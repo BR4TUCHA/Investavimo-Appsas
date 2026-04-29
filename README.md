@@ -52,9 +52,19 @@ http://localhost:8000
 Iš esamo MVP pridėtas Android apvalkalas su Capacitor, todėl galima sugeneruoti
 `apk` failą telefonui.
 
-### Kur yra sugeneruotas APK
+### Kur parsisiųsti APK iš GitHub
 
-Po build'o failas yra čia:
+Į repo yra įkeltas parsisiunčiamas failas čia:
+
+```text
+apk/TaupykLab-debug.apk
+```
+
+Šitą failą gali atsidaryti GitHub ir telefone spausti `Download` / `View raw`.
+
+### Kur yra lokalus build failas
+
+Po build'o lokalus Gradle sugeneruotas failas yra čia:
 
 ```text
 android/app/build/outputs/apk/debug/app-debug.apk
@@ -76,5 +86,7 @@ cd android
 
 - Šiuo metu tai yra `debug` APK versija.
 - Android telefone gali reikėti leisti diegimą iš nežinomų šaltinių.
+- Parsisiunčiamo failo kontrolinė suma (`SHA-256`):
+  `4a220b95760590917c40c6b631bde515cd717b53da8b3b2500d402afff97cfd9`
 - Jei norėsi, kitame etape galima padaryti pasirašytą `release` APK arba AAB
   failą Google Play įkėlimui.
