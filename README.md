@@ -1,33 +1,39 @@
 # Investavimo-Appsas
 
-`TaupykLab` yra paprastas vieno puslapio MVP prototipas, skirtas parodyti vaikų
+`TaupykLab` yra vieno puslapio MVP prototipas, skirtas parodyti vaikų
 kišenpinigių, taupymo, investavimo edukacijos ir tėvų kontrolės idėją.
 
 ## Kas įdėta
 
-- hero sekcija su produkto pasiūlymu;
-- interaktyvus simuliatorius:
-  - mėnesio kišenpinigių dydis,
-  - procentas taupymui,
-  - procentas investavimo kišenei,
-  - taupymo tikslas,
-  - esama pažanga,
-  - tėvų prisidėjimo procentas;
-- automatiškai perskaičiuojamas paskirstymas į:
-  - išleidimą,
-  - taupymą,
-  - investavimą;
-- tėvų pranešimo ir prisidėjimo scenarijus;
+- viršuje esantys rolės mygtukai:
+  - `Vaiko prisijungimas`,
+  - `Tėvų prisijungimas`;
+- interaktyvus valdymo skydelis su skirtingomis teisėmis:
+  - tėvai gali keisti limitus, kišenpinigius, taupymo tikslus ir investavimo dalį,
+  - vaikas mato nustatymus, bet jų keisti negali;
+- investavimo kategorijos:
+  - ETF fondai,
+  - technologijos,
+  - žalioji energija,
+  - saugi pinigų rinka;
+- avataro-asistento kortelė su atsitiktiniais patarimais ir žinutėmis;
+- push notification tipo įspėjimai:
+  - kai vaikas artėja prie limito,
+  - kai limitas viršijamas,
+  - kai pasiekiamas taupymo tikslas,
+  - kai tėvų prisidėjimas gali būti aktyvuotas;
 - mini mokymosi zona su trumpomis finansų pamokomis ir viktorina.
 
 ## MVP logika
 
 - Tėvai nustato, kokia kišenpinigių dalis lieka išleidimui, taupymui ir
   investavimo mokymuisi.
+- Vaiko rolėje valdikliai užrakinami, todėl vaikas mato taisykles, bet jų
+  pakeisti negali.
 - Kai vaikas pasiekia bent 50% savo tikslo, programėlė pažymi, kad galima
   siųsti pranešimą tėvams ir aktyvuoti jų prisidėjimą.
-- Tėvų prisidėjimo procentas skaičiuojamas tik po to, kai šis slenkstis
-  pasiektas.
+- Jei išleidžiama suma priartėja prie limito arba jį viršija, rodomi
+  įspėjamieji pranešimai ir avataro-asistento patarimai.
 - Edukacinė dalis skirta aiškinti bazines sąvokas: taupymą, riziką ir
   sudėtinį augimą.
 
