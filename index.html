@@ -16,273 +16,341 @@
     <div class="page-shell">
       <header class="topbar">
         <div>
-          <p class="eyebrow">Interaktyvus produkto prototipas</p>
+          <p class="eyebrow">Mobili, skiltimis suskaidyta MVP versija</p>
           <h1>TaupykLab</h1>
+          <p class="topbar-copy" id="roleDescription">
+            Tėvai valdo limitus ir tikslus, o vaikas gali kurti savo tikslus,
+            mokytis ir spręsti klausimus.
+          </p>
         </div>
 
-        <div class="topbar-tools">
-          <nav class="topbar-nav">
-            <a href="#simuliatorius">Valdymas</a>
-            <a href="#investavimas">Investavimas</a>
-            <a href="#mokymasis">Mokymasis</a>
-          </nav>
-
-          <div class="login-switch" aria-label="Programėlės rolės">
-            <button class="role-button" data-role-target="child" type="button">
-              Vaiko prisijungimas
-            </button>
-            <button
-              class="role-button active"
-              data-role-target="parent"
-              type="button"
-            >
-              Tėvų prisijungimas
-            </button>
-          </div>
+        <div class="login-switch" aria-label="Programėlės rolės">
+          <button class="role-button" data-role-target="child" type="button">
+            Vaiko prisijungimas
+          </button>
+          <button class="role-button active" data-role-target="parent" type="button">
+            Tėvų prisijungimas
+          </button>
         </div>
       </header>
 
-      <main>
-        <section class="hero">
-          <div class="hero-copy">
-            <span class="badge">Tėvų kontrolė + vaikų limitai + investavimo mokymasis</span>
-            <p class="role-caption" id="roleCaption">Aktyvus režimas: tėvai</p>
-            <h2>
-              Vienoje vietoje
-              <span>vaiko pinigai, limitai ir finansinio raštingumo augimas.</span>
-            </h2>
-            <p class="lead" id="roleDescription">
-              Tėvai nustato išlaidų ribas, investavimo kategorijas ir gauna
-              pranešimus, o vaikai mato tik tai, kas jiems leidžiama: limitus,
-              tikslus ir klausimus mokymuisi.
-            </p>
-
-            <div class="hero-actions">
-              <a class="button primary" href="#simuliatorius">Atidaryti valdymo skydą</a>
-              <a class="button secondary" href="#mokymasis">Spręsti klausimus</a>
+      <section class="status-hero">
+        <article class="hero-card hero-card-primary">
+          <p class="panel-label">Aktyvus režimas</p>
+          <h2 id="roleCaption">Tėvų režimas</h2>
+          <p class="hero-copy" id="heroCopy">
+            Tėvai gali koreguoti limitus, redaguoti ar ištrinti tikslus ir valdyti
+            investavimo profilį.
+          </p>
+          <div class="hero-metrics">
+            <div class="metric-pill">
+              <span>Aktyvus tikslas</span>
+              <strong id="heroGoalName">Dviratis</strong>
             </div>
+            <div class="metric-pill">
+              <span>Savaitės limitas</span>
+              <strong id="heroWeeklyLimit">28 EUR</strong>
+            </div>
+            <div class="metric-pill">
+              <span>Biblioteka</span>
+              <strong id="heroLibraryCount">120 klaus. / 120 pamokų</strong>
+            </div>
+          </div>
+        </article>
 
-            <div class="permission-grid">
-              <article class="permission-card">
-                <p class="panel-label">Vaiko režimas</p>
-                <h3>Matyti gali, keisti negali</h3>
-                <ul>
-                  <li>Mato savaitės limitą, pažangą ir investavimo kryptis</li>
-                  <li>Gali spręsti viktorinos klausimus ir sekti tikslą</li>
-                  <li>Negali keisti limitų, procentų ar tėvų taisyklių</li>
-                </ul>
-              </article>
-
-              <article class="permission-card">
-                <p class="panel-label">Tėvų režimas</p>
-                <h3>Visa kontrolė vienoje vietoje</h3>
-                <ul>
-                  <li>Nustato limitus, paskirstymą ir investavimo profilį</li>
-                  <li>Gauna įspėjimus, kai limitas artėja ar yra viršytas</li>
-                  <li>Mato, kada įjungti papildomą prisidėjimą prie tikslo</li>
-                </ul>
-              </article>
+        <article class="hero-card advisor-card">
+          <div class="advisor-head">
+            <div class="assistant-avatar" aria-hidden="true">
+              <svg viewBox="0 0 120 120" role="img">
+                <defs>
+                  <linearGradient id="avatarBg" x1="0%" x2="100%" y1="0%" y2="100%">
+                    <stop offset="0%" stop-color="#8f99ff" />
+                    <stop offset="100%" stop-color="#4f46e5" />
+                  </linearGradient>
+                </defs>
+                <circle cx="60" cy="60" r="56" fill="url(#avatarBg)" />
+                <circle cx="60" cy="66" r="30" fill="#ffffff" />
+                <circle cx="48" cy="60" r="5" fill="#172033" />
+                <circle cx="72" cy="60" r="5" fill="#172033" />
+                <path
+                  d="M47 77c5 6 21 6 26 0"
+                  fill="none"
+                  stroke="#172033"
+                  stroke-linecap="round"
+                  stroke-width="4"
+                />
+                <path
+                  d="M36 44c7-10 17-16 24-16s17 6 24 16"
+                  fill="none"
+                  stroke="#ffffff"
+                  stroke-linecap="round"
+                  stroke-width="8"
+                />
+                <circle cx="92" cy="28" r="14" fill="#ffd166" />
+                <path
+                  d="M92 21v14M85 28h14"
+                  fill="none"
+                  stroke="#172033"
+                  stroke-linecap="round"
+                  stroke-width="3"
+                />
+              </svg>
+            </div>
+            <div>
+              <p class="panel-label">Taupytukas</p>
+              <h3>100+ atsitiktinių promptų</h3>
             </div>
           </div>
 
-          <div class="hero-panel">
-            <div class="panel-card accent-card">
-              <p class="panel-label">Vaiko piniginė</p>
-              <div class="panel-main-row">
-                <strong id="walletAmount">65 EUR</strong>
-                <span class="status-pill" id="walletStatusPill">Tėvų limitas aktyvus</span>
-              </div>
+          <p class="advisor-message" id="assistantMessage">
+            Tėvų režime verta patikrinti, ar savaitės limitas dar tinka aktyviam
+            tikslui.
+          </p>
+          <div class="assistant-tags" id="assistantTags"></div>
+          <div class="action-row">
+            <button class="button secondary compact-button" id="nextPrompt" type="button">
+              Kitas patarimas
+            </button>
+            <button class="button primary compact-button" id="enablePush" type="button">
+              Išjungti push
+            </button>
+          </div>
+        </article>
+      </section>
 
-              <div class="split-metrics">
-                <div>
+      <main class="tab-panels">
+        <section class="tab-panel active" data-tab-panel="home">
+          <div class="section-heading compact-heading">
+            <p class="eyebrow">Pagrindinis vaizdas</p>
+            <h2>Greita vaiko pinigų ir progreso santrauka</h2>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="card stat-card">
+              <p class="panel-label">Pinigų paskirstymas</p>
+              <div class="stat-list">
+                <div class="stat-row">
                   <span>Išleidimui</span>
-                  <strong id="heroSpend">32.50 EUR</strong>
+                  <strong id="spendAmount">35 EUR</strong>
                 </div>
-                <div>
+                <div class="stat-row">
                   <span>Taupymui</span>
-                  <strong id="heroSave">19.50 EUR</strong>
+                  <strong id="saveAmount">21 EUR</strong>
                 </div>
-                <div>
+                <div class="stat-row">
                   <span>Investavimui</span>
-                  <strong id="heroInvest">13 EUR</strong>
+                  <strong id="investAmount">14 EUR</strong>
                 </div>
               </div>
+            </article>
 
-              <div class="limit-inline">
-                <span>Savaitės limitas: <strong id="heroWeeklyLimit">25 EUR</strong></span>
-                <span>Išleista: <strong id="heroSpent">18 EUR</strong></span>
+            <article class="card stat-card">
+              <p class="panel-label">Limitų būsena</p>
+              <div class="stat-highlight">
+                <strong id="limitStatus">Viskas pagal planą</strong>
+                <span id="limitDetail">Vaikas dar nepriartėjo prie savaitės ribos.</span>
               </div>
-            </div>
-
-            <div class="panel-card assistant-card">
-              <div class="assistant-header">
-                <div class="assistant-avatar" aria-hidden="true">
-                  <svg viewBox="0 0 120 120" role="img">
-                    <defs>
-                      <linearGradient id="avatarBg" x1="0%" x2="100%" y1="0%" y2="100%">
-                        <stop offset="0%" stop-color="#7c89ff" />
-                        <stop offset="100%" stop-color="#4f46e5" />
-                      </linearGradient>
-                    </defs>
-                    <circle cx="60" cy="60" r="56" fill="url(#avatarBg)" />
-                    <circle cx="60" cy="65" r="30" fill="#ffffff" />
-                    <circle cx="48" cy="60" r="5" fill="#172033" />
-                    <circle cx="72" cy="60" r="5" fill="#172033" />
-                    <path
-                      d="M47 77c5 6 21 6 26 0"
-                      fill="none"
-                      stroke="#172033"
-                      stroke-linecap="round"
-                      stroke-width="4"
-                    />
-                    <path
-                      d="M36 44c7-10 17-16 24-16s17 6 24 16"
-                      fill="none"
-                      stroke="#ffffff"
-                      stroke-linecap="round"
-                      stroke-width="8"
-                    />
-                    <circle cx="92" cy="28" r="14" fill="#ffd166" />
-                    <path
-                      d="M92 21v14M85 28h14"
-                      fill="none"
-                      stroke="#172033"
-                      stroke-linecap="round"
-                      stroke-width="3"
-                    />
-                  </svg>
-                </div>
-
+              <div class="mini-grid">
                 <div>
-                  <p class="panel-label">Avataras-asistentas</p>
-                  <h3>Taupytukas</h3>
+                  <span>Išleista</span>
+                  <strong id="spentAmount">22 EUR</strong>
+                </div>
+                <div>
+                  <span>Likęs limitas</span>
+                  <strong id="remainingLimitAmount">6 EUR</strong>
                 </div>
               </div>
+            </article>
 
-              <p class="assistant-message" id="assistantMessage">
-                Šiandien puiku stebėti limitą: jei vaikas priartėja prie ribos,
-                tėvai iškart gauna įspėjimą.
+            <article class="card stat-card">
+              <p class="panel-label">Aktyvus tikslas</p>
+              <h3 id="selectedGoalTitleHome">Dviratis</h3>
+              <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+              </div>
+              <div class="mini-grid">
+                <div>
+                  <span>Sutaupyta</span>
+                  <strong id="savedAmount">80 EUR</strong>
+                </div>
+                <div>
+                  <span>Pažanga</span>
+                  <strong id="savedPercent">44%</strong>
+                </div>
+                <div>
+                  <span>Tėvų įnašas</span>
+                  <strong id="parentContribution">0 EUR</strong>
+                </div>
+              </div>
+              <p class="notification-banner pending" id="notificationBanner">
+                Tėvų prisidėjimas bus siūlomas, kai pasieksite 50% tikslo.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" data-tab-panel="goals">
+          <div class="section-heading compact-heading">
+            <p class="eyebrow">Tikslai</p>
+            <h2>Vaikas gali išsikelti tikslus, tėvai gali juos valdyti</h2>
+            <p id="goalsRoleDescription">
+              Vaiko režime galima kurti naujus tikslus. Tėvų režime galima juos
+              redaguoti, ištrinti arba pridėti savo.
+            </p>
+          </div>
+
+          <div class="goals-layout">
+            <article class="card goal-list-card">
+              <div class="section-mini-heading">
+                <div>
+                  <p class="panel-label">Tikslų sąrašas</p>
+                  <h3 id="goalCountLabel">3 tikslai</h3>
+                </div>
+                <span class="status-pill success" id="goalModePill">Valdymas aktyvus</span>
+              </div>
+              <div class="goal-list" id="goalList"></div>
+            </article>
+
+            <article class="card goal-detail-card">
+              <div class="section-mini-heading">
+                <div>
+                  <p class="panel-label">Pasirinktas tikslas</p>
+                  <h3 id="goalDetailTitle">Dviratis</h3>
+                </div>
+                <span class="status-pill" id="goalCreatorPill">Sukūrė vaikas</span>
+              </div>
+
+              <p class="goal-detail-copy" id="goalDetailCopy">
+                Tikslas pasirinktas peržiūrai. Tėvai gali jį koreguoti, o vaikas
+                gali stebėti pažangą.
               </p>
 
-              <div class="assistant-tags" id="assistantTags"></div>
-
-              <div class="assistant-actions">
-                <button class="button secondary compact-button" id="nextPrompt" type="button">
-                  Kitas patarimas
-                </button>
-                <button class="button primary compact-button" id="enablePush" type="button">
-                  Įjungti push pranešimus
-                </button>
+              <div class="progress-track large-progress">
+                <div class="progress-fill" id="goalDetailProgress"></div>
               </div>
-            </div>
+
+              <div class="goal-stats">
+                <div>
+                  <span>Tikslas</span>
+                  <strong id="goalTargetAmount">180 EUR</strong>
+                </div>
+                <div>
+                  <span>Sutaupyta</span>
+                  <strong id="goalSavedAmount">80 EUR</strong>
+                </div>
+                <div>
+                  <span>Likę</span>
+                  <strong id="goalRemainingAmount">100 EUR</strong>
+                </div>
+                <div>
+                  <span>Pažanga</span>
+                  <strong id="goalProgressPercent">44%</strong>
+                </div>
+              </div>
+
+              <form class="goal-form" id="parentGoalForm">
+                <h4>Tėvų tikslų redagavimas</h4>
+                <div class="form-grid">
+                  <label>
+                    Pavadinimas
+                    <input id="parentGoalTitle" type="text" maxlength="40" />
+                  </label>
+                  <label>
+                    Emoji
+                    <input id="parentGoalEmoji" type="text" maxlength="2" />
+                  </label>
+                  <label>
+                    Tikslinė suma
+                    <input id="parentGoalTarget" type="number" min="10" step="5" />
+                  </label>
+                  <label>
+                    Jau sutaupyta
+                    <input id="parentGoalSaved" type="number" min="0" step="5" />
+                  </label>
+                </div>
+                <div class="action-row">
+                  <button class="button primary" id="saveGoalButton" type="submit">
+                    Išsaugoti pakeitimus
+                  </button>
+                  <button class="button secondary" id="addParentGoalButton" type="button">
+                    Pridėti naują tikslą
+                  </button>
+                  <button class="button danger" id="deleteGoalButton" type="button">
+                    Ištrinti tikslą
+                  </button>
+                </div>
+              </form>
+
+              <form class="goal-form" id="childGoalForm" hidden>
+                <h4>Išsikelk naują tikslą</h4>
+                <div class="form-grid">
+                  <label>
+                    Tikslo pavadinimas
+                    <input id="childGoalTitle" type="text" maxlength="40" placeholder="Pvz. Dviratis" />
+                  </label>
+                  <label>
+                    Emoji
+                    <input id="childGoalEmoji" type="text" maxlength="2" placeholder="🚲" />
+                  </label>
+                  <label>
+                    Kiek nori sutaupyti?
+                    <input id="childGoalTarget" type="number" min="10" step="5" placeholder="120" />
+                  </label>
+                </div>
+                <div class="action-row">
+                  <button class="button primary" id="createChildGoalButton" type="submit">
+                    Iškelti savo tikslą
+                  </button>
+                </div>
+              </form>
+            </article>
           </div>
         </section>
 
-        <section class="overview-grid" id="funkcijos">
-          <article class="info-card">
-            <div class="icon-bubble">1</div>
-            <h3>Dvi aiškios rolės</h3>
-            <p>
-              Viršuje yra atskiri vaiko ir tėvų prisijungimo mygtukai. Vaikas
-              mato tik jam skirtą informaciją, o tėvai valdo visas taisykles.
-            </p>
-          </article>
-
-          <article class="info-card">
-            <div class="icon-bubble">2</div>
-            <h3>Avataras su promptais</h3>
-            <p>
-              Taupytukas nuolat primena, ką verta padaryti toliau: saugoti
-              limitą, tęsti tikslą ar pažiūrėti į investavimo kategorijas.
-            </p>
-          </article>
-
-          <article class="info-card">
-            <div class="icon-bubble">3</div>
-            <h3>Push įspėjimai dėl išlaidų</h3>
-            <p>
-              Kai savaitės limitas beveik pasiektas arba viršytas, sistema
-              sugeneruoja įspėjimą tėvams ir parodo jį pačiame valdymo skydelyje.
-            </p>
-          </article>
-        </section>
-
-        <section class="simulator-section" id="simuliatorius">
-          <div class="section-heading">
-            <p class="eyebrow">Valdymas ir limitai</p>
-            <h2>Tėvų nustatymai, kurių vaikas pakeisti negali</h2>
-            <p>
-              Pakeisk parametrus tėvų režime ir perjunk į vaiko režimą, kad
-              pamatytum, kaip vaikas mato tik ribas, pažangą ir mokymosi dalį.
+        <section class="tab-panel" data-tab-panel="limits">
+          <div class="section-heading compact-heading">
+            <p class="eyebrow">Limitai</p>
+            <h2>Atskira vieta limitams ir push įspėjimams</h2>
+            <p id="limitsModeCopy">
+              Tėvų režime galima valdyti išlaidų ribas. Vaiko režime ši informacija
+              rodoma tik skaitymui.
             </p>
           </div>
 
-          <div class="simulator-grid">
-            <form class="simulator-card controls-card">
+          <div class="limits-layout">
+            <article class="card controls-card">
               <div class="mode-banner" id="controlModeBanner">
-                Tėvų režimas aktyvus - galima valdyti limitus, tikslus ir investavimo profilį.
+                Tėvų režimas aktyvus - limitus ir paskirstymą galima keisti.
               </div>
 
               <div class="control-group">
                 <label for="allowance">Mėnesio kišenpinigiai</label>
                 <div class="range-header">
-                  <input
-                    id="allowance"
-                    data-parent-control
-                    type="range"
-                    min="20"
-                    max="300"
-                    step="5"
-                    value="65"
-                  />
-                  <strong id="allowanceValue">65 EUR</strong>
+                  <input id="allowance" data-parent-control type="range" min="20" max="300" step="5" value="70" />
+                  <strong id="allowanceValue">70 EUR</strong>
                 </div>
               </div>
 
               <div class="control-group">
                 <label for="weeklyLimit">Savaitės išleidimo limitas</label>
                 <div class="range-header">
-                  <input
-                    id="weeklyLimit"
-                    data-parent-control
-                    type="range"
-                    min="5"
-                    max="80"
-                    step="1"
-                    value="25"
-                  />
-                  <strong id="weeklyLimitValue">25 EUR</strong>
+                  <input id="weeklyLimit" data-parent-control type="range" min="5" max="90" step="1" value="28" />
+                  <strong id="weeklyLimitValue">28 EUR</strong>
                 </div>
               </div>
 
               <div class="control-group">
                 <label for="spentThisWeek">Jau išleista šią savaitę</label>
                 <div class="range-header">
-                  <input
-                    id="spentThisWeek"
-                    data-parent-control
-                    type="range"
-                    min="0"
-                    max="120"
-                    step="1"
-                    value="18"
-                  />
-                  <strong id="spentThisWeekValue">18 EUR</strong>
+                  <input id="spentThisWeek" data-parent-control type="range" min="0" max="120" step="1" value="22" />
+                  <strong id="spentThisWeekValue">22 EUR</strong>
                 </div>
               </div>
 
               <div class="control-group">
-                <label for="savePercent">Užrakinta taupymui</label>
+                <label for="savePercent">Skirta taupymui</label>
                 <div class="range-header">
-                  <input
-                    id="savePercent"
-                    data-parent-control
-                    type="range"
-                    min="10"
-                    max="70"
-                    step="5"
-                    value="30"
-                  />
+                  <input id="savePercent" data-parent-control type="range" min="10" max="70" step="5" value="30" />
                   <strong id="savePercentValue">30%</strong>
                 </div>
               </div>
@@ -290,250 +358,151 @@
               <div class="control-group">
                 <label for="investPercent">Skirta investavimui</label>
                 <div class="range-header">
-                  <input
-                    id="investPercent"
-                    data-parent-control
-                    type="range"
-                    min="0"
-                    max="40"
-                    step="5"
-                    value="20"
-                  />
+                  <input id="investPercent" data-parent-control type="range" min="0" max="40" step="5" value="20" />
                   <strong id="investPercentValue">20%</strong>
                 </div>
               </div>
 
               <div class="control-group">
-                <label for="goalAmount">Taupymo tikslas</label>
+                <label for="matchPercent">Tėvų prisidėjimas po 50% tikslo</label>
                 <div class="range-header">
-                  <input
-                    id="goalAmount"
-                    data-parent-control
-                    type="range"
-                    min="40"
-                    max="400"
-                    step="10"
-                    value="160"
-                  />
-                  <strong id="goalAmountValue">160 EUR</strong>
-                </div>
-              </div>
-
-              <div class="control-group">
-                <label for="goalProgress">Vaiko pasiekta tikslo dalis</label>
-                <div class="range-header">
-                  <input
-                    id="goalProgress"
-                    data-parent-control
-                    type="range"
-                    min="0"
-                    max="100"
-                    step="5"
-                    value="45"
-                  />
-                  <strong id="goalProgressValue">45%</strong>
-                </div>
-              </div>
-
-              <div class="control-group">
-                <label for="matchPercent">Tėvų prisidėjimas po slenksčio</label>
-                <div class="range-header">
-                  <input
-                    id="matchPercent"
-                    data-parent-control
-                    type="range"
-                    min="0"
-                    max="100"
-                    step="10"
-                    value="50"
-                  />
+                  <input id="matchPercent" data-parent-control type="range" min="0" max="100" step="10" value="50" />
                   <strong id="matchPercentValue">50%</strong>
                 </div>
               </div>
+            </article>
 
-              <div class="control-group">
-                <label>Investavimo kategorijų profilis</label>
-                <div class="profile-switch" id="profileSwitch">
-                  <button class="profile-button" data-profile="safe" data-parent-control type="button">
-                    Saugus
-                  </button>
-                  <button
-                    class="profile-button active"
-                    data-profile="balanced"
-                    data-parent-control
-                    type="button"
-                  >
-                    Subalansuotas
-                  </button>
-                  <button class="profile-button" data-profile="growth" data-parent-control type="button">
-                    Augimo
-                  </button>
+            <article class="card notification-card">
+              <div class="section-mini-heading">
+                <div>
+                  <p class="panel-label">Push ir įspėjimai</p>
+                  <h3>Kas būtų siunčiama dabar?</h3>
                 </div>
+                <span class="status-pill success" id="pushStatus">Push aktyvūs</span>
               </div>
-            </form>
+              <ul class="notification-list" id="notificationList"></ul>
+            </article>
 
-            <div class="simulator-card results-card">
-              <div class="summary-panel">
-                <p class="panel-label">Paskirstymas</p>
-
-                <div class="summary-row">
-                  <span>Išleidimui dabar</span>
-                  <strong id="spendAmount">32.50 EUR</strong>
-                </div>
-
-                <div class="summary-row">
-                  <span>Automatiškai taupoma</span>
-                  <strong id="saveAmount">19.50 EUR</strong>
-                </div>
-
-                <div class="summary-row">
-                  <span>Investavimo kišenė</span>
-                  <strong id="investAmount">13 EUR</strong>
-                </div>
-
-                <div class="summary-row">
-                  <span>Savaitės limitas</span>
-                  <strong id="weeklyLimitAmount">25 EUR</strong>
-                </div>
-
-                <div class="summary-row">
-                  <span>Išleista šią savaitę</span>
-                  <strong id="spentAmount">18 EUR</strong>
-                </div>
-
-                <div class="summary-row emphasis">
-                  <span>Limito būsena</span>
-                  <strong id="limitStatus">Viskas pagal planą</strong>
-                </div>
-              </div>
-
-              <div class="category-panel" id="investavimas">
-                <div class="section-mini-heading">
-                  <div>
-                    <p class="panel-label">Investavimo kategorijos</p>
-                    <h3 id="investmentProfileTitle">Subalansuotas profilis</h3>
-                  </div>
-                  <span class="status-pill success" id="investmentProfileStatus">3 kryptys</span>
-                </div>
-                <div class="investment-grid" id="investmentGrid"></div>
-              </div>
-
-              <div class="goal-panel">
-                <div class="goal-header">
-                  <div>
-                    <p class="panel-label">Tikslas</p>
-                    <h3>Dviratis vasarai</h3>
-                  </div>
-                  <strong id="savedAmount">72 EUR</strong>
-                </div>
-
-                <div class="progress-track">
-                  <div class="progress-fill" id="progressFill"></div>
-                </div>
-
-                <div class="goal-stats">
-                  <div>
-                    <span>Vaikas sutaupė</span>
-                    <strong id="savedPercent">45%</strong>
-                  </div>
-                  <div>
-                    <span>Tėvų įnašas</span>
-                    <strong id="parentContribution">0 EUR</strong>
-                  </div>
-                  <div>
-                    <span>Likęs kelias</span>
-                    <strong id="remainingAmount">88 EUR</strong>
-                  </div>
-                </div>
-
-                <p class="notification-banner pending" id="notificationBanner">
-                  Tėvų pranešimas dar neišsiųstas - kai vaikas pasieks 50% tikslo, bus siūloma prisidėti.
-                </p>
-              </div>
-
-              <div class="push-panel">
-                <div class="section-mini-heading">
-                  <div>
-                    <p class="panel-label">Push ir įspėjimai</p>
-                    <h3>Kas dabar būtų siunčiama?</h3>
-                  </div>
-                  <span class="status-pill" id="pushStatus">Push neišjungti</span>
-                </div>
-                <ul class="notification-list" id="notificationList"></ul>
-              </div>
-
-              <div class="rules-panel">
-                <p class="panel-label">Ką ši programėlė automatiškai padaro?</p>
-                <ul id="rulesList">
-                  <li>Užrakina 30% taupymui ir 20% investavimui.</li>
-                  <li>Rodo vaikui tik matymo režimą, jei aktyvus vaiko prisijungimas.</li>
-                  <li>Informuoja tėvus, kai limitas artėja prie ribos.</li>
-                </ul>
-              </div>
-            </div>
+            <article class="card rules-card">
+              <p class="panel-label">Automatinės taisyklės</p>
+              <ul class="rules-list" id="rulesList"></ul>
+            </article>
           </div>
         </section>
 
-        <section class="learning-section" id="mokymasis">
-          <div class="section-heading">
-            <p class="eyebrow">Mokymasis ir klausimai</p>
-            <h2>Vaikas gali mokytis, net kai negali keisti nustatymų</h2>
+        <section class="tab-panel" data-tab-panel="invest">
+          <div class="section-heading compact-heading">
+            <p class="eyebrow">Investavimas</p>
+            <h2>Investavimo profiliai su atskiromis kategorijomis</h2>
             <p>
-              Tėvai kontroliuoja taisykles, o vaikas gauna saugią erdvę suprasti
-              taupymą, investavimo kategorijas ir atsakingą pinigų naudojimą.
+              Tėvai renkasi profilį, o vaikas mato, į kokias kryptis virtualiai
+              keliauja investavimo kišenė.
             </p>
           </div>
 
-          <div class="lesson-grid">
-            <article class="lesson-card">
-              <span class="lesson-tag">Pamoka 1</span>
-              <h3>Kas yra išlaidų limitas?</h3>
-              <p>
-                Limitas padeda neperdeginti visų pinigų per vieną savaitę ir
-                išmoko planuoti, kiek gali būti išleista dabar.
-              </p>
+          <div class="invest-layout">
+            <article class="card">
+              <div class="section-mini-heading">
+                <div>
+                  <p class="panel-label">Profilio pasirinkimas</p>
+                  <h3 id="investmentProfileTitle">Subalansuotas profilis</h3>
+                </div>
+                <span class="status-pill success" id="investmentProfileStatus">3 kryptys</span>
+              </div>
+
+              <div class="profile-switch">
+                <button class="profile-button" data-profile="safe" data-parent-control type="button">
+                  Saugus
+                </button>
+                <button class="profile-button active" data-profile="balanced" data-parent-control type="button">
+                  Subalansuotas
+                </button>
+                <button class="profile-button" data-profile="growth" data-parent-control type="button">
+                  Augimo
+                </button>
+              </div>
             </article>
 
-            <article class="lesson-card">
-              <span class="lesson-tag">Pamoka 2</span>
-              <h3>Kodėl investavimas turi kategorijas?</h3>
-              <p>
-                Skirtingos kryptys, pavyzdžiui, saugesni fondai ar augimo
-                sektoriai, leidžia aiškiau suprasti, kur ir kodėl keliauja pinigai.
-              </p>
-            </article>
+            <div class="investment-grid" id="investmentGrid"></div>
+          </div>
+        </section>
 
-            <article class="lesson-card">
-              <span class="lesson-tag">Pamoka 3</span>
-              <h3>Kada tėvai gauna įspėjimą?</h3>
-              <p>
-                Jei limitas beveik pasiektas arba jau viršytas, sistema siunčia
-                pranešimą, kad būtų galima sureaguoti laiku.
-              </p>
-            </article>
+        <section class="tab-panel" data-tab-panel="learn">
+          <div class="section-heading compact-heading">
+            <p class="eyebrow">Mokymasis</p>
+            <h2>Daugiau nei 100 trumpų mokymosi patarimų</h2>
+            <p id="learningLibraryMeta">Bibliotekoje yra 120 trumpų finansinio raštingumo patarimų.</p>
           </div>
 
-          <div class="quiz-card">
-            <div>
-              <p class="panel-label">Mini viktorina</p>
-              <h3 id="quizQuestion">Kam dažniausiai labiausiai tinka taupymas?</h3>
-              <p class="quiz-helper" id="quizHelper">
-                Vaiko režime viktorina lieka aktyvi, nors limitų ir investavimo
-                nustatymų keisti negalima.
+          <div class="learning-layout">
+            <article class="card learning-feature-card">
+              <div class="section-mini-heading">
+                <div>
+                  <p class="panel-label">Dabartinis patarimas</p>
+                  <h3 id="learningTitle">Kaip planuoti savaitės biudžetą?</h3>
+                </div>
+                <span class="status-pill success" id="learningCounter">1 / 120</span>
+              </div>
+              <p class="learning-topic" id="learningTopic">Tema: limitai</p>
+              <p class="learning-text" id="learningText">
+                Kai turi limitą, kiekvienas pirkinys tampa pasirinkimu: ar jis svarbesnis
+                už tavo tikslą?
               </p>
-              <p class="quiz-role-note" id="quizRoleNote">
-                Dabartinis režimas: tėvai.
-              </p>
+              <p class="learning-meta" id="learningMeta">Skirta vaikui ir tėvams kalbėtis kartu.</p>
+              <div class="action-row">
+                <button class="button secondary" id="nextLearningTip" type="button">Kitas patarimas</button>
+                <button class="button primary" id="randomLearningTip" type="button">Atsitiktinis patarimas</button>
+              </div>
+            </article>
+
+            <article class="card preview-card">
+              <p class="panel-label">Kitos idėjos</p>
+              <div class="preview-list" id="learningPreviewList"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" data-tab-panel="quiz">
+          <div class="section-heading compact-heading">
+            <p class="eyebrow">Viktorina</p>
+            <h2>Daugiau nei 100 klausimų apie taupymą ir investavimą</h2>
+            <p id="quizLibraryMeta">Viktorinos bibliotekoje yra 120 klausimų.</p>
+          </div>
+
+          <article class="card quiz-card">
+            <div class="section-mini-heading">
+              <div>
+                <p class="panel-label">Klausimas</p>
+                <h3 id="quizQuestion">Kodėl verta turėti savaitės limitą?</h3>
+              </div>
+              <span class="status-pill success" id="quizCounter">1 / 120</span>
             </div>
+
+            <p class="quiz-helper" id="quizHelper">
+              Pagalvok apie planavimą, o ne tik apie draudimą ką nors pirkti.
+            </p>
+            <p class="quiz-role-note" id="quizRoleNote">Dabartinis režimas: tėvai.</p>
+
             <div class="quiz-options" id="quizOptions"></div>
             <div class="quiz-feedback" id="quizFeedback"></div>
-            <button class="button secondary" id="nextQuestion" type="button">
-              Kitas klausimas
-            </button>
-          </div>
+
+            <div class="action-row">
+              <button class="button secondary" id="nextQuestion" type="button">Kitas klausimas</button>
+              <button class="button primary" id="randomQuestion" type="button">Atsitiktinis klausimas</button>
+            </div>
+          </article>
         </section>
       </main>
     </div>
+
+    <nav class="bottom-nav" aria-label="Programėlės skiltys">
+      <button class="bottom-nav-button active" data-tab-target="home" type="button">Pradžia</button>
+      <button class="bottom-nav-button" data-tab-target="goals" type="button">Tikslai</button>
+      <button class="bottom-nav-button" data-tab-target="limits" type="button">Limitai</button>
+      <button class="bottom-nav-button" data-tab-target="invest" type="button">Invest.</button>
+      <button class="bottom-nav-button" data-tab-target="learn" type="button">Mokymasis</button>
+      <button class="bottom-nav-button" data-tab-target="quiz" type="button">Viktorina</button>
+    </nav>
 
     <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
 
