@@ -3,34 +3,45 @@ const PROMPT_ROTATION_MS = 8000;
 
 const state = {
   mode: "parent",
-  activeTab: "suvestine",
+  activeTab: "home",
   allowance: 70,
   weeklyLimit: 28,
-  spentThisWeek: 19,
+  spentThisWeek: 22,
   savePercent: 30,
   investPercent: 20,
   matchPercent: 50,
   profile: "balanced",
   pushEnabled: true,
+  promptIndex: 0,
   quizIndex: 0,
   learningIndex: 0,
-  promptIndex: 0,
   goals: [
     {
       id: "goal-bike",
-      title: "Dviratis vasarai",
+      title: "Dviratis",
+      emoji: "🚲",
       amount: 180,
-      progress: 45,
+      progress: 44,
       author: "child",
     },
     {
       id: "goal-console",
       title: "Žaidimų konsolė",
+      emoji: "🎮",
       amount: 250,
       progress: 20,
       author: "parent",
     },
+    {
+      id: "goal-camp",
+      title: "Vasaros stovykla",
+      emoji: "⛺",
+      amount: 140,
+      progress: 62,
+      author: "parent",
+    },
   ],
+  selectedGoalId: "goal-bike",
 };
 
 const investmentProfiles = {
@@ -42,19 +53,19 @@ const investmentProfiles = {
         name: "Pinigų rinka",
         share: "40%",
         risk: "Labai žema rizika",
-        description: "Skirta aiškinti, kad dalis pinigų gali būti laikoma labai ramioje zonoje.",
+        description: "Padeda paaiškinti, kad dalis pinigų gali būti laikoma ramiau ir saugiau.",
       },
       {
         name: "Obligacijų fondai",
         share: "35%",
         risk: "Žema rizika",
-        description: "Parodo stabilesnę kryptį ir paaiškina, kas yra nuosaikus augimas.",
+        description: "Tinka aiškinti stabilesnio augimo idėją ir mažesnius svyravimus.",
       },
       {
         name: "Taupymo rezervas",
         share: "25%",
         risk: "Apsauga",
-        description: "Primena, kad ne visi pinigai turi būti investuojami - dalis gali likti saugumui.",
+        description: "Primena, kad ne visi pinigai turi būti investuojami - dalis gali likti rezervui.",
       },
     ],
   },
@@ -66,13 +77,13 @@ const investmentProfiles = {
         name: "ETF fondai",
         share: "45%",
         risk: "Žema - vidutinė rizika",
-        description: "Pirmas žingsnis aiškinti, kodėl vienas krepšelis gali būti saugesnis nei viena akcija.",
+        description: "Padeda suprasti, kodėl vienas krepšelis gali būti saugesnis už vieną akciją.",
       },
       {
         name: "Technologijos",
         share: "30%",
         risk: "Vidutinė rizika",
-        description: "Padeda vaikui suprasti, kad augimo sritys gali svyruoti labiau.",
+        description: "Parodo, kad augimo sritys gali svyruoti, bet yra įdomios mokymuisi.",
       },
       {
         name: "Žalioji energija",
@@ -90,19 +101,19 @@ const investmentProfiles = {
         name: "Technologijų augimas",
         share: "40%",
         risk: "Padidėjusi rizika",
-        description: "Tinka parodyti, kad greitesnio augimo kryptys dažniau svyruoja.",
+        description: "Tinka aiškinti, kad didesnis augimo potencialas reiškia ir daugiau svyravimo.",
       },
       {
         name: "AI ir robotika",
         share: "35%",
         risk: "Aukštesnė rizika",
-        description: "Edukacinė kategorija apie ateities sektorius ir neapibrėžtumą.",
+        description: "Moko apie ateities sektorius ir tai, kad naujos sritys nėra garantija.",
       },
       {
         name: "Ateities miestai",
         share: "25%",
         risk: "Vidutinė - aukštesnė rizika",
-        description: "Padeda vaikui suprasti teminius investavimo pasirinkimus.",
+        description: "Padeda vaikui suprasti temines investavimo kryptis ir ilgalaikį mąstymą.",
       },
     ],
   },
@@ -111,54 +122,49 @@ const investmentProfiles = {
 function buildQuizBank() {
   const topics = [
     {
-      name: "taupymą",
+      name: "taupymo įprotį",
+      helper: "Pagalvok apie veiksmą, kuris padeda nuolat artėti prie tikslo.",
       correct: "Pirmiausia atsidėti dalį pinigų tikslui",
       wrongA: "Viską išleisti tą pačią dieną",
-      wrongB: "Visada laukti, kol kiti nuspręs už tave",
-      helper: "Pagalvok apie įprotį, kuris padeda artėti prie tikslo.",
-      feedback:
-        "Teisingai - mažas, bet pastovus atsidėjimas yra vienas svarbiausių taupymo įpročių.",
+      wrongB: "Spręsti tik tada, kai pinigų beveik nelieka",
+      feedback: "Teisingai - pastovus atsidėjimas kuria stiprų taupymo įprotį.",
     },
     {
-      name: "išlaidų limitą",
+      name: "savaitės limitą",
+      helper: "Atsakymas susijęs su planavimu ir savikontrole.",
       correct: "Ribą, kuri padeda neišleisti per daug per savaitę",
       wrongA: "Būdą išleisti daugiau nei planuota",
-      wrongB: "Paslėptą mokestį",
-      helper: "Atsakymas susijęs su savikontrole ir planavimu.",
-      feedback:
-        "Teisingai - limitas reikalingas tam, kad vaikas mokytųsi kontroliuoti savaitės biudžetą.",
+      wrongB: "Slaptą papildomą mokestį",
+      feedback: "Teisingai - limitas padeda valdyti biudžetą ir planuoti išlaidas.",
     },
     {
       name: "investavimo riziką",
+      helper: "Pagalvok, kas nutinka investicijų vertei laikui bėgant.",
       correct: "Kad vertė gali ir kilti, ir kristi",
       wrongA: "Kad grąža visada garantuota",
-      wrongB: "Kad tėvai visada panaikins nuostolius",
-      helper: "Pagalvok apie tai, jog investicijų vertė svyruoja.",
-      feedback:
-        "Teisingai - investavimo rizika reiškia, kad vertė gali keistis, todėl svarbu atsargumas.",
+      wrongB: "Kad tėvai visada padengs nuostolius",
+      feedback: "Teisingai - investavimas reiškia svyravimą, todėl reikia atsargumo.",
     },
     {
       name: "ETF fondus",
+      helper: "Čia svarbi krepšelio ir diversifikacijos idėja.",
       correct: "Krepšelį, kuriame yra daugiau nei viena investicija",
-      wrongA: "Vieną vienintelę akciją",
-      wrongB: "Taupyklę be jokio svyravimo",
-      helper: "Čia svarbi diversifikacijos idėja.",
-      feedback:
-        "Teisingai - ETF leidžia parodyti vaikui, kad pinigai gali būti paskirstyti plačiau.",
+      wrongA: "Vieną pavienę akciją",
+      wrongB: "Taupyklę be jokios rizikos",
+      feedback: "Teisingai - ETF leidžia paskirstyti riziką per daugiau nei vieną kryptį.",
     },
     {
       name: "tikslų planavimą",
+      helper: "Atsakymas turi turėti sumą, kryptį ir progresą.",
       correct: "Aiškų norą susieti su suma ir žingsniais",
       wrongA: "Tiesiog norėti kažko be plano",
       wrongB: "Keisti tikslą kasdien be priežasties",
-      helper: "Atsakymas turi turėti aiškumą ir planą.",
-      feedback:
-        "Teisingai - tikslas tampa realesnis, kai turi sumą, progresą ir aiškų planą.",
+      feedback: "Teisingai - tikslas tampa realesnis, kai turi aiškią sumą ir progresą.",
     },
   ];
 
   const bank = [];
-  for (let index = 0; index < 110; index += 1) {
+  for (let index = 0; index < 120; index += 1) {
     const topic = topics[index % topics.length];
     bank.push({
       question: `Klausimas ${index + 1}. Kas geriausiai apibūdina ${topic.name}?`,
@@ -175,38 +181,38 @@ function buildLearningTips() {
   const themes = [
     {
       title: "Kaip veikia savaitės limitas?",
-      text: "Savaitės limitas padeda neperdeginti visų pinigų per kelias dienas ir išmoko planuoti.",
       tag: "Limitai",
+      text: "Savaitės limitas padeda neperdeginti visų pinigų per kelias dienas ir išmoko planuoti iš anksto.",
     },
     {
       title: "Kodėl verta turėti tikslą?",
-      text: "Tikslas padeda vaikui suprasti, kam verta atsidėti pinigus ir ką reiškia progresas.",
       tag: "Tikslai",
+      text: "Tikslas padeda vaikui suprasti, kam verta atsidėti pinigus ir kaip progresas virsta motyvacija.",
     },
     {
       title: "Kuo skiriasi taupymas ir investavimas?",
-      text: "Taupymas dažniau skirtas saugumui ir artimiems pirkiniams, o investavimas - ilgesniam augimui.",
       tag: "Pagrindai",
+      text: "Taupymas dažniau skirtas saugumui ir artimesniam pirkiniui, o investavimas - ilgesniam laikotarpiui.",
     },
     {
       title: "Kas yra diversifikacija?",
-      text: "Diversifikacija reiškia, kad pinigai paskirstomi per daugiau nei vieną kryptį, o ne į vieną vietą.",
       tag: "Investavimas",
+      text: "Diversifikacija reiškia, kad pinigai paskirstomi per daugiau nei vieną kryptį, o ne dedami į vieną vietą.",
     },
     {
       title: "Kodėl tėvų kontrolė naudinga?",
-      text: "Ji padeda vaikui mokytis saugioje aplinkoje ir palaipsniui suprasti finansinius sprendimus.",
       tag: "Tėvai",
+      text: "Ji padeda vaikui mokytis saugioje aplinkoje ir palaipsniui geriau suprasti finansinius sprendimus.",
     },
   ];
 
   const entries = [];
-  for (let index = 0; index < 125; index += 1) {
+  for (let index = 0; index < 120; index += 1) {
     const theme = themes[index % themes.length];
     entries.push({
       title: `${theme.title} #${index + 1}`,
-      text: `${theme.text} Šis patarimas skirtas trumpam, lengvai perskaitomam mokymuisi telefone.`,
       tag: theme.tag,
+      text: `${theme.text} Šis patarimas pateiktas trumpu, telefonui patogiu formatu.`,
     });
   }
   return entries;
@@ -223,22 +229,59 @@ const elements = {
   profileButtons: Array.from(document.querySelectorAll("[data-profile]")),
   roleCaption: document.querySelector("#roleCaption"),
   roleDescription: document.querySelector("#roleDescription"),
-  walletAmount: document.querySelector("#walletAmount"),
-  walletStatusPill: document.querySelector("#walletStatusPill"),
-  heroSpend: document.querySelector("#heroSpend"),
-  heroSave: document.querySelector("#heroSave"),
-  heroInvest: document.querySelector("#heroInvest"),
+  heroCopy: document.querySelector("#heroCopy"),
+  heroGoalName: document.querySelector("#heroGoalName"),
   heroWeeklyLimit: document.querySelector("#heroWeeklyLimit"),
-  heroSpent: document.querySelector("#heroSpent"),
+  heroLibraryCount: document.querySelector("#heroLibraryCount"),
   assistantMessage: document.querySelector("#assistantMessage"),
   assistantTags: document.querySelector("#assistantTags"),
   nextPrompt: document.querySelector("#nextPrompt"),
   enablePush: document.querySelector("#enablePush"),
+  spendAmount: document.querySelector("#spendAmount"),
+  saveAmount: document.querySelector("#saveAmount"),
+  investAmount: document.querySelector("#investAmount"),
+  limitStatus: document.querySelector("#limitStatus"),
+  limitDetail: document.querySelector("#limitDetail"),
+  spentAmount: document.querySelector("#spentAmount"),
+  remainingLimitAmount: document.querySelector("#remainingLimitAmount"),
+  selectedGoalTitleHome: document.querySelector("#selectedGoalTitleHome"),
+  progressFill: document.querySelector("#progressFill"),
+  savedAmount: document.querySelector("#savedAmount"),
+  savedPercent: document.querySelector("#savedPercent"),
+  parentContribution: document.querySelector("#parentContribution"),
+  notificationBanner: document.querySelector("#notificationBanner"),
+  goalsRoleDescription: document.querySelector("#goalsRoleDescription"),
+  goalCountLabel: document.querySelector("#goalCountLabel"),
+  goalModePill: document.querySelector("#goalModePill"),
+  goalList: document.querySelector("#goalList"),
+  goalDetailTitle: document.querySelector("#goalDetailTitle"),
+  goalCreatorPill: document.querySelector("#goalCreatorPill"),
+  goalDetailCopy: document.querySelector("#goalDetailCopy"),
+  goalDetailProgress: document.querySelector("#goalDetailProgress"),
+  goalTargetAmount: document.querySelector("#goalTargetAmount"),
+  goalSavedAmount: document.querySelector("#goalSavedAmount"),
+  goalRemainingAmount: document.querySelector("#goalRemainingAmount"),
+  goalProgressPercent: document.querySelector("#goalProgressPercent"),
+  parentGoalForm: document.querySelector("#parentGoalForm"),
+  parentGoalTitle: document.querySelector("#parentGoalTitle"),
+  parentGoalEmoji: document.querySelector("#parentGoalEmoji"),
+  parentGoalTarget: document.querySelector("#parentGoalTarget"),
+  parentGoalSaved: document.querySelector("#parentGoalSaved"),
+  saveGoalButton: document.querySelector("#saveGoalButton"),
+  addParentGoalButton: document.querySelector("#addParentGoalButton"),
+  deleteGoalButton: document.querySelector("#deleteGoalButton"),
+  childGoalForm: document.querySelector("#childGoalForm"),
+  childGoalTitle: document.querySelector("#childGoalTitle"),
+  childGoalEmoji: document.querySelector("#childGoalEmoji"),
+  childGoalTarget: document.querySelector("#childGoalTarget"),
+  createChildGoalButton: document.querySelector("#createChildGoalButton"),
+  limitsModeCopy: document.querySelector("#limitsModeCopy"),
+  controlModeBanner: document.querySelector("#controlModeBanner"),
   allowance: document.querySelector("#allowance"),
   weeklyLimit: document.querySelector("#weeklyLimit"),
   spentThisWeek: document.querySelector("#spentThisWeek"),
-  savePercent: document.querySelector("#savePercent"),
-  investPercent: document.querySelector("#investPercent"),
+  savePercentInput: document.querySelector("#savePercent"),
+  investPercentInput: document.querySelector("#investPercent"),
   matchPercent: document.querySelector("#matchPercent"),
   allowanceValue: document.querySelector("#allowanceValue"),
   weeklyLimitValue: document.querySelector("#weeklyLimitValue"),
@@ -246,46 +289,30 @@ const elements = {
   savePercentValue: document.querySelector("#savePercentValue"),
   investPercentValue: document.querySelector("#investPercentValue"),
   matchPercentValue: document.querySelector("#matchPercentValue"),
-  spendAmount: document.querySelector("#spendAmount"),
-  saveAmount: document.querySelector("#saveAmount"),
-  investAmount: document.querySelector("#investAmount"),
-  weeklyLimitAmount: document.querySelector("#weeklyLimitAmount"),
-  spentAmount: document.querySelector("#spentAmount"),
-  limitStatus: document.querySelector("#limitStatus"),
   pushStatus: document.querySelector("#pushStatus"),
   notificationList: document.querySelector("#notificationList"),
   rulesList: document.querySelector("#rulesList"),
   investmentProfileTitle: document.querySelector("#investmentProfileTitle"),
   investmentProfileStatus: document.querySelector("#investmentProfileStatus"),
   investmentGrid: document.querySelector("#investmentGrid"),
-  goalsList: document.querySelector("#goalsList"),
-  goalTitleInput: document.querySelector("#goalTitleInput"),
-  goalAmountInput: document.querySelector("#goalAmountInput"),
-  goalProgressInput: document.querySelector("#goalProgressInput"),
-  addGoalButton: document.querySelector("#addGoalButton"),
-  parentGoalTools: document.querySelector("#parentGoalTools"),
-  goalsModeNote: document.querySelector("#goalsModeNote"),
-  selectedGoalTitle: document.querySelector("#selectedGoalTitle"),
-  selectedGoalAuthor: document.querySelector("#selectedGoalAuthor"),
-  savedAmount: document.querySelector("#savedAmount"),
-  savedPercent: document.querySelector("#savedPercent"),
-  parentContribution: document.querySelector("#parentContribution"),
-  remainingAmount: document.querySelector("#remainingAmount"),
-  progressFill: document.querySelector("#progressFill"),
-  notificationBanner: document.querySelector("#notificationBanner"),
-  learningMeta: document.querySelector("#learningMeta"),
+  learningLibraryMeta: document.querySelector("#learningLibraryMeta"),
   learningTitle: document.querySelector("#learningTitle"),
+  learningCounter: document.querySelector("#learningCounter"),
+  learningTopic: document.querySelector("#learningTopic"),
   learningText: document.querySelector("#learningText"),
-  learningTag: document.querySelector("#learningTag"),
-  prevLearning: document.querySelector("#prevLearning"),
-  nextLearning: document.querySelector("#nextLearning"),
-  quizMeta: document.querySelector("#quizMeta"),
+  learningMeta: document.querySelector("#learningMeta"),
+  nextLearningTip: document.querySelector("#nextLearningTip"),
+  randomLearningTip: document.querySelector("#randomLearningTip"),
+  learningPreviewList: document.querySelector("#learningPreviewList"),
+  quizLibraryMeta: document.querySelector("#quizLibraryMeta"),
   quizQuestion: document.querySelector("#quizQuestion"),
+  quizCounter: document.querySelector("#quizCounter"),
   quizHelper: document.querySelector("#quizHelper"),
   quizRoleNote: document.querySelector("#quizRoleNote"),
   quizOptions: document.querySelector("#quizOptions"),
   quizFeedback: document.querySelector("#quizFeedback"),
   nextQuestion: document.querySelector("#nextQuestion"),
+  randomQuestion: document.querySelector("#randomQuestion"),
   toastStack: document.querySelector("#toastStack"),
 };
 
@@ -315,12 +342,12 @@ function clampPercentages() {
   const locked = state.savePercent + state.investPercent;
   if (locked > 100) {
     state.investPercent = Math.max(0, 100 - state.savePercent);
-    elements.investPercent.value = String(state.investPercent);
+    elements.investPercentInput.value = String(state.investPercent);
   }
 }
 
-function getCurrentGoal() {
-  return state.goals[0];
+function getSelectedGoal() {
+  return state.goals.find((goal) => goal.id === state.selectedGoalId) || state.goals[0] || null;
 }
 
 function getMetrics() {
@@ -332,8 +359,7 @@ function getMetrics() {
   const overLimit = state.spentThisWeek > state.weeklyLimit;
   const nearLimit = !overLimit && state.spentThisWeek >= state.weeklyLimit * 0.8;
   const remainingLimit = Math.max(0, state.weeklyLimit - state.spentThisWeek);
-
-  const currentGoal = getCurrentGoal();
+  const currentGoal = getSelectedGoal();
   const savedAmount = currentGoal ? (currentGoal.amount * currentGoal.progress) / 100 : 0;
   const thresholdReached = currentGoal ? currentGoal.progress >= MATCH_THRESHOLD : false;
   const parentContribution = currentGoal && thresholdReached
@@ -344,7 +370,6 @@ function getMetrics() {
     : 0;
 
   return {
-    spendPercent,
     spendAmount,
     saveAmount,
     investAmount,
@@ -366,43 +391,43 @@ function getCurrentProfile() {
 function buildAssistantPrompts(metrics) {
   const prompts = [
     {
-      text: `Šiuo metu aktyvus ${getCurrentProfile().title.toLowerCase()} - verta aptarti, kuo skiriasi investavimo kryptys.`,
-      tags: ["investavimas", "kategorijos"],
+      text: `Programėlėje jau yra ${quizQuestions.length} klausimų ir ${learningTips.length} mokymosi patarimų - kiekviena dalis turi savo atskirą skiltį.`,
+      tags: ["biblioteka", "100+"],
     },
     {
-      text: `Programėlėje jau yra ${quizQuestions.length}+ klausimų ir ${learningTips.length}+ trumpų mokymosi patarimų.`,
-      tags: ["mokymasis", "100+"],
+      text: `Aktyvus ${getCurrentProfile().title.toLowerCase()} - verta su vaiku aptarti, kuo skiriasi investavimo kryptys.`,
+      tags: ["investavimas", "profilis"],
     },
   ];
 
   if (state.mode === "parent") {
     prompts.unshift({
-      text: `Tėvai gali koreguoti ar trinti tikslus, o vaikai patys gali išsikelti naujus norus taupymui.`,
-      tags: ["tikslai", "tėvų kontrolė"],
+      text: "Tėvų režime galima redaguoti ir trinti tikslus, o taip pat pridėti naujus tikslus vaikui.",
+      tags: ["tėvai", "tikslų valdymas"],
     });
   } else {
     prompts.unshift({
-      text: `Vaiko režime gali kurti naujus tikslus ir matyti limitus, bet negali keisti tėvų nustatytų taisyklių.`,
-      tags: ["vaiko režimas", "tikslai"],
+      text: "Vaiko režime gali išsikelti naują tikslą, bet limitų ar investavimo taisyklių keisti negalima.",
+      tags: ["vaikas", "savas tikslas"],
     });
   }
 
   if (metrics.overLimit) {
     prompts.unshift({
-      text: "Limitas jau viršytas - programėlė parodytų skubų perspėjimą ir tėvų reakcijos poreikį.",
+      text: "Savaitės limitas jau viršytas - sistema parodytų skubų perspėjimą tėvams.",
       tags: ["skubu", "limitas"],
     });
   } else if (metrics.nearLimit) {
     prompts.unshift({
-      text: `Iki savaitės limito liko ${formatCurrency(metrics.remainingLimit)} - verta sustoti prieš kitą pirkimą.`,
-      tags: ["perspėjimas", "limitas"],
+      text: `Iki savaitės limito liko tik ${formatCurrency(metrics.remainingLimit)} - verta sustoti prieš kitą pirkinį.`,
+      tags: ["perspėjimas", "savaitė"],
     });
   }
 
   if (metrics.currentGoal && metrics.thresholdReached) {
     prompts.push({
-      text: `Tikslas "${metrics.currentGoal.title}" pasiekė ${metrics.currentGoal.progress}%, todėl galima aktyvuoti tėvų prisidėjimą.`,
-      tags: ["tikslas", "prisidėjimas"],
+      text: `Tikslas "${metrics.currentGoal.title}" jau pasiekė ${metrics.currentGoal.progress}% - galima aktyvuoti tėvų prisidėjimą.`,
+      tags: ["tikslas", "50%+"],
     });
   }
 
@@ -428,8 +453,8 @@ function renderAssistant(metrics, randomize = false) {
   });
 
   elements.enablePush.textContent = state.pushEnabled
-    ? "Išjungti push pranešimus"
-    : "Įjungti push pranešimus";
+    ? "Išjungti push"
+    : "Įjungti push";
   elements.enablePush.disabled = state.mode !== "parent";
 }
 
@@ -451,7 +476,7 @@ function renderTabs() {
   });
 
   elements.tabPanels.forEach((panel) => {
-    panel.hidden = panel.dataset.tabPanel !== state.activeTab;
+    panel.classList.toggle("active", panel.dataset.tabPanel === state.activeTab);
   });
 }
 
@@ -474,30 +499,135 @@ function renderRoleState(metrics) {
     button.disabled = !isParent;
   });
 
-  elements.roleCaption.textContent = `Aktyvus režimas: ${isParent ? "tėvai" : "vaikas"}`;
+  elements.roleCaption.textContent = isParent ? "Tėvų režimas" : "Vaiko režimas";
   elements.roleDescription.textContent = isParent
-    ? "Tėvai valdo limitus, investavimo profilį, push įspėjimus ir gali koreguoti bet kurį tikslą."
-    : "Vaikas mato taisykles, turi atskiras skiltis apačioje ir gali kurti savo taupymo tikslus.";
-
+    ? "Tėvai valdo limitus, tikslus ir investavimo profilį, o apačioje skiltys padalintos taip, kad informacija neapkrautų vieno ekrano."
+    : "Vaikas mato atskiras skiltis, gali mokytis, spręsti viktoriną ir išsikelti naujus tikslus, bet tėvų taisyklių nekeičia.";
+  elements.heroCopy.textContent = isParent
+    ? "Tėvai gali koreguoti limitus, redaguoti ar ištrinti tikslus ir valdyti investavimo profilį."
+    : "Vaikas gali sekti progresą, kurti savo tikslus ir mokytis per atskiras programėlės skiltis.";
+  elements.goalsRoleDescription.textContent = isParent
+    ? "Tėvų režime galima redaguoti, ištrinti arba pridėti naujus tikslus."
+    : "Vaiko režime gali susikurti naują tikslą, o tėvai vėliau galės jį koreguoti.";
+  elements.goalModePill.textContent = isParent ? "Valdymas aktyvus" : "Vaiko siūlomi tikslai";
+  elements.goalModePill.className = `status-pill ${isParent ? "success" : "warning"}`;
+  elements.limitsModeCopy.textContent = isParent
+    ? "Tėvų režime galima valdyti išlaidų ribas ir paskirstymą."
+    : "Vaiko režime limitų skiltis rodoma tik skaitymui - keisti nieko negalima.";
+  elements.controlModeBanner.textContent = isParent
+    ? "Tėvų režimas aktyvus - limitus ir paskirstymą galima keisti."
+    : "Vaiko režimas aktyvus - visi limitų nustatymai rodomi tik skaitymui.";
   elements.quizRoleNote.textContent = `Dabartinis režimas: ${isParent ? "tėvai" : "vaikas"}.`;
-  elements.parentGoalTools.hidden = !isParent;
-  elements.goalsModeNote.textContent = isParent
-    ? "Tėvai gali pridėti, koreguoti arba ištrinti bet kurį tikslą."
-    : "Vaikas gali pridėti savo tikslus. Esamus tikslus koreguoti ar trinti gali tik tėvai.";
+}
+
+function renderHome(metrics) {
+  elements.heroGoalName.textContent = metrics.currentGoal ? metrics.currentGoal.title : "-";
+  elements.heroWeeklyLimit.textContent = formatCurrency(state.weeklyLimit);
+  elements.heroLibraryCount.textContent = `${quizQuestions.length} klaus. / ${learningTips.length} pamokų`;
+
+  elements.spendAmount.textContent = formatCurrency(metrics.spendAmount);
+  elements.saveAmount.textContent = formatCurrency(metrics.saveAmount);
+  elements.investAmount.textContent = formatCurrency(metrics.investAmount);
+
+  elements.spentAmount.textContent = formatCurrency(state.spentThisWeek);
+  elements.remainingLimitAmount.textContent = formatCurrency(metrics.remainingLimit);
 
   if (metrics.overLimit) {
-    elements.walletStatusPill.textContent = "Viršytas limitas";
-    elements.walletStatusPill.className = "status-pill danger";
+    elements.limitStatus.textContent = "Viršytas limitas";
+    elements.limitDetail.textContent = "Tėvams būtų rodomas skubus push perspėjimas.";
   } else if (metrics.nearLimit) {
-    elements.walletStatusPill.textContent = "Artėja prie ribos";
-    elements.walletStatusPill.className = "status-pill warning";
+    elements.limitStatus.textContent = "Artėjama prie ribos";
+    elements.limitDetail.textContent = "Sistema perspėtų dar prieš viršijant limitą.";
   } else {
-    elements.walletStatusPill.textContent = "Limitas kontroliuojamas";
-    elements.walletStatusPill.className = "status-pill success";
+    elements.limitStatus.textContent = "Viskas pagal planą";
+    elements.limitDetail.textContent = "Vaikas dar turi saugią atsargą iki savaitės ribos.";
+  }
+
+  if (metrics.currentGoal) {
+    elements.selectedGoalTitleHome.textContent = `${metrics.currentGoal.emoji} ${metrics.currentGoal.title}`;
+    elements.savedAmount.textContent = formatCurrency(metrics.savedAmount);
+    elements.savedPercent.textContent = `${metrics.currentGoal.progress}%`;
+    elements.parentContribution.textContent = formatCurrency(metrics.parentContribution);
+    elements.progressFill.style.width = `${Math.min(100, metrics.currentGoal.progress)}%`;
+  } else {
+    elements.selectedGoalTitleHome.textContent = "Tikslo nėra";
+    elements.savedAmount.textContent = "0 EUR";
+    elements.savedPercent.textContent = "0%";
+    elements.parentContribution.textContent = "0 EUR";
+    elements.progressFill.style.width = "0%";
+  }
+
+  if (metrics.thresholdReached) {
+    elements.notificationBanner.textContent = `Tikslas "${metrics.currentGoal.title}" pasiekė ${metrics.currentGoal.progress}%, todėl galima aktyvuoti ${state.matchPercent}% tėvų prisidėjimą.`;
+    elements.notificationBanner.className = "notification-banner success";
+  } else {
+    elements.notificationBanner.textContent = "Tėvų prisidėjimas bus siūlomas, kai pasieksite 50% tikslo.";
+    elements.notificationBanner.className = "notification-banner pending";
   }
 }
 
-function renderSummary(metrics) {
+function renderGoalList(metrics) {
+  elements.goalCountLabel.textContent = `${state.goals.length} tikslai`;
+  elements.goalList.innerHTML = "";
+
+  state.goals.forEach((goal) => {
+    const selected = goal.id === state.selectedGoalId;
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = `goal-list-item ${selected ? "active" : ""}`;
+    item.innerHTML = `
+      <div>
+        <strong>${goal.emoji} ${goal.title}</strong>
+        <span>Sukūrė: ${goal.author === "child" ? "vaikas" : "tėvai"}</span>
+      </div>
+      <div>
+        <strong>${goal.progress}%</strong>
+        <span>${formatCurrency(goal.amount)}</span>
+      </div>
+    `;
+    item.addEventListener("click", () => {
+      state.selectedGoalId = goal.id;
+      renderAll();
+    });
+    elements.goalList.appendChild(item);
+  });
+
+  if (!metrics.currentGoal) {
+    elements.goalDetailTitle.textContent = "Pasirink tikslo nėra";
+    elements.goalCreatorPill.textContent = "Nėra duomenų";
+    elements.goalDetailCopy.textContent = "Sukurk naują tikslą, kad čia matytum detales.";
+    elements.goalDetailProgress.style.width = "0%";
+    elements.goalTargetAmount.textContent = "0 EUR";
+    elements.goalSavedAmount.textContent = "0 EUR";
+    elements.goalRemainingAmount.textContent = "0 EUR";
+    elements.goalProgressPercent.textContent = "0%";
+    return;
+  }
+
+  elements.goalDetailTitle.textContent = `${metrics.currentGoal.emoji} ${metrics.currentGoal.title}`;
+  elements.goalCreatorPill.textContent = metrics.currentGoal.author === "child" ? "Sukūrė vaikas" : "Sukūrė tėvai";
+  elements.goalCreatorPill.className = `status-pill ${metrics.currentGoal.author === "child" ? "warning" : "success"}`;
+  elements.goalDetailCopy.textContent = metrics.currentGoal.author === "child"
+    ? "Tai vaiko pasiūlytas tikslas. Tėvai gali jį koreguoti arba palikti tokį, koks yra."
+    : "Tai tėvų pridėtas tikslas, kurį galima toliau koreguoti ir stebėti."
+  ;
+  elements.goalDetailProgress.style.width = `${Math.min(100, metrics.currentGoal.progress)}%`;
+  elements.goalTargetAmount.textContent = formatCurrency(metrics.currentGoal.amount);
+  elements.goalSavedAmount.textContent = formatCurrency(metrics.savedAmount);
+  elements.goalRemainingAmount.textContent = formatCurrency(metrics.remainingAmount);
+  elements.goalProgressPercent.textContent = `${metrics.currentGoal.progress}%`;
+
+  elements.parentGoalTitle.value = metrics.currentGoal.title;
+  elements.parentGoalEmoji.value = metrics.currentGoal.emoji;
+  elements.parentGoalTarget.value = String(metrics.currentGoal.amount);
+  elements.parentGoalSaved.value = String(Math.round(metrics.savedAmount));
+
+  const isParent = state.mode === "parent";
+  elements.parentGoalForm.hidden = !isParent;
+  elements.childGoalForm.hidden = isParent;
+}
+
+function renderLimits(metrics) {
   elements.allowanceValue.textContent = formatCurrency(state.allowance);
   elements.weeklyLimitValue.textContent = formatCurrency(state.weeklyLimit);
   elements.spentThisWeekValue.textContent = formatCurrency(state.spentThisWeek);
@@ -505,104 +635,65 @@ function renderSummary(metrics) {
   elements.investPercentValue.textContent = `${state.investPercent}%`;
   elements.matchPercentValue.textContent = `${state.matchPercent}%`;
 
-  elements.walletAmount.textContent = formatCurrency(state.allowance);
-  elements.heroSpend.textContent = formatCurrency(metrics.spendAmount);
-  elements.heroSave.textContent = formatCurrency(metrics.saveAmount);
-  elements.heroInvest.textContent = formatCurrency(metrics.investAmount);
-  elements.heroWeeklyLimit.textContent = formatCurrency(state.weeklyLimit);
-  elements.heroSpent.textContent = formatCurrency(state.spentThisWeek);
-
-  elements.spendAmount.textContent = formatCurrency(metrics.spendAmount);
-  elements.saveAmount.textContent = formatCurrency(metrics.saveAmount);
-  elements.investAmount.textContent = formatCurrency(metrics.investAmount);
-  elements.weeklyLimitAmount.textContent = formatCurrency(state.weeklyLimit);
-  elements.spentAmount.textContent = formatCurrency(state.spentThisWeek);
-
-  if (metrics.overLimit) {
-    elements.limitStatus.textContent = "Viršytas limitas";
-  } else if (metrics.nearLimit) {
-    elements.limitStatus.textContent = "Artėja prie ribos";
-  } else {
-    elements.limitStatus.textContent = "Viskas pagal planą";
-  }
-
-  if (metrics.currentGoal) {
-    elements.selectedGoalTitle.textContent = metrics.currentGoal.title;
-    elements.selectedGoalAuthor.textContent =
-      metrics.currentGoal.author === "child"
-        ? "Sukūrė vaikas"
-        : "Sukūrė tėvai";
-    elements.savedAmount.textContent = formatCurrency(metrics.savedAmount);
-    elements.savedPercent.textContent = `${metrics.currentGoal.progress}%`;
-    elements.parentContribution.textContent = formatCurrency(metrics.parentContribution);
-    elements.remainingAmount.textContent = formatCurrency(metrics.remainingAmount);
-    elements.progressFill.style.width = `${Math.min(100, metrics.currentGoal.progress)}%`;
-
-    if (metrics.thresholdReached) {
-      elements.notificationBanner.textContent = `Tikslas "${metrics.currentGoal.title}" pasiekė ${metrics.currentGoal.progress}%, todėl galima įjungti ${state.matchPercent}% tėvų prisidėjimą.`;
-      elements.notificationBanner.className = "notification-banner success";
-    } else {
-      elements.notificationBanner.textContent = `Tikslas "${metrics.currentGoal.title}" dar nepasiekė ${MATCH_THRESHOLD}% ribos, todėl tėvų prisidėjimas dar laukia.`;
-      elements.notificationBanner.className = "notification-banner pending";
-    }
-  }
-}
-
-function renderNotifications(metrics) {
   elements.notificationList.innerHTML = "";
-  const items = [];
+  const notifications = [];
 
   if (metrics.overLimit) {
-    items.push({
+    notifications.push({
       tone: "danger",
       title: "Skubus įspėjimas",
       text: `Viršytas savaitės limitas ${formatCurrency(state.weeklyLimit)}.`,
     });
   } else if (metrics.nearLimit) {
-    items.push({
+    notifications.push({
       tone: "warning",
       title: "Ankstyvas perspėjimas",
-      text: `Iki limito liko ${formatCurrency(metrics.remainingLimit)}.`,
+      text: `Vaikas išleido ${formatCurrency(state.spentThisWeek)} ir artėja prie ribos.`,
     });
   } else {
-    items.push({
+    notifications.push({
       tone: "success",
-      title: "Stabili situacija",
-      text: "Išlaidos vis dar telpa į suplanuotą ribą.",
+      title: "Viskas pagal planą",
+      text: `Iki savaitės limito dar liko ${formatCurrency(metrics.remainingLimit)}.`,
     });
   }
 
-  items.push({
-    tone: state.pushEnabled ? "info" : "warning",
+  notifications.push({
+    tone: state.pushEnabled ? "success" : "warning",
     title: state.pushEnabled ? "Push aktyvūs" : "Push išjungti",
     text: state.pushEnabled
-      ? "Tėvų telefonas gautų pranešimus apie limitus ir tikslus."
-      : "Kol push išjungti, įspėjimai lieka tik programėlėje.",
+      ? "Tėvų telefonas gautų limitų ir tikslo įspėjimus."
+      : "Įspėjimai būtų matomi tik pačioje programėlėje.",
+  });
+
+  if (metrics.thresholdReached && metrics.currentGoal) {
+    notifications.push({
+      tone: "success",
+      title: "Tikslas pasiekė 50%+",
+      text: `Galima aktyvuoti ${state.matchPercent}% prisidėjimą prie "${metrics.currentGoal.title}".`,
+    });
+  }
+
+  notifications.forEach((item) => {
+    const node = document.createElement("li");
+    node.className = `notification-item ${item.tone}`;
+    node.innerHTML = `<strong>${item.title}</strong><span>${item.text}</span>`;
+    elements.notificationList.appendChild(node);
   });
 
   elements.pushStatus.textContent = state.pushEnabled ? "Push aktyvūs" : "Push išjungti";
   elements.pushStatus.className = `status-pill ${state.pushEnabled ? "success" : "warning"}`;
 
-  items.forEach((item) => {
-    const row = document.createElement("li");
-    row.className = `notification-item ${item.tone}`;
-    row.innerHTML = `<strong>${item.title}</strong><span>${item.text}</span>`;
-    elements.notificationList.appendChild(row);
-  });
-}
-
-function renderRules(metrics) {
   const rules = [
-    `Užrakina ${state.savePercent}% taupymui ir ${state.investPercent}% investavimui, todėl ne viskas gali būti išleista iš karto.`,
+    `Užrakina ${state.savePercent}% taupymui ir ${state.investPercent}% investavimui.`,
     state.mode === "parent"
-      ? "Tėvai šiuo metu gali valdyti limitus, investavimo profilį ir tikslų koregavimą."
-      : "Vaikas gali kurti naujus tikslus, bet limitų ir tėvų nustatymų keisti negali.",
+      ? "Tėvų režime galima koreguoti limitus ir paskirstymą."
+      : "Vaiko režime limitų nustatymai yra tik skaitymui.",
     metrics.overLimit
-      ? "Limitas viršytas - būtų sugeneruotas skubus push perspėjimas."
+      ? "Viršijus limitą būtų rodomas skubus perspėjimas."
       : metrics.nearLimit
-        ? "Vaikas artėja prie limito, todėl siunčiamas ankstyvas perspėjimas."
-        : "Sistema stebi išlaidas ir laukia, ar bus pasiekta perspėjimo riba.",
-    `Viktorinos banke yra ${quizQuestions.length}+ klausimų, o mokymosi bibliotekoje - ${learningTips.length}+ patarimų.`,
+        ? "Priartėjus prie ribos būtų rodomas ankstyvas perspėjimas."
+        : "Kol kas išlaidos dar saugiai telpa į nustatytą ribą.",
   ];
 
   elements.rulesList.innerHTML = "";
@@ -613,7 +704,7 @@ function renderRules(metrics) {
   });
 }
 
-function renderInvestmentGrid() {
+function renderInvesting() {
   const profile = getCurrentProfile();
   elements.investmentProfileTitle.textContent = profile.title;
   elements.investmentProfileStatus.textContent = profile.status;
@@ -634,148 +725,45 @@ function renderInvestmentGrid() {
   });
 }
 
-function renderGoals() {
-  elements.goalsList.innerHTML = "";
-  state.goals.forEach((goal, index) => {
-    const card = document.createElement("article");
-    card.className = "goal-card";
-    if (index === 0) {
-      card.classList.add("active");
-    }
-
-    const actions = state.mode === "parent"
-      ? `
-        <div class="goal-card-actions">
-          <button class="small-action" data-goal-action="promote" data-goal-id="${goal.id}" type="button">Rodyti viršuje</button>
-          <button class="small-action" data-goal-action="edit" data-goal-id="${goal.id}" type="button">Koreguoti</button>
-          <button class="small-action danger" data-goal-action="delete" data-goal-id="${goal.id}" type="button">Ištrinti</button>
-        </div>
-      `
-      : `
-        <div class="goal-card-actions">
-          <button class="small-action" data-goal-action="promote" data-goal-id="${goal.id}" type="button">Rodyti viršuje</button>
-        </div>
-      `;
-
-    card.innerHTML = `
-      <div class="goal-card-top">
-        <div>
-          <h4>${goal.title}</h4>
-          <span>${goal.author === "child" ? "Vaiko tikslas" : "Tėvų tikslas"}</span>
-        </div>
-        <strong>${goal.progress}%</strong>
-      </div>
-      <p class="goal-card-meta">Tikslas: ${formatCurrency(goal.amount)}</p>
-      ${actions}
-    `;
-    elements.goalsList.appendChild(card);
-  });
-
-  Array.from(document.querySelectorAll("[data-goal-action]")).forEach((button) => {
-    button.addEventListener("click", () => {
-      const { goalAction, goalId } = button.dataset;
-      handleGoalAction(goalAction, goalId);
-    });
-  });
-}
-
-function handleGoalAction(action, goalId) {
-  const goalIndex = state.goals.findIndex((goal) => goal.id === goalId);
-  if (goalIndex === -1) {
-    return;
-  }
-
-  if (action === "promote") {
-    const [goal] = state.goals.splice(goalIndex, 1);
-    state.goals.unshift(goal);
-    showToast(`Tikslas "${goal.title}" perkeltas į viršų.`, "info");
-    renderAll();
-    return;
-  }
-
-  if (state.mode !== "parent") {
-    showToast("Tik tėvai gali koreguoti arba trinti tikslus.", "warning");
-    return;
-  }
-
-  if (action === "delete") {
-    const [removedGoal] = state.goals.splice(goalIndex, 1);
-    if (!state.goals.length) {
-      state.goals.push({
-        id: `goal-${Date.now()}`,
-        title: "Naujas tikslas",
-        amount: 120,
-        progress: 0,
-        author: "parent",
-      });
-    }
-    showToast(`Tikslas "${removedGoal.title}" ištrintas.`, "warning");
-    renderAll();
-    return;
-  }
-
-  if (action === "edit") {
-    const goal = state.goals[goalIndex];
-    goal.progress = Math.min(100, goal.progress + 10);
-    goal.amount += 10;
-    showToast(`Tikslas "${goal.title}" pakoreguotas.`, "success");
-    renderAll();
-  }
-}
-
-function addGoal() {
-  const title = elements.goalTitleInput.value.trim();
-  const amount = Number(elements.goalAmountInput.value);
-  const progress = Number(elements.goalProgressInput.value);
-
-  if (!title || amount <= 0) {
-    showToast("Įvesk tikslo pavadinimą ir sumą.", "warning");
-    return;
-  }
-
-  state.goals.unshift({
-    id: `goal-${Date.now()}`,
-    title,
-    amount,
-    progress,
-    author: state.mode === "parent" ? "parent" : "child",
-  });
-
-  elements.goalTitleInput.value = "";
-  elements.goalAmountInput.value = "";
-  elements.goalProgressInput.value = "0";
-
-  showToast(`Pridėtas tikslas "${title}".`, "success");
-  renderAll();
-}
-
 function renderLearning() {
-  const entry = learningTips[state.learningIndex % learningTips.length];
-  elements.learningMeta.textContent = `${state.learningIndex + 1} / ${learningTips.length} patarimų`;
-  elements.learningTitle.textContent = entry.title;
-  elements.learningText.textContent = entry.text;
-  elements.learningTag.textContent = entry.tag;
+  const tip = learningTips[state.learningIndex];
+  elements.learningLibraryMeta.textContent = `Bibliotekoje yra ${learningTips.length} trumpų finansinio raštingumo patarimų.`;
+  elements.learningTitle.textContent = tip.title;
+  elements.learningCounter.textContent = `${state.learningIndex + 1} / ${learningTips.length}`;
+  elements.learningTopic.textContent = `Tema: ${tip.tag}`;
+  elements.learningText.textContent = tip.text;
+  elements.learningMeta.textContent = "Trumpi patarimai skirti telefonui, kad informacija nesusikrautų viename ekrane.";
+
+  elements.learningPreviewList.innerHTML = "";
+  for (let offset = 1; offset <= 4; offset += 1) {
+    const previewTip = learningTips[(state.learningIndex + offset) % learningTips.length];
+    const node = document.createElement("div");
+    node.className = "preview-item";
+    node.innerHTML = `<strong>${previewTip.title}</strong><span>${previewTip.tag}</span>`;
+    elements.learningPreviewList.appendChild(node);
+  }
 }
 
 function renderQuiz() {
-  const item = quizQuestions[state.quizIndex % quizQuestions.length];
-  elements.quizMeta.textContent = `${state.quizIndex + 1} / ${quizQuestions.length} klausimų`;
-  elements.quizQuestion.textContent = item.question;
-  elements.quizHelper.textContent = item.helper;
-  elements.quizOptions.innerHTML = "";
+  const quiz = quizQuestions[state.quizIndex];
+  elements.quizLibraryMeta.textContent = `Viktorinos bibliotekoje yra ${quizQuestions.length} klausimų.`;
+  elements.quizQuestion.textContent = quiz.question;
+  elements.quizCounter.textContent = `${state.quizIndex + 1} / ${quizQuestions.length}`;
+  elements.quizHelper.textContent = quiz.helper;
   elements.quizFeedback.textContent = "";
   elements.quizFeedback.className = "quiz-feedback";
+  elements.quizOptions.innerHTML = "";
 
-  item.options.forEach((option, index) => {
+  quiz.options.forEach((option, index) => {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "quiz-option";
     button.textContent = option;
     button.addEventListener("click", () => {
-      const correct = index === item.correctIndex;
+      const correct = index === quiz.correctIndex;
       Array.from(elements.quizOptions.children).forEach((candidate, candidateIndex) => {
         candidate.classList.remove("correct", "wrong");
-        if (candidateIndex === item.correctIndex) {
+        if (candidateIndex === quiz.correctIndex) {
           candidate.classList.add("correct");
         } else if (candidateIndex === index && !correct) {
           candidate.classList.add("wrong");
@@ -783,8 +771,8 @@ function renderQuiz() {
       });
 
       elements.quizFeedback.textContent = correct
-        ? item.feedback
-        : "Dar ne visai. Pagalvok apie planavimą, limitą ir atsakingą investavimo mokymąsi.";
+        ? quiz.feedback
+        : "Dar ne visai. Pagalvok apie planavimą, tikslus ir atsakingą pinigų naudojimą.";
       elements.quizFeedback.className = `quiz-feedback ${correct ? "success" : "error"}`;
     });
     elements.quizOptions.appendChild(button);
@@ -795,11 +783,10 @@ function renderAll(options = {}) {
   const metrics = getMetrics();
   renderTabs();
   renderRoleState(metrics);
-  renderSummary(metrics);
-  renderNotifications(metrics);
-  renderRules(metrics);
-  renderInvestmentGrid();
-  renderGoals();
+  renderHome(metrics);
+  renderGoalList(metrics);
+  renderLimits(metrics);
+  renderInvesting();
   renderLearning();
   renderQuiz();
   renderAssistant(metrics, Boolean(options.randomizePrompt));
@@ -810,7 +797,6 @@ function attachControl(input, key) {
     if (state.mode !== "parent") {
       return;
     }
-
     state[key] = Number(event.target.value);
     renderAll();
   });
@@ -820,7 +806,6 @@ elements.roleButtons.forEach((button) => {
   button.addEventListener("click", () => {
     state.mode = button.dataset.roleTarget;
     renderAll();
-    restartPromptRotation();
     showToast(
       state.mode === "parent" ? "Įjungtas tėvų režimas." : "Įjungtas vaiko režimas.",
       "info",
@@ -840,7 +825,6 @@ elements.profileButtons.forEach((button) => {
     if (state.mode !== "parent") {
       return;
     }
-
     state.profile = button.dataset.profile;
     renderAll({ randomizePrompt: true });
     showToast(`Pasirinktas ${getCurrentProfile().title.toLowerCase()}.`, "success");
@@ -856,7 +840,6 @@ elements.enablePush.addEventListener("click", () => {
   if (state.mode !== "parent") {
     return;
   }
-
   state.pushEnabled = !state.pushEnabled;
   renderAll({ randomizePrompt: true });
   showToast(
@@ -865,15 +848,113 @@ elements.enablePush.addEventListener("click", () => {
   );
 });
 
-elements.addGoalButton.addEventListener("click", addGoal);
+attachControl(elements.allowance, "allowance");
+attachControl(elements.weeklyLimit, "weeklyLimit");
+attachControl(elements.spentThisWeek, "spentThisWeek");
+attachControl(elements.savePercentInput, "savePercent");
+attachControl(elements.investPercentInput, "investPercent");
+attachControl(elements.matchPercent, "matchPercent");
 
-elements.prevLearning.addEventListener("click", () => {
-  state.learningIndex = (state.learningIndex - 1 + learningTips.length) % learningTips.length;
+elements.parentGoalForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  if (state.mode !== "parent") {
+    return;
+  }
+  const goal = getSelectedGoal();
+  if (!goal) {
+    return;
+  }
+
+  const nextTitle = elements.parentGoalTitle.value.trim();
+  const nextEmoji = elements.parentGoalEmoji.value.trim() || "🎯";
+  const nextTarget = Number(elements.parentGoalTarget.value);
+  const nextSaved = Number(elements.parentGoalSaved.value);
+
+  if (!nextTitle || nextTarget <= 0) {
+    showToast("Užpildyk pavadinimą ir teisingą tikslo sumą.", "warning");
+    return;
+  }
+
+  goal.title = nextTitle;
+  goal.emoji = nextEmoji;
+  goal.amount = nextTarget;
+  goal.progress = Math.max(0, Math.min(100, Math.round((nextSaved / nextTarget) * 100)));
+  renderAll();
+  showToast("Tikslas atnaujintas.", "success");
+});
+
+elements.addParentGoalButton.addEventListener("click", () => {
+  if (state.mode !== "parent") {
+    return;
+  }
+
+  const nextId = `goal-parent-${Date.now()}`;
+  const newGoal = {
+    id: nextId,
+    title: "Naujas tėvų tikslas",
+    emoji: "🎯",
+    amount: 150,
+    progress: 0,
+    author: "parent",
+  };
+  state.goals.unshift(newGoal);
+  state.selectedGoalId = nextId;
+  renderAll();
+  showToast("Pridėtas naujas tėvų tikslas.", "success");
+});
+
+elements.deleteGoalButton.addEventListener("click", () => {
+  if (state.mode !== "parent") {
+    return;
+  }
+  if (state.goals.length <= 1) {
+    showToast("Reikia palikti bent vieną tikslą.", "warning");
+    return;
+  }
+
+  state.goals = state.goals.filter((goal) => goal.id !== state.selectedGoalId);
+  state.selectedGoalId = state.goals[0].id;
+  renderAll();
+  showToast("Tikslas ištrintas.", "warning");
+});
+
+elements.childGoalForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  if (state.mode !== "child") {
+    return;
+  }
+
+  const title = elements.childGoalTitle.value.trim();
+  const emoji = elements.childGoalEmoji.value.trim() || "🌟";
+  const target = Number(elements.childGoalTarget.value);
+
+  if (!title || target <= 0) {
+    showToast("Įrašyk tikslo pavadinimą ir teigiamą sumą.", "warning");
+    return;
+  }
+
+  const nextId = `goal-child-${Date.now()}`;
+  state.goals.unshift({
+    id: nextId,
+    title,
+    emoji,
+    amount: target,
+    progress: 0,
+    author: "child",
+  });
+  state.selectedGoalId = nextId;
+  elements.childGoalForm.reset();
+  renderAll();
+  showToast("Naujas vaiko tikslas sukurtas.", "success");
+});
+
+elements.nextLearningTip.addEventListener("click", () => {
+  state.learningIndex = (state.learningIndex + 1) % learningTips.length;
   renderLearning();
 });
 
-elements.nextLearning.addEventListener("click", () => {
-  state.learningIndex = (state.learningIndex + 1) % learningTips.length;
+elements.randomLearningTip.addEventListener("click", () => {
+  state.learningIndex = Math.floor(Math.random() * learningTips.length);
   renderLearning();
 });
 
@@ -882,12 +963,10 @@ elements.nextQuestion.addEventListener("click", () => {
   renderQuiz();
 });
 
-attachControl(elements.allowance, "allowance");
-attachControl(elements.weeklyLimit, "weeklyLimit");
-attachControl(elements.spentThisWeek, "spentThisWeek");
-attachControl(elements.savePercent, "savePercent");
-attachControl(elements.investPercent, "investPercent");
-attachControl(elements.matchPercent, "matchPercent");
+elements.randomQuestion.addEventListener("click", () => {
+  state.quizIndex = Math.floor(Math.random() * quizQuestions.length);
+  renderQuiz();
+});
 
 renderAll();
 restartPromptRotation();
