@@ -5,37 +5,43 @@ kišenpinigių, taupymo, investavimo edukacijos ir tėvų kontrolės idėją.
 
 ## Kas įdėta
 
-- viršuje esantys rolės mygtukai:
+- apatinė navigacija su atskiromis skiltimis:
+  - `Pagrindas`,
+  - `Tikslai`,
+  - `Limitai`,
+  - `Mokymasis`,
+  - `Viktorina`;
+- skirtingi rolės režimai:
   - `Vaiko prisijungimas`,
   - `Tėvų prisijungimas`;
-- interaktyvus valdymo skydelis su skirtingomis teisėmis:
-  - tėvai gali keisti limitus, kišenpinigius, taupymo tikslus ir investavimo dalį,
-  - vaikas mato nustatymus, bet jų keisti negali;
-- investavimo kategorijos:
-  - ETF fondai,
-  - technologijos,
-  - žalioji energija,
-  - saugi pinigų rinka;
-- avataro-asistento kortelė su atsitiktiniais patarimais ir žinutėmis;
-- push notification tipo įspėjimai:
-  - kai vaikas artėja prie limito,
-  - kai limitas viršijamas,
-  - kai pasiekiamas taupymo tikslas,
-  - kai tėvų prisidėjimas gali būti aktyvuotas;
-- mini mokymosi zona su trumpomis finansų pamokomis ir viktorina.
+- tikslų modulis:
+  - vaikas gali pats siūlyti ir kurti naujus tikslus,
+  - tėvai gali pridėti savo tikslus,
+  - tėvai gali redaguoti ir ištrinti esamus tikslus;
+- atskira limitų skiltis su:
+  - savaitės limitu,
+  - išleista suma,
+  - perspėjimais apie artėjimą prie ribos arba jos viršijimą,
+  - push notification imitacija;
+- atskira investavimo ir bendro valdymo logika pagrindinėje skiltyje;
+- avataro-asistento kortelė su atsitiktiniais patarimais;
+- daugiau nei 100 mokymosi patarimų / mini pamokų;
+- daugiau nei 100 viktorinos klausimų.
 
 ## MVP logika
 
 - Tėvai nustato, kokia kišenpinigių dalis lieka išleidimui, taupymui ir
   investavimo mokymuisi.
-- Vaiko rolėje valdikliai užrakinami, todėl vaikas mato taisykles, bet jų
-  pakeisti negali.
-- Kai vaikas pasiekia bent 50% savo tikslo, programėlė pažymi, kad galima
-  siųsti pranešimą tėvams ir aktyvuoti jų prisidėjimą.
+- Vaiko režime valdymo elementai užrakinami, tačiau vaikas vis tiek gali:
+  - matyti taisykles,
+  - kurti savo tikslų pasiūlymus,
+  - spręsti viktorinos klausimus,
+  - skaityti mokymosi patarimus.
+- Tikslai saugomi atskiroje skiltyje, kur tėvai gali juos koreguoti arba trinti.
 - Jei išleidžiama suma priartėja prie limito arba jį viršija, rodomi
-  įspėjamieji pranešimai ir avataro-asistento patarimai.
-- Edukacinė dalis skirta aiškinti bazines sąvokas: taupymą, riziką ir
-  sudėtinį augimą.
+  įspėjamieji pranešimai ir avataro-asistento promptai.
+- Mokymosi ir viktorinos turinys išplėstas iki 100+ įrašų kiekvienoje skiltyje,
+  kad ekranai būtų atskirti ir nebūtų perkrauti vienoje vietoje.
 
 ## Paleidimas
 
