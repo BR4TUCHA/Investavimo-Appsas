@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="lt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TaupykLab | Vaikų taupymo ir investavimo programėlė</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">MVP demonstracija</p>
+          <h1>TaupykLab</h1>
+        </div>
+        <nav class="topbar-nav">
+          <a href="#simuliatorius">Simuliatorius</a>
+          <a href="#funkcijos">Funkcijos</a>
+          <a href="#mokymasis">Mokymasis</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="hero-copy">
+            <span class="badge">Vaikų kišenpinigiai + tėvų kontrolė + finansinis raštingumas</span>
+            <h2>
+              Programėlė, kuri paverčia kišenpinigius
+              <span>taupymo ir investavimo įpročiu.</span>
+            </h2>
+            <p class="lead">
+              Tėvai perveda kišenpinigius į programėlę, dalis pinigų automatiškai
+              užrakinama taupymui ar investavimui, o vaikai realiu laiku mato savo
+              pažangą, tikslus ir atlygius.
+            </p>
+            <div class="hero-actions">
+              <a class="button primary" href="#simuliatorius">Išbandyti idėją</a>
+              <a class="button secondary" href="#mokymasis">Peržiūrėti mokymosi zoną</a>
+            </div>
+            <ul class="hero-points">
+              <li>Automatinis paskirstymas: išleisti / taupyti / investuoti</li>
+              <li>Tėvų „match“ mechanika, kai vaikas pasiekia tarpinius tikslus</li>
+              <li>Mini pamokos apie pinigus, riziką ir ilgalaikį augimą</li>
+            </ul>
+          </div>
+
+          <div class="hero-panel">
+            <div class="panel-card accent-card">
+              <p class="panel-label">Vaiko piniginė</p>
+              <div class="panel-main-row">
+                <strong id="walletAmount">45 EUR</strong>
+                <span class="status-pill">Savaitės limitas aktyvus</span>
+              </div>
+              <div class="split-metrics">
+                <div>
+                  <span>Išleidimui</span>
+                  <strong id="heroSpend">22.50 EUR</strong>
+                </div>
+                <div>
+                  <span>Taupymui</span>
+                  <strong id="heroSave">15.75 EUR</strong>
+                </div>
+                <div>
+                  <span>Investavimui</span>
+                  <strong id="heroInvest">6.75 EUR</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-card">
+              <p class="panel-label">Tėvų veiksmas</p>
+              <h3>„Sutaupei 50% dviračiui“</h3>
+              <p class="notification-copy">
+                Programėlė išsiunčia tėvams pranešimą ir leidžia vienu paspaudimu
+                padengti likusią sumos dalį.
+              </p>
+              <div class="notification-row">
+                <span>Automatinis pranešimas</span>
+                <span class="status-pill success">Įjungtas</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="overview-grid" id="funkcijos">
+          <article class="info-card">
+            <div class="icon-bubble">1</div>
+            <h3>Automatinės taisyklės</h3>
+            <p>
+              Kiekvieną kartą pervedus kišenpinigius, nustatyta procentinė dalis
+              nukeliauja į taupymą ir investavimą, todėl vaikas negali visko
+              išleisti iš karto.
+            </p>
+          </article>
+          <article class="info-card">
+            <div class="icon-bubble">2</div>
+            <h3>Tėvų kontrolės skydelis</h3>
+            <p>
+              Tėvai mato tikslus, gali uždėti išleidimo limitus, gauti
+              pranešimus apie pažangą ir paskatinti vaiką papildomu prisidėjimu.
+            </p>
+          </article>
+          <article class="info-card">
+            <div class="icon-bubble">3</div>
+            <h3>Mokymosi zona</h3>
+            <p>
+              Vaikai ir tėvai kartu pereina trumpas pamokas apie taupymą,
+              sudėtinį augimą, riziką ir atsakingą investavimą.
+            </p>
+          </article>
+        </section>
+
+        <section class="simulator-section" id="simuliatorius">
+          <div class="section-heading">
+            <p class="eyebrow">Interaktyvus MVP</p>
+            <h2>Pasimatuok, kaip galėtų veikti programėlė</h2>
+            <p>
+              Keisk kišenpinigių sumą, paskirstymo procentus ir taupymo tikslą.
+              Dešinėje matysi, kokią naudą gauna vaikas ir kokį veiksmą atlieka tėvai.
+            </p>
+          </div>
+
+          <div class="simulator-grid">
+            <form class="simulator-card controls-card">
+              <div class="control-group">
+                <label for="allowance">Mėnesio kišenpinigiai</label>
+                <div class="range-header">
+                  <input id="allowance" type="range" min="10" max="300" step="5" value="45" />
+                  <strong id="allowanceValue">45 EUR</strong>
+                </div>
+              </div>
+
+              <div class="control-group">
+                <label for="savePercent">Užrakinta taupymui</label>
+                <div class="range-header">
+                  <input id="savePercent" type="range" min="10" max="80" step="5" value="35" />
+                  <strong id="savePercentValue">35%</strong>
+                </div>
+              </div>
+
+              <div class="control-group">
+                <label for="investPercent">Skirta investavimo kišenei</label>
+                <div class="range-header">
+                  <input id="investPercent" type="range" min="0" max="40" step="5" value="15" />
+                  <strong id="investPercentValue">15%</strong>
+                </div>
+              </div>
+
+              <div class="control-group">
+                <label for="goalAmount">Taupymo tikslas</label>
+                <div class="range-header">
+                  <input id="goalAmount" type="range" min="20" max="400" step="10" value="120" />
+                  <strong id="goalAmountValue">120 EUR</strong>
+                </div>
+              </div>
+
+              <div class="control-group">
+                <label for="goalProgress">Vaiko jau pasiekta tikslo dalis</label>
+                <div class="range-header">
+                  <input id="goalProgress" type="range" min="0" max="100" step="5" value="50" />
+                  <strong id="goalProgressValue">50%</strong>
+                </div>
+              </div>
+
+              <div class="control-group">
+                <label for="matchPercent">Tėvų prisidėjimas po pasiekto slenksčio</label>
+                <div class="range-header">
+                  <input id="matchPercent" type="range" min="0" max="100" step="10" value="50" />
+                  <strong id="matchPercentValue">50%</strong>
+                </div>
+              </div>
+            </form>
+
+            <div class="simulator-card results-card">
+              <div class="summary-panel">
+                <p class="panel-label">Paskirstymas</p>
+                <div class="summary-row">
+                  <span>Išleidimui dabar</span>
+                  <strong id="spendAmount">22.50 EUR</strong>
+                </div>
+                <div class="summary-row">
+                  <span>Automatiškai taupoma</span>
+                  <strong id="saveAmount">15.75 EUR</strong>
+                </div>
+                <div class="summary-row">
+                  <span>Investavimo kišenė</span>
+                  <strong id="investAmount">6.75 EUR</strong>
+                </div>
+                <div class="summary-row emphasis">
+                  <span>Išleidimo procentas</span>
+                  <strong id="spendPercentValue">50%</strong>
+                </div>
+              </div>
+
+              <div class="goal-panel">
+                <div class="goal-header">
+                  <div>
+                    <p class="panel-label">Tikslas</p>
+                    <h3>Dviratis vasarai</h3>
+                  </div>
+                  <strong id="savedAmount">60 EUR</strong>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="goal-stats">
+                  <div>
+                    <span>Vaikas sutaupė</span>
+                    <strong id="savedPercent">50%</strong>
+                  </div>
+                  <div>
+                    <span>Tėvų įnašas</span>
+                    <strong id="parentContribution">60 EUR</strong>
+                  </div>
+                  <div>
+                    <span>Likęs kelias</span>
+                    <strong id="remainingAmount">0 EUR</strong>
+                  </div>
+                </div>
+                <p class="notification-banner" id="notificationBanner">
+                  Pranešimas tėvams: vaikas pasiekė 50% tikslo, galima aktyvuoti papildymą.
+                </p>
+              </div>
+
+              <div class="rules-panel">
+                <p class="panel-label">Ką ši programėlė automatiškai padaro?</p>
+                <ul id="rulesList">
+                  <li>Užrakina 35% taupymui, kad pinigai nebūtų išleisti impulsyviai.</li>
+                  <li>Skiria 15% investavimo pradžiai su edukaciniais paaiškinimais.</li>
+                  <li>Siunčia tėvams pranešimą, kai pasiekiama 50% tikslo riba.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="learning-section" id="mokymasis">
+          <div class="section-heading">
+            <p class="eyebrow">Mokymosi modulis</p>
+            <h2>Trumpa finansų pamoka vaikui ir tėvams</h2>
+            <p>
+              Programėlė gali turėti mikro pamokas, kurios paaiškina ne tik kaip
+              taupyti, bet ir kodėl verta suprasti investavimo pagrindus.
+            </p>
+          </div>
+
+          <div class="lesson-grid">
+            <article class="lesson-card">
+              <span class="lesson-tag">Pamoka 1</span>
+              <h3>Kuo skiriasi taupymas ir investavimas?</h3>
+              <p>
+                Taupymas labiau tinka artimam tikslui ir saugumui, o investavimas
+                padeda pinigams augti ilgesnį laiką, tačiau su didesniu svyravimu.
+              </p>
+            </article>
+            <article class="lesson-card">
+              <span class="lesson-tag">Pamoka 2</span>
+              <h3>Kas yra sudėtinis augimas?</h3>
+              <p>
+                Kai uždirbta grąža pradeda uždirbti papildomą grąžą, nedidelės sumos
+                per laiką gali išaugti žymiai labiau nei atrodo pradžioje.
+              </p>
+            </article>
+            <article class="lesson-card">
+              <span class="lesson-tag">Pamoka 3</span>
+              <h3>Kodėl svarbi rizika?</h3>
+              <p>
+                Vaikams reikia suprasti, kad investavimas nėra garantuotas pelnas,
+                todėl sprendimai turi būti daromi atsakingai ir su tėvų priežiūra.
+              </p>
+            </article>
+          </div>
+
+          <div class="quiz-card">
+            <div>
+              <p class="panel-label">Mini viktorina</p>
+              <h3 id="quizQuestion">Kam dažniausiai labiausiai tinka taupymas?</h3>
+              <p class="quiz-helper" id="quizHelper">
+                Atsakyk į klausimą ir pažiūrėk, kaip programėlė galėtų mokyti vaikus per žaidybinimą.
+              </p>
+            </div>
+            <div class="quiz-options" id="quizOptions"></div>
+            <div class="quiz-feedback" id="quizFeedback"></div>
+            <button class="button secondary" id="nextQuestion" type="button">
+              Kitas klausimas
+            </button>
+          </div>
+        </section>
+
+        <section class="roadmap-section">
+          <div class="section-heading">
+            <p class="eyebrow">Kaip būtų galima plėsti toliau?</p>
+            <h2>Natūralūs produkto plėtros žingsniai</h2>
+          </div>
+          <div class="roadmap-grid">
+            <article class="roadmap-card">
+              <h3>1. Tėvų piniginė ir pervedimai</h3>
+              <p>
+                Susieti tėvų kortelę / sąskaitą, suplanuoti periodinius kišenpinigių
+                pervedimus ir nustatyti automatinio paskirstymo taisykles.
+              </p>
+            </article>
+            <article class="roadmap-card">
+              <h3>2. Tikslai ir apdovanojimai</h3>
+              <p>
+                Kurti taupymo tikslus, pranešimus apie tarpinius pasiekimus ir
+                tėvų prisidėjimą prie didesnių pirkinių ar svajonių.
+              </p>
+            </article>
+            <article class="roadmap-card">
+              <h3>3. Saugus investavimo mokymas</h3>
+              <p>
+                Įdiegti simuliacinius portfelius, paaiškinimus apie ETF / akcijas ir
+                tik vėliau svarstyti realius investavimo produktus su priežiūra.
+              </p>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
