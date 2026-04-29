@@ -1,0 +1,8 @@
+{
+  "appId": "lt.taupyklab.app",
+  "appName": "TaupykLab",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}
