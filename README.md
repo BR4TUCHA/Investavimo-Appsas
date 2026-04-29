@@ -46,3 +46,35 @@ Tada atidarykite:
 ```text
 http://localhost:8000
 ```
+
+## Android APK
+
+Iš esamo MVP pridėtas Android apvalkalas su Capacitor, todėl galima sugeneruoti
+`apk` failą telefonui.
+
+### Kur yra sugeneruotas APK
+
+Po build'o failas yra čia:
+
+```text
+android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+### Kaip perbuildinti APK
+
+Jei reikėtų perbuildinti iš naujo:
+
+```bash
+npm install
+npm run build:web
+npx cap sync android
+cd android
+./gradlew assembleDebug
+```
+
+### Pastaba
+
+- Šiuo metu tai yra `debug` APK versija.
+- Android telefone gali reikėti leisti diegimą iš nežinomų šaltinių.
+- Jei norėsi, kitame etape galima padaryti pasirašytą `release` APK arba AAB
+  failą Google Play įkėlimui.
