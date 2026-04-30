@@ -23,15 +23,6 @@
             mokytis ir spręsti klausimus.
           </p>
         </div>
-
-        <div class="login-switch" aria-label="Programėlės rolės">
-          <button class="role-button" data-role-target="child" type="button">
-            Vaiko prisijungimas
-          </button>
-          <button class="role-button active" data-role-target="parent" type="button">
-            Tėvų prisijungimas
-          </button>
-        </div>
       </header>
 
       <section class="status-hero">
@@ -494,6 +485,42 @@
         </section>
       </main>
     </div>
+
+    <div class="floating-role-control">
+      <button class="role-fab" id="roleFab" type="button" aria-expanded="false" aria-controls="roleFabMenu">
+        <span class="role-fab-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" role="img">
+            <path
+              d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-3.6 0-6.5 1.8-6.5 4v1h13v-1c0-2.2-2.9-4-6.5-4Z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+        <span class="role-fab-label" id="roleFabLabel">Tėvai</span>
+      </button>
+
+      <div class="role-fab-menu" id="roleFabMenu" hidden>
+        <button class="role-button floating-role-button" data-role-target="child" type="button">
+          Vaiko prisijungimas
+        </button>
+        <button class="role-button floating-role-button active" data-role-target="parent" type="button">
+          Tėvų prisijungimas
+        </button>
+      </div>
+    </div>
+
+    <aside class="section-guide" id="sectionGuide" hidden>
+      <div>
+        <p class="panel-label" id="sectionGuideEyebrow">Skilties intro</p>
+        <h3 id="sectionGuideTitle">Pradžia</h3>
+        <p class="section-guide-copy" id="sectionGuideText">
+          Čia matai bendrą santrauką apie pinigus, aktyvų tikslą ir savaitės limito būseną.
+        </p>
+      </div>
+      <button class="button secondary compact-button" id="closeSectionGuide" type="button">
+        Supratau
+      </button>
+    </aside>
 
     <nav class="bottom-nav" aria-label="Programėlės skiltys">
       <button class="bottom-nav-button active" data-tab-target="home" type="button">Pradžia</button>

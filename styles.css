@@ -106,12 +106,91 @@ input {
   gap: 10px;
 }
 
+.floating-role-control {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 80;
+  display: grid;
+  gap: 8px;
+  justify-items: end;
+}
+
+.role-fab-label {
+  display: none;
+}
+
+.role-fab-menu {
+  display: grid;
+  gap: 8px;
+  justify-items: stretch;
+}
+
+.role-fab-menu[hidden] {
+  display: none;
+}
+
+.role-fab {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid rgba(79, 70, 229, 0.2);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 16px 30px rgba(17, 24, 39, 0.14);
+  display: grid;
+  place-items: center;
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.role-fab svg {
+  width: 22px;
+  height: 22px;
+}
+
+.role-fab.child {
+  color: var(--warning);
+}
+
 .login-switch {
-  padding: 6px;
-  background: rgba(255, 255, 255, 0.85);
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.98);
   border: 1px solid var(--border);
-  border-radius: 999px;
-  box-shadow: var(--shadow);
+  border-radius: 22px;
+  box-shadow: 0 18px 32px rgba(17, 24, 39, 0.12);
+  flex-direction: column;
+  min-width: 220px;
+}
+
+.login-switch[hidden] {
+  display: none;
+}
+
+.section-guide {
+  position: fixed;
+  left: 50%;
+  bottom: 96px;
+  transform: translateX(-50%);
+  width: min(540px, calc(100% - 20px));
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  background: rgba(17, 27, 53, 0.96);
+  color: white;
+  box-shadow: 0 20px 40px rgba(17, 24, 39, 0.2);
+  z-index: 70;
+}
+
+.section-guide[hidden] {
+  display: none;
+}
+
+.section-guide .panel-label,
+.section-guide-copy {
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .role-button,
@@ -636,6 +715,37 @@ body.child-mode [data-parent-control] {
   z-index: 40;
 }
 
+.intro-sheet {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(23, 32, 51, 0.46);
+  z-index: 75;
+}
+
+.intro-sheet[hidden] {
+  display: none;
+}
+
+.intro-card {
+  width: min(420px, 100%);
+  background: white;
+  border-radius: 24px;
+  padding: 22px;
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 44px rgba(17, 24, 39, 0.18);
+  display: grid;
+  gap: 14px;
+}
+
+.intro-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
 .toast-stack {
   position: fixed;
   right: 16px;
@@ -737,6 +847,7 @@ body.child-mode [data-parent-control] {
     width: calc(100% - 14px);
     padding: 8px;
     gap: 6px;
+    bottom: 10px;
   }
 
   .toast-stack {
@@ -748,5 +859,14 @@ body.child-mode [data-parent-control] {
   .toast {
     min-width: 0;
     max-width: none;
+  }
+
+  .floating-role-control {
+    top: 10px;
+    right: 10px;
+  }
+
+  .login-switch {
+    min-width: 180px;
   }
 }
