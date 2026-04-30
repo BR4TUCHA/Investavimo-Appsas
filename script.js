@@ -163,15 +163,43 @@ function buildQuizBank() {
     },
   ];
 
+  const questionFrames = [
+    "Kas geriausiai apibūdina",
+    "Kurį atsakymą pasirinktum, jei reikėtų paaiškinti",
+    "Kuris teiginys tiksliausiai nusako",
+    "Ką svarbiausia suprasti apie",
+    "Kaip trumpai paaiškintum",
+    "Kurį variantą verta prisiminti kalbant apie",
+  ];
+
+  const helperAddons = [
+    "Atsakymas susijęs su ilgalaikiu įpročiu.",
+    "Pagalvok, kas padeda priimti saugesnį sprendimą.",
+    "Čia svarbu planavimas, o ne impulsyvus veiksmas.",
+    "Ieškok atsakymo, kuris kuria gerą finansinį įprotį.",
+    "Pagalvok, kas padeda vaikui jaustis labiau pasiruošus.",
+  ];
+
+  const followUps = [
+    "Šis klausimas padeda atskirti impulsyvų pasirinkimą nuo protingo sprendimo.",
+    "Taip vaikas geriau supranta, kodėl biudžetas turi ribas.",
+    "Tai viena svarbiausių minčių pradedant mokytis apie pinigus.",
+    "Tokie klausimai ugdo ne tik žinias, bet ir finansinę savikontrolę.",
+    "Būtent tokios mažos sąvokos ilgainiui kuria stiprų pinigų supratimą.",
+  ];
+
   const bank = [];
   for (let index = 0; index < 120; index += 1) {
     const topic = topics[index % topics.length];
+    const frame = questionFrames[index % questionFrames.length];
+    const helperAddon = helperAddons[index % helperAddons.length];
+    const followUp = followUps[index % followUps.length];
     bank.push({
-      question: `Klausimas ${index + 1}. Kas geriausiai apibūdina ${topic.name}?`,
-      helper: topic.helper,
+      question: `Klausimas ${index + 1}. ${frame} ${topic.name}?`,
+      helper: `${topic.helper} ${helperAddon}`,
       options: [topic.wrongA, topic.correct, topic.wrongB],
       correctIndex: 1,
-      feedback: topic.feedback,
+      feedback: `${topic.feedback} ${followUp}`,
     });
   }
   return bank;
@@ -206,17 +234,62 @@ function buildLearningTips() {
     },
   ];
 
+  const openingLines = [
+    "Trumpa mintis šiandienai:",
+    "Mažas finansinis priminimas:",
+    "Pamoka vienu sakiniu:",
+    "Svarbi mintis prieš kitą sprendimą:",
+    "Štai ką verta aptarti kartu:",
+  ];
+
+  const closingLines = [
+    "Pabandyk šią mintį susieti su savo dabartiniu tikslu.",
+    "Tokias temas geriausia aptarti prieš leidžiant pinigus.",
+    "Kuo dažniau vaikas girdi tokius paaiškinimus, tuo lengviau formuojasi įprotis.",
+    "Šita idėja padeda ne tik taupyti, bet ir geriau suprasti investavimą.",
+    "Net trumpas pokalbis apie šį principą gali labai pakeisti sprendimų kokybę.",
+  ];
+
   const entries = [];
   for (let index = 0; index < 120; index += 1) {
     const theme = themes[index % themes.length];
+    const opening = openingLines[index % openingLines.length];
+    const closing = closingLines[index % closingLines.length];
     entries.push({
       title: `${theme.title} #${index + 1}`,
       tag: theme.tag,
-      text: `${theme.text} Šis patarimas pateiktas trumpu, telefonui patogiu formatu.`,
+      text: `${opening} ${theme.text} ${closing}`,
     });
   }
   return entries;
 }
+
+const tabIntros = {
+  home: {
+    title: "Sveikas atvykęs į pradžios skiltį",
+    text: "Čia matai greitą santrauką: aktyvų tikslą, limitų būseną ir bendrą pinigų paskirstymą.",
+  },
+  goals: {
+    title: "Čia gyvena tikslai",
+    text: "Vaikas gali sukurti naują tikslą, o tėvai jį peržiūri, koreguoja arba ištrina, jei reikia.",
+  },
+  limits: {
+    title: "Limitų skiltis padeda kontroliuoti tempą",
+    text: "Šioje vietoje aiškiai matosi savaitės limitas, išleista suma ir perspėjimai, jei artėjama prie ribos.",
+  },
+  invest: {
+    title: "Investavimo skiltis skirta supratimui",
+    text: "Čia rodoma, kaip investavimo kišenė paskirstoma tarp skirtingų kategorijų ir kokia jų rizika.",
+  },
+  learn: {
+    title: "Mokymosi skiltyje yra daug skaitymo",
+    text: "Čia sudėta daugiau nei 100 trumpų patarimų, kad kiekvieną kartą vaikas rastų naują finansinio raštingumo mintį.",
+  },
+  quiz: {
+    title: "Viktorinos skiltis skirta praktikai",
+    text: "Čia vaikas gali nuolat tikrinti, kaip supranta taupymo, limitų ir investavimo pagrindus.",
+  },
+};
 
 const quizQuestions = buildQuizBank();
 const learningTips = buildLearningTips();
@@ -227,6 +300,13 @@ const elements = {
   tabPanels: Array.from(document.querySelectorAll("[data-tab-panel]")),
   parentControls: Array.from(document.querySelectorAll("[data-parent-control]")),
   profileButtons: Array.from(document.querySelectorAll("[data-profile]")),
+  roleFab: document.querySelector("#roleFab"),
+  roleMenu: document.querySelector("#roleFabMenu"),
+  roleFabLabel: document.querySelector("#roleFabLabel"),
+  tabIntroCard: document.querySelector("#sectionGuide"),
+  tabIntroTitle: document.querySelector("#sectionGuideTitle"),
+  tabIntroText: document.querySelector("#sectionGuideText"),
+  closeTabIntro: document.querySelector("#closeSectionGuide"),
   roleCaption: document.querySelector("#roleCaption"),
   roleDescription: document.querySelector("#roleDescription"),
   heroCopy: document.querySelector("#heroCopy"),
@@ -317,6 +397,7 @@ const elements = {
 };
 
 let promptTimer = null;
+let introDismissedForTab = "";
 
 function formatCurrency(value) {
   const rounded = Math.round(Number(value) * 100) / 100;
@@ -468,6 +549,15 @@ function restartPromptRotation() {
   }, PROMPT_ROTATION_MS);
 }
 
+function renderTabIntro() {
+  const intro = tabIntros[state.activeTab];
+  const isDismissed = introDismissedForTab === state.activeTab;
+
+  elements.tabIntroTitle.textContent = intro.title;
+  elements.tabIntroText.textContent = intro.text;
+  elements.tabIntroCard.hidden = isDismissed;
+}
+
 function renderTabs() {
   elements.tabButtons.forEach((button) => {
     const active = button.dataset.tabTarget === state.activeTab;
@@ -478,6 +568,8 @@ function renderTabs() {
   elements.tabPanels.forEach((panel) => {
     panel.classList.toggle("active", panel.dataset.tabPanel === state.activeTab);
   });
+
+  renderTabIntro();
 }
 
 function renderRoleState(metrics) {
@@ -488,6 +580,9 @@ function renderRoleState(metrics) {
     button.classList.toggle("active", active);
     button.setAttribute("aria-pressed", String(active));
   });
+
+  elements.roleFabLabel.textContent = isParent ? "Tėvų režimas" : "Vaiko režimas";
+  elements.roleFab.classList.toggle("child", !isParent);
 
   elements.parentControls.forEach((control) => {
     control.disabled = !isParent;
@@ -805,6 +900,7 @@ function attachControl(input, key) {
 elements.roleButtons.forEach((button) => {
   button.addEventListener("click", () => {
     state.mode = button.dataset.roleTarget;
+    elements.roleMenu.hidden = true;
     renderAll();
     showToast(
       state.mode === "parent" ? "Įjungtas tėvų režimas." : "Įjungtas vaiko režimas.",
@@ -816,8 +912,18 @@ elements.roleButtons.forEach((button) => {
 elements.tabButtons.forEach((button) => {
   button.addEventListener("click", () => {
     state.activeTab = button.dataset.tabTarget;
-    renderTabs();
+    introDismissedForTab = "";
+    renderAll();
   });
+});
+
+elements.roleFab.addEventListener("click", () => {
+  elements.roleMenu.hidden = !elements.roleMenu.hidden;
+});
+
+elements.closeTabIntro.addEventListener("click", () => {
+  introDismissedForTab = state.activeTab;
+  renderTabIntro();
 });
 
 elements.profileButtons.forEach((button) => {
@@ -954,7 +1060,7 @@ elements.nextLearningTip.addEventListener("click", () => {
 });
 
 elements.randomLearningTip.addEventListener("click", () => {
-  state.learningIndex = Math.floor(Math.random() * learningTips.length);
+  state.learningIndex = (state.learningIndex + 37) % learningTips.length;
   renderLearning();
 });
 
@@ -964,7 +1070,7 @@ elements.nextQuestion.addEventListener("click", () => {
 });
 
 elements.randomQuestion.addEventListener("click", () => {
-  state.quizIndex = Math.floor(Math.random() * quizQuestions.length);
+  state.quizIndex = (state.quizIndex + 41) % quizQuestions.length;
   renderQuiz();
 });
 
