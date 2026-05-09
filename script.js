@@ -1,8 +1,47 @@
 const MATCH_THRESHOLD = 50;
 const PROMPT_ROTATION_MS = 9000;
+const AUTH_STORAGE_KEY = "kidfund-auth";
+const PARENT_ONLY_TABS = new Set(["permissions", "transfers", "controls", "goals-admin"]);
+
+function loadAuthStore() {
+  try {
+    const raw = window.localStorage.getItem(AUTH_STORAGE_KEY);
+    if (!raw) {
+      return {
+        pins: {
+          parent: "",
+          child: "",
+        },
+        lastRole: "parent",
+      };
+    }
+    const parsed = JSON.parse(raw);
+    return {
+      pins: {
+        parent: parsed?.pins?.parent || "",
+        child: parsed?.pins?.child || "",
+      },
+      lastRole: parsed?.lastRole || "parent",
+    };
+  } catch (error) {
+    return {
+      pins: {
+        parent: "",
+        child: "",
+      },
+      lastRole: "parent",
+    };
+  }
+}
+
+function saveAuthStore() {
+  window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authStore));
+}
+
+const authStore = loadAuthStore();
 
 const state = {
-  mode: "parent",
+  mode: authStore.lastRole || "parent",
   activeTab: "overview",
   profile: "balanced",
   allowance: 70,
@@ -96,6 +135,11 @@ const state = {
       time: "Vakar 14:03",
     },
   ],
+};
+
+const authSession = {
+  open: true,
+  role: state.mode,
 };
 
 const investmentProfiles = {
@@ -394,7 +438,19 @@ const elements = {
   tabButtons: Array.from(document.querySelectorAll("[data-tab-target]")),
   tabPanels: Array.from(document.querySelectorAll("[data-tab-panel]")),
   parentControls: Array.from(document.querySelectorAll("[data-parent-control]")),
+  parentOnlyBlocks: Array.from(document.querySelectorAll("[data-parent-only]")),
   profileButtons: Array.from(document.querySelectorAll("[data-profile]")),
+  authOverlay: document.querySelector("#authOverlay"),
+  authTitle: document.querySelector("#authTitle"),
+  authText: document.querySelector("#authText"),
+  authRoleButtons: Array.from(document.querySelectorAll("[data-auth-role]")),
+  authPin: document.querySelector("#authPin"),
+  authPinConfirmWrap: document.querySelector("#authPinConfirmWrap"),
+  authPinConfirm: document.querySelector("#authPinConfirm"),
+  authStatus: document.querySelector("#authStatus"),
+  authPrimaryButton: document.querySelector("#authPrimaryButton"),
+  authFingerprintButton: document.querySelector("#authFingerprintButton"),
+  authResetPin: document.querySelector("#authResetPin"),
   activeProfileLabel: document.querySelector("#activeProfileLabel"),
   modeBadge: document.querySelector("#modeBadge"),
   beginnerCopy: document.querySelector("#beginnerCopy"),
@@ -529,6 +585,64 @@ const elements = {
 
 let promptTimer = null;
 let introDismissedForTab = "";
+
+function isParentTab(tabName) {
+  return PARENT_ONLY_TABS.has(tabName);
+}
+
+function getAuthMode() {
+  return authStore.pins[authSession.role] ? "login" : "register";
+}
+
+function openAuth(role) {
+  authSession.role = role;
+  authSession.open = true;
+  elements.authPin.value = "";
+  elements.authPinConfirm.value = "";
+  renderAuth();
+}
+
+function completeAuth(role, successMessage) {
+  authSession.open = false;
+  authStore.lastRole = role;
+  saveAuthStore();
+  state.mode = role;
+  state.activeTab = role === "child" ? "feed" : "overview";
+  elements.profileMenu.hidden = true;
+  introDismissedForTab = "";
+  renderAll();
+  showToast(successMessage, "success");
+}
+
+function renderAuth() {
+  const mode = getAuthMode();
+  elements.authOverlay.hidden = !authSession.open;
+  if (!authSession.open) {
+    return;
+  }
+
+  elements.authRoleButtons.forEach((button) => {
+    const active = button.dataset.authRole === authSession.role;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+
+  const isRegister = mode === "register";
+  elements.authTitle.textContent = isRegister ? "Sukurti PIN kodą" : "Prisijungti prie KidFund";
+  elements.authText.textContent = isRegister
+    ? `Pirmą kartą prisijungiant kaip ${authSession.role === "parent" ? "tėvai" : "vaikas"}, reikia susikurti 4 skaitmenų PIN kodą.`
+    : `Įvesk ${authSession.role === "parent" ? "tėvų" : "vaiko"} PIN kodą arba naudok piršto skeno demonstraciją.`;
+  elements.authPinConfirmWrap.hidden = !isRegister;
+  elements.authPrimaryButton.textContent = isRegister ? "Sukurti PIN" : "Prisijungti";
+  elements.authFingerprintButton.disabled = isRegister;
+  elements.authFingerprintButton.textContent = isRegister
+    ? "Piršto skenas po registracijos"
+    : "Prisijungti piršto skenu";
+  elements.authResetPin.hidden = isRegister;
+  elements.authStatus.textContent = isRegister
+    ? "PIN išsaugomas šiame įrenginyje ir naudojamas tik demonstracijai."
+    : "Demo režime galima jungtis PIN kodu arba pseudo biometriniu skenu.";
+}
 
 function formatCurrency(value) {
   const rounded = Math.round(Number(value) * 100) / 100;
@@ -698,6 +812,11 @@ function renderTabIntro() {
 
 function renderTabs() {
   elements.tabButtons.forEach((button) => {
+    const hideForChild = state.mode !== "parent" && button.hasAttribute("data-parent-only");
+    button.hidden = hideForChild;
+  });
+
+  elements.tabButtons.forEach((button) => {
     const active = button.dataset.tabTarget === state.activeTab;
     button.classList.toggle("active", active);
     button.setAttribute("aria-pressed", String(active));
@@ -712,6 +831,10 @@ function renderTabs() {
 
 function renderRoleState(metrics) {
   const isParent = state.mode === "parent";
+
+  elements.parentOnlyBlocks.forEach((block) => {
+    block.hidden = !isParent;
+  });
 
   elements.roleButtons.forEach((button) => {
     const active = button.dataset.roleTarget === state.mode;
@@ -736,7 +859,7 @@ function renderRoleState(metrics) {
   elements.roleCaption.textContent = isParent ? "Tėvų režimas" : "Vaiko režimas";
   elements.roleDescription.textContent = isParent
     ? "Tėvai valdo limitus, leidimus ir pervedimus, o vaikas turi aiškiai suskaidytas skiltis mokymuisi ir taupymui."
-    : "Vaikas gali pateikti prašymus, stebėti taupyklę, skaityti patarimus ir spręsti klausimus, bet nekeičia tėvų taisyklių.";
+    : "Vaikas mato tik savo veiksmus, push pranešimus apie pakeitimus, taupyklę, mokymąsi ir klausimus. Tėvų valdymo blokai paslėpti.";
   elements.heroCopy.textContent = isParent
     ? "Tėvai gali duoti pinigus, pildyti taupyklę, tvirtinti prašymus ir valdyti investavimo profilį."
     : "Vaikas gali pateikti taupyklės prašymus ir sekti progresą, kol tėvai priima sprendimus leidimų skiltyje.";
@@ -1152,6 +1275,9 @@ function renderGoalManagement(metrics) {
 }
 
 function renderAll(options = {}) {
+  if (state.mode !== "parent" && isParentTab(state.activeTab)) {
+    state.activeTab = "feed";
+  }
   const metrics = getMetrics();
   renderTabs();
   renderRoleState(metrics);
@@ -1230,15 +1356,15 @@ function attachControl(input, key) {
 
 elements.roleButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    state.mode = button.dataset.roleTarget;
+    openAuth(button.dataset.roleTarget);
     elements.profileMenu.hidden = true;
-    introDismissedForTab = "";
-    renderAll();
-    showToast(state.mode === "parent" ? "Įjungtas tėvų režimas." : "Įjungtas vaiko režimas.", "info");
   });
 });
 
 elements.profileFab.addEventListener("click", () => {
+  if (authSession.open) {
+    return;
+  }
   const isHidden = elements.profileMenu.hidden;
   elements.profileMenu.hidden = !isHidden;
   elements.profileFab.setAttribute("aria-expanded", String(isHidden));
@@ -1255,6 +1381,66 @@ elements.tabButtons.forEach((button) => {
 elements.closeSectionGuide.addEventListener("click", () => {
   introDismissedForTab = state.activeTab;
   renderTabIntro();
+});
+
+elements.authRoleButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    authSession.role = button.dataset.authRole;
+    elements.authPin.value = "";
+    elements.authPinConfirm.value = "";
+    renderAuth();
+  });
+});
+
+elements.authPrimaryButton.addEventListener("click", () => {
+  const mode = getAuthMode();
+  const pin = elements.authPin.value.trim();
+
+  if (!/^\d{4}$/.test(pin)) {
+    elements.authStatus.textContent = "PIN kodas turi būti tiksliai 4 skaitmenų.";
+    return;
+  }
+
+  if (mode === "register") {
+    const confirmation = elements.authPinConfirm.value.trim();
+    if (pin !== confirmation) {
+      elements.authStatus.textContent = "PIN kodai nesutampa. Pabandyk dar kartą.";
+      return;
+    }
+
+    authStore.pins[authSession.role] = pin;
+    saveAuthStore();
+    completeAuth(authSession.role, "PIN sukurtas ir prisijungimas sėkmingas.");
+    return;
+  }
+
+  if (authStore.pins[authSession.role] !== pin) {
+    elements.authStatus.textContent = "Neteisingas PIN kodas. Pabandyk dar kartą.";
+    return;
+  }
+
+  completeAuth(authSession.role, "Prisijungimas su PIN sėkmingas.");
+});
+
+elements.authFingerprintButton.addEventListener("click", () => {
+  if (!authStore.pins[authSession.role]) {
+    elements.authStatus.textContent = "Pirmiausia susikurk PIN kodą šiai rolei.";
+    return;
+  }
+
+  elements.authStatus.textContent = "Vyksta piršto skeno demonstracija...";
+  window.setTimeout(() => {
+    completeAuth(authSession.role, "Biometrinis prisijungimas sėkmingas.");
+  }, 700);
+});
+
+elements.authResetPin.addEventListener("click", () => {
+  authStore.pins[authSession.role] = "";
+  saveAuthStore();
+  elements.authPin.value = "";
+  elements.authPinConfirm.value = "";
+  renderAuth();
+  elements.authStatus.textContent = "Senas PIN pašalintas. Gali registruoti naują.";
 });
 
 elements.profileButtons.forEach((button) => {
@@ -1513,3 +1699,4 @@ elements.randomQuestion.addEventListener("click", () => {
 
 renderAll();
 restartPromptRotation();
+openAuth(state.mode);
