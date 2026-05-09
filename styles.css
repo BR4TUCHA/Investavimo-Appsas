@@ -261,10 +261,50 @@ button {
   gap: 12px;
 }
 
-.auth-form-grid label {
+.auth-form-grid label,
+.pin-label {
   display: grid;
   gap: 8px;
   font-weight: 700;
+}
+
+.pin-block {
+  display: grid;
+  gap: 8px;
+}
+
+.pin-slots {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.pin-slot {
+  min-height: 58px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  display: grid;
+  place-items: center;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: white;
+}
+
+.pin-slot.filled {
+  border-color: rgba(31, 143, 255, 0.24);
+  background: rgba(31, 143, 255, 0.12);
+}
+
+.pin-hidden-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
 }
 
 .auth-status {
@@ -275,6 +315,46 @@ button {
 
 .auth-reset-button {
   justify-self: flex-start;
+}
+
+.biometric-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: white;
+  text-align: left;
+}
+
+.biometric-card strong,
+.biometric-card small {
+  display: block;
+}
+
+.biometric-card small {
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.biometric-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: rgba(31, 143, 255, 0.12);
+  color: #9ed2ff;
+  flex-shrink: 0;
+}
+
+.biometric-icon svg {
+  width: 24px;
+  height: 24px;
+  display: block;
 }
 
 .tab-panel {
@@ -890,8 +970,18 @@ input[type="range"] {
 }
 
 .bottom-nav-icon {
-  font-size: 1rem;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   line-height: 1;
+}
+
+.bottom-nav-icon svg {
+  width: 20px;
+  height: 20px;
+  display: block;
 }
 
 .bottom-nav-label {
