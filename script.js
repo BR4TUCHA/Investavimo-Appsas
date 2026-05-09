@@ -433,6 +433,10 @@ const elements = {
   savedPercent: document.querySelector("#savedPercent"),
   parentContribution: document.querySelector("#parentContribution"),
   notificationBanner: document.querySelector("#notificationBanner"),
+  pushPreviewTitle: document.querySelector("#pushPreviewTitle"),
+  pushPreviewBadge: document.querySelector("#pushPreviewBadge"),
+  pushPreviewText: document.querySelector("#pushPreviewText"),
+  pushPreviewTime: document.querySelector("#pushPreviewTime"),
   goalSelector: document.querySelector("#goalSelector"),
   savingsModeBadge: document.querySelector("#savingsModeBadge"),
   selectedGoalSavingsAmount: document.querySelector("#selectedGoalSavingsAmount"),
@@ -584,7 +588,7 @@ function getMetrics() {
   };
 }
 
-function appendFeed(title, text, tone = "info", time = "Ką tik") {
+function appendFeed(title, text, tone = "info", time = "Ką tik", sendPush = false) {
   state.feed.unshift({
     id: `feed-${Date.now()}-${Math.random()}`,
     title,
@@ -593,6 +597,10 @@ function appendFeed(title, text, tone = "info", time = "Ką tik") {
     time,
   });
   state.feed = state.feed.slice(0, 20);
+
+  if (sendPush && state.pushEnabled) {
+    showToast(`Push: ${title}`, tone === "danger" ? "warning" : tone);
+  }
 }
 
 function getCurrentProfile() {
@@ -806,6 +814,15 @@ function renderOverview(metrics) {
     `;
     elements.expenseFeed.appendChild(row);
   });
+
+  const latestPush = state.feed[0];
+  elements.pushPreviewTitle.textContent = latestPush ? latestPush.title : "Push aktyvūs";
+  elements.pushPreviewText.textContent = latestPush
+    ? latestPush.text
+    : "Čia bus rodoma paskutinė svarbi push žinutė apie taupyklę, leidimus ar pervedimus.";
+  elements.pushPreviewTime.textContent = latestPush ? latestPush.time : "Ką tik";
+  elements.pushPreviewBadge.textContent = state.pushEnabled ? "Push įjungti" : "Push išjungti";
+  elements.pushPreviewBadge.className = `badge-pill ${state.pushEnabled ? "success" : "warning"}`;
 }
 
 function renderGoalSelector() {
@@ -877,6 +894,7 @@ function renderRequests() {
           }.`,
           "success",
           "Ką tik",
+          true,
         );
         renderAll({ randomizePrompt: true });
         showToast("Prašymas patvirtintas.", "success");
@@ -893,6 +911,7 @@ function renderRequests() {
           `Neleista atlikti veiksmo su ${formatCurrency(request.amount)}.`,
           "warning",
           "Ką tik",
+          true,
         );
         renderAll({ randomizePrompt: true });
         showToast("Prašymas atmestas.", "warning");
@@ -1182,6 +1201,7 @@ function createRequest(type, amount, reason) {
       `Vaikas pateikė prašymą ${type === "deposit" ? "įdėti" : "išimti"} ${formatCurrency(amount)}.`,
       "warning",
       "Ką tik",
+      true,
     );
   } else {
     applyRequestEffect(request);
@@ -1192,6 +1212,7 @@ function createRequest(type, amount, reason) {
       )}.`,
       "success",
       "Ką tik",
+      true,
     );
   }
 }
@@ -1303,7 +1324,7 @@ elements.childQuickSave.addEventListener("click", () => {
 elements.parentAddToSavings.addEventListener("click", () => {
   const goal = getSelectedGoal();
   goal.saved += 10;
-  appendFeed("Tėvai papildė taupyklę", `Į tikslą „${goal.title}“ pridėta 10 EUR.`, "success", "Ką tik");
+  appendFeed("Tėvai papildė taupyklę", `Į tikslą „${goal.title}“ pridėta 10 EUR.`, "success", "Ką tik", true);
   renderAll();
   showToast("10 EUR pridėta į taupyklę.", "success");
 });
@@ -1311,7 +1332,7 @@ elements.parentAddToSavings.addEventListener("click", () => {
 elements.parentWithdrawFromSavings.addEventListener("click", () => {
   const goal = getSelectedGoal();
   goal.saved = Math.max(0, goal.saved - 10);
-  appendFeed("Tėvai nuėmė iš taupyklės", `Iš tikslo „${goal.title}“ nuimta 10 EUR.`, "warning", "Ką tik");
+  appendFeed("Tėvai nuėmė iš taupyklės", `Iš tikslo „${goal.title}“ nuimta 10 EUR.`, "warning", "Ką tik", true);
   renderAll();
   showToast("10 EUR nuimta iš taupyklės.", "warning");
 });
@@ -1328,6 +1349,7 @@ elements.togglePermissionPolicy.addEventListener("click", () => {
       : "Vaiko taupyklės veiksmai dabar gali būti patvirtinami automatiškai.",
     state.permissionRequired ? "warning" : "success",
     "Ką tik",
+    true,
   );
   renderAll();
 });
@@ -1351,13 +1373,13 @@ elements.parentTransferForm.addEventListener("submit", (event) => {
 
   if (type === "wallet") {
     state.walletBalance += amount;
-    appendFeed("Papildyta vaiko piniginė", `${formatCurrency(amount)} pervesta į vaiko piniginę. ${note}`, "success", "Ką tik");
+    appendFeed("Papildyta vaiko piniginė", `${formatCurrency(amount)} pervesta į vaiko piniginę. ${note}`, "success", "Ką tik", true);
   } else if (type === "savings" && goal) {
     goal.saved += amount;
-    appendFeed("Papildyta taupyklė", `${formatCurrency(amount)} įdėta į tikslą „${goal.title}“. ${note}`, "success", "Ką tik");
+    appendFeed("Papildyta taupyklė", `${formatCurrency(amount)} įdėta į tikslą „${goal.title}“. ${note}`, "success", "Ką tik", true);
   } else if (type === "bonus" && goal) {
     goal.saved += amount;
-    appendFeed("Skirta premija", `${formatCurrency(amount)} pridėta kaip papildomas paskatinimas tikslui „${goal.title}“.`, "success", "Ką tik");
+    appendFeed("Skirta premija", `${formatCurrency(amount)} pridėta kaip papildomas paskatinimas tikslui „${goal.title}“.`, "success", "Ką tik", true);
   }
 
   elements.parentTransferForm.reset();
@@ -1370,7 +1392,7 @@ elements.addWeeklyAllowance.addEventListener("click", () => {
     return;
   }
   state.walletBalance += 20;
-  appendFeed("Savaitės kišenpinigiai", "Tėvai pervedė 20 EUR į vaiko piniginę.", "success", "Ką tik");
+  appendFeed("Savaitės kišenpinigiai", "Tėvai pervedė 20 EUR į vaiko piniginę.", "success", "Ką tik", true);
   renderAll();
   showToast("Pridėta 20 EUR kišenpinigių.", "success");
 });
