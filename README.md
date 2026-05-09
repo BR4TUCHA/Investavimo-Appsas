@@ -111,6 +111,6 @@ cd android
 - Šiuo metu tai yra `debug` APK versija.
 - Android telefone gali reikėti leisti diegimą iš nežinomų šaltinių.
 - Parsisiunčiamo failo kontrolinė suma (`SHA-256`):
-  `55ceab9053725b40f49ec0cec55e8732e4dc9e69981f4dfe724ac5799670b782`
+  `9e4ad7acc398930b5a6528f5c53964f0817401cf899178bae2c1bbf2d4397834`
 - Jei norėsi, kitame etape galima padaryti pasirašytą `release` APK arba AAB
   failą Google Play įkėlimui.
