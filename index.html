@@ -69,32 +69,69 @@
           </div>
 
           <div class="auth-form-grid">
-            <label>
-              PIN kodas
-              <input id="authPin" type="password" inputmode="numeric" maxlength="4" placeholder="1234" />
-            </label>
-            <label id="authPinConfirmWrap">
-              Pakartok PIN
+            <div class="pin-block">
+              <label class="pin-label" for="authPin">PIN kodas</label>
+              <button class="pin-slots" id="authPinSlots" type="button">
+                <span class="pin-slot" data-slot-group="pin" data-slot-index="0"></span>
+                <span class="pin-slot" data-slot-group="pin" data-slot-index="1"></span>
+                <span class="pin-slot" data-slot-group="pin" data-slot-index="2"></span>
+                <span class="pin-slot" data-slot-group="pin" data-slot-index="3"></span>
+              </button>
               <input
-                id="authPinConfirm"
+                id="authPin"
+                class="pin-hidden-input"
                 type="password"
                 inputmode="numeric"
                 maxlength="4"
-                placeholder="1234"
+                autocomplete="one-time-code"
               />
-            </label>
+            </div>
+
+            <div class="pin-block" id="authPinConfirmWrap">
+              <label class="pin-label" for="authPinConfirm">Pakartok PIN</label>
+              <button class="pin-slots" id="authPinConfirmSlots" type="button">
+                <span class="pin-slot" data-slot-group="confirm" data-slot-index="0"></span>
+                <span class="pin-slot" data-slot-group="confirm" data-slot-index="1"></span>
+                <span class="pin-slot" data-slot-group="confirm" data-slot-index="2"></span>
+                <span class="pin-slot" data-slot-group="confirm" data-slot-index="3"></span>
+              </button>
+              <input
+                id="authPinConfirm"
+                class="pin-hidden-input"
+                type="password"
+                inputmode="numeric"
+                maxlength="4"
+                autocomplete="one-time-code"
+              />
+            </div>
           </div>
 
           <p class="auth-status" id="authStatus">
             Demo režime PIN saugomas tik šiame įrenginyje.
           </p>
 
+          <button class="biometric-card" id="authFingerprintButton" type="button">
+            <span class="biometric-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="img">
+                <path
+                  d="M12 2a6 6 0 0 0-6 6v2M18 10V8a6 6 0 1 0-12 0m9 7a3 3 0 0 1-6 0m6-3v3a6 6 0 1 1-12 0v-3m9-3v6m-6-6v6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.8"
+                />
+              </svg>
+            </span>
+            <span>
+              <strong>Prisijungti piršto skenu</strong>
+              <small>Biometrinio prisijungimo demonstracija</small>
+            </span>
+          </button>
+
           <div class="action-row">
             <button class="button primary" id="authPrimaryButton" type="button">
               Sukurti PIN
-            </button>
-            <button class="button secondary" id="authFingerprintButton" type="button">
-              Piršto skenas
             </button>
           </div>
 
@@ -741,31 +778,120 @@
 
       <nav class="bottom-nav" aria-label="Programėlės skiltys">
         <button class="bottom-nav-button active" data-tab-target="overview" type="button">
-          <span class="bottom-nav-icon" aria-hidden="true">🏠</span>
+          <span class="bottom-nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path
+                d="M4 10.5 12 4l8 6.5M6.5 9.5V20h11V9.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+              />
+            </svg>
+          </span>
           <span class="bottom-nav-label">Pradžia</span>
         </button>
         <button class="bottom-nav-button" data-tab-target="savings" type="button">
-          <span class="bottom-nav-icon" aria-hidden="true">🐷</span>
+          <span class="bottom-nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path
+                d="M6 14.5c0-3.6 3.1-6.5 7-6.5 1.5 0 2.9.4 4 1.1h2.5l-1.2 2.1c.4.7.7 1.5.7 2.3 0 3.4-2.8 6.1-6.3 6.1H9.8l-1.8 1.4-.2-1.8C6.7 18.6 6 16.7 6 14.5Z"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+              />
+              <circle cx="14.3" cy="12.7" r="0.9" fill="currentColor" />
+            </svg>
+          </span>
           <span class="bottom-nav-label">Taupyklė</span>
         </button>
         <button class="bottom-nav-button" data-tab-target="permissions" data-parent-only type="button">
-          <span class="bottom-nav-icon" aria-hidden="true">✅</span>
+          <span class="bottom-nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path
+                d="M5 12.5 9.2 17 19 7.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+              />
+            </svg>
+          </span>
           <span class="bottom-nav-label">Leidimai</span>
         </button>
         <button class="bottom-nav-button" data-tab-target="transfers" data-parent-only type="button">
-          <span class="bottom-nav-icon" aria-hidden="true">💸</span>
+          <span class="bottom-nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path
+                d="M4 12h13m0 0-3.5-3.5M17 12l-3.5 3.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.9"
+              />
+              <rect
+                x="3"
+                y="5"
+                width="18"
+                height="14"
+                rx="3"
+                ry="3"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+              />
+            </svg>
+          </span>
           <span class="bottom-nav-label">Duoti</span>
         </button>
         <button class="bottom-nav-button" data-tab-target="learn" type="button">
-          <span class="bottom-nav-icon" aria-hidden="true">📘</span>
+          <span class="bottom-nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path
+                d="M6 5.5h9.5A2.5 2.5 0 0 1 18 8v10.5H8a2 2 0 0 0-2 2V5.5Zm0 0v15a2 2 0 0 1 2-2"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.7"
+              />
+            </svg>
+          </span>
           <span class="bottom-nav-label">Mokytis</span>
         </button>
         <button class="bottom-nav-button" data-tab-target="quiz" type="button">
-          <span class="bottom-nav-icon" aria-hidden="true">❓</span>
+          <span class="bottom-nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path
+                d="M9.5 9a2.5 2.5 0 1 1 4 2l-1.2 1a2 2 0 0 0-.8 1.6V14m0 4h.01"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.9"
+              />
+            </svg>
+          </span>
           <span class="bottom-nav-label">Klausimai</span>
         </button>
         <button class="bottom-nav-button" data-tab-target="feed" type="button">
-          <span class="bottom-nav-icon" aria-hidden="true">🔔</span>
+          <span class="bottom-nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path
+                d="M12 5a4 4 0 0 1 4 4v2.4c0 .9.3 1.8.9 2.5l1.1 1.3H6l1.1-1.3c.6-.7.9-1.6.9-2.5V9a4 4 0 0 1 4-4Zm-1.8 13a1.8 1.8 0 0 0 3.6 0"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+              />
+            </svg>
+          </span>
           <span class="bottom-nav-label">Push</span>
         </button>
       </nav>

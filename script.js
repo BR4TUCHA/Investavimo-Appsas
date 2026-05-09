@@ -444,6 +444,10 @@ const elements = {
   authTitle: document.querySelector("#authTitle"),
   authText: document.querySelector("#authText"),
   authRoleButtons: Array.from(document.querySelectorAll("[data-auth-role]")),
+  authPinSlots: document.querySelector("#authPinSlots"),
+  authPinConfirmSlots: document.querySelector("#authPinConfirmSlots"),
+  authPinSlotItems: Array.from(document.querySelectorAll('[data-slot-group="pin"]')),
+  authPinConfirmSlotItems: Array.from(document.querySelectorAll('[data-slot-group="confirm"]')),
   authPin: document.querySelector("#authPin"),
   authPinConfirmWrap: document.querySelector("#authPinConfirmWrap"),
   authPinConfirm: document.querySelector("#authPinConfirm"),
@@ -586,6 +590,10 @@ const elements = {
 let promptTimer = null;
 let introDismissedForTab = "";
 
+function sanitizePin(value) {
+  return value.replace(/\D/g, "").slice(0, 4);
+}
+
 function isParentTab(tabName) {
   return PARENT_ONLY_TABS.has(tabName);
 }
@@ -642,6 +650,18 @@ function renderAuth() {
   elements.authStatus.textContent = isRegister
     ? "PIN išsaugomas šiame įrenginyje ir naudojamas tik demonstracijai."
     : "Demo režime galima jungtis PIN kodu arba pseudo biometriniu skenu.";
+
+  renderPinSlots(elements.authPinSlotItems, elements.authPin.value);
+  renderPinSlots(elements.authPinConfirmSlotItems, elements.authPinConfirm.value);
+}
+
+function renderPinSlots(slotElements, value) {
+  const normalized = sanitizePin(value);
+  slotElements.forEach((slot, index) => {
+    const filled = normalized[index];
+    slot.textContent = filled ? "•" : "";
+    slot.classList.toggle("filled", Boolean(filled));
+  });
 }
 
 function formatCurrency(value) {
@@ -1390,6 +1410,24 @@ elements.authRoleButtons.forEach((button) => {
     elements.authPinConfirm.value = "";
     renderAuth();
   });
+});
+
+elements.authPinSlots.addEventListener("click", () => {
+  elements.authPin.focus();
+});
+
+elements.authPinConfirmSlots.addEventListener("click", () => {
+  elements.authPinConfirm.focus();
+});
+
+elements.authPin.addEventListener("input", () => {
+  elements.authPin.value = sanitizePin(elements.authPin.value);
+  renderPinSlots(elements.authPinSlotItems, elements.authPin.value);
+});
+
+elements.authPinConfirm.addEventListener("input", () => {
+  elements.authPinConfirm.value = sanitizePin(elements.authPinConfirm.value);
+  renderPinSlots(elements.authPinConfirmSlotItems, elements.authPinConfirm.value);
 });
 
 elements.authPrimaryButton.addEventListener("click", () => {
