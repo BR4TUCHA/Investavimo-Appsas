@@ -250,7 +250,11 @@ button {
 }
 
 .hero-card,
-.section-card {
+.section-card,
+.account-card,
+.beginner-card,
+.stat-card,
+.asset-card {
   padding: 20px;
 }
 
@@ -424,10 +428,6 @@ button {
 
 .asset-grid {
   grid-template-columns: 1fr;
-}
-
-.asset-card {
-  padding: 20px;
 }
 
 .section-head {
@@ -764,7 +764,7 @@ input[type="range"] {
 .section-guide {
   position: fixed;
   left: 50%;
-  bottom: 102px;
+  top: 84px;
   transform: translateX(-50%);
   width: min(460px, calc(100% - 24px));
   display: flex;
@@ -794,9 +794,7 @@ input[type="range"] {
   bottom: 12px;
   transform: translateX(-50%);
   width: min(480px, calc(100% - 16px));
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(82px, 1fr);
+  display: flex;
   gap: 8px;
   overflow-x: auto;
   padding: 10px;
@@ -810,6 +808,14 @@ input[type="range"] {
 
 .bottom-nav::-webkit-scrollbar {
   display: none;
+}
+
+.bottom-nav-button {
+  flex: 0 0 auto;
+  min-width: 88px;
+  text-align: center;
+  white-space: nowrap;
+  font-size: 0.84rem;
 }
 
 .toast-stack {
@@ -903,7 +909,7 @@ input[type="range"] {
   .section-guide {
     flex-direction: column;
     align-items: stretch;
-    bottom: 104px;
+    top: 78px;
   }
 
   .toast-stack {
