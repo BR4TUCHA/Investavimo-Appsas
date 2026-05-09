@@ -1,7 +1,7 @@
 {
-  "name": "taupyklab",
+  "name": "kidfund",
   "version": "1.0.0",
-  "description": "`TaupykLab` yra paprastas vieno puslapio MVP prototipas, skirtas parodyti vaikų kišenpinigių, taupymo, investavimo edukacijos ir tėvų kontrolės idėją.",
+  "description": "`KidFund` yra paprastas vieno puslapio MVP prototipas, skirtas parodyti vaikų kišenpinigių, taupymo, investavimo edukacijos ir tėvų kontrolės idėją.",
   "private": true,
   "scripts": {
     "verify:web": "node --check script.js",

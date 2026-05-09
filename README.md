@@ -1,6 +1,6 @@
 # Investavimo-Appsas
 
-`TaupykLab` yra mobiliai pritaikytas MVP prototipas, skirtas parodyti vaikų
+`KidFund` yra mobiliai pritaikytas MVP prototipas, skirtas parodyti vaikų
 kišenpinigių, taupymo, investavimo edukacijos ir tėvų kontrolės idėją.
 
 ## Kas įdėta
@@ -111,6 +111,6 @@ cd android
 - Šiuo metu tai yra `debug` APK versija.
 - Android telefone gali reikėti leisti diegimą iš nežinomų šaltinių.
 - Parsisiunčiamo failo kontrolinė suma (`SHA-256`):
-  `a57c4ef0991ce7508a56f06143dbdd88f95f2e04a0f28010aff34cc95782111a`
+  `ef710f25dd2aa1a64acf0d2f7ce9d997201ce691383fc23ccecc11a4ea9f784d`
 - Jei norėsi, kitame etape galima padaryti pasirašytą `release` APK arba AAB
   failą Google Play įkėlimui.
