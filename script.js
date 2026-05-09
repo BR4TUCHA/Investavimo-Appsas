@@ -5,6 +5,7 @@ const state = {
   mode: "parent",
   activeTab: "overview",
   profile: "balanced",
+  allowance: 70,
   walletBalance: 152.4,
   weeklyLimit: 28,
   spentThisWeek: 18.12,

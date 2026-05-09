@@ -250,7 +250,11 @@ button {
 }
 
 .hero-card,
-.section-card {
+.section-card,
+.account-card,
+.beginner-card,
+.stat-card,
+.asset-card {
   padding: 20px;
 }
 
@@ -424,10 +428,6 @@ button {
 
 .asset-grid {
   grid-template-columns: 1fr;
-}
-
-.asset-card {
-  padding: 20px;
 }
 
 .section-head {
