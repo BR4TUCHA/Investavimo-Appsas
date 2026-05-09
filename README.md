@@ -81,7 +81,7 @@ Iš esamo MVP pridėtas Android apvalkalas su Capacitor, todėl galima sugeneruo
 Į repo yra įkeltas parsisiunčiamas failas čia:
 
 ```text
-apk/TaupykLab-debug.apk
+apk/KidFund-debug.apk
 ```
 
 Šitą failą gali atsidaryti GitHub ir telefone spausti `Download` / `View raw`.
@@ -111,6 +111,6 @@ cd android
 - Šiuo metu tai yra `debug` APK versija.
 - Android telefone gali reikėti leisti diegimą iš nežinomų šaltinių.
 - Parsisiunčiamo failo kontrolinė suma (`SHA-256`):
-  `61a9bbf7935f4a2e6ec2c912acead56235a29db7d090ace33dd7d8b83c6d4866`
+  `55ceab9053725b40f49ec0cec55e8732e4dc9e69981f4dfe724ac5799670b782`
 - Jei norėsi, kitame etape galima padaryti pasirašytą `release` APK arba AAB
   failą Google Play įkėlimui.

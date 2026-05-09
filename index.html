@@ -51,6 +51,59 @@
         </div>
       </header>
 
+      <div class="auth-overlay" id="authOverlay">
+        <div class="auth-card">
+          <p class="card-eyebrow">KidFund prisijungimas</p>
+          <h2 id="authTitle">Sukurti PIN kodą</h2>
+          <p class="card-copy" id="authText">
+            Pasirink rolę ir susikurk 4 skaitmenų PIN kodą. Vėliau galėsi jungtis PIN arba piršto skenu.
+          </p>
+
+          <div class="auth-role-switch">
+            <button class="auth-role-button active" data-auth-role="parent" type="button">
+              Tėvai
+            </button>
+            <button class="auth-role-button" data-auth-role="child" type="button">
+              Vaikas
+            </button>
+          </div>
+
+          <div class="auth-form-grid">
+            <label>
+              PIN kodas
+              <input id="authPin" type="password" inputmode="numeric" maxlength="4" placeholder="1234" />
+            </label>
+            <label id="authPinConfirmWrap">
+              Pakartok PIN
+              <input
+                id="authPinConfirm"
+                type="password"
+                inputmode="numeric"
+                maxlength="4"
+                placeholder="1234"
+              />
+            </label>
+          </div>
+
+          <p class="auth-status" id="authStatus">
+            Demo režime PIN saugomas tik šiame įrenginyje.
+          </p>
+
+          <div class="action-row">
+            <button class="button primary" id="authPrimaryButton" type="button">
+              Sukurti PIN
+            </button>
+            <button class="button secondary" id="authFingerprintButton" type="button">
+              Piršto skenas
+            </button>
+          </div>
+
+          <button class="link-button auth-reset-button" id="authResetPin" type="button" hidden>
+            Registruoti PIN iš naujo
+          </button>
+        </div>
+      </div>
+
       <section class="status-hero">
         <article class="dark-card hero-card hero-card-primary">
           <p class="card-eyebrow">Aktyvus režimas</p>
@@ -368,7 +421,7 @@
               </div>
             </form>
 
-            <div class="parent-direct-actions">
+            <div class="parent-direct-actions" data-parent-only>
               <h3>Tėvų greiti veiksmai</h3>
               <p class="card-copy">
                 Tėvams leidimų nereikia - jie gali tiesiogiai papildyti ar sumažinti taupyklę.
@@ -385,7 +438,7 @@
           </article>
         </section>
 
-        <section class="tab-panel" data-tab-panel="permissions">
+        <section class="tab-panel" data-tab-panel="permissions" data-parent-only>
           <article class="dark-card section-card">
             <div class="section-head">
               <div>
@@ -407,7 +460,7 @@
           </article>
         </section>
 
-        <section class="tab-panel" data-tab-panel="transfers">
+        <section class="tab-panel" data-tab-panel="transfers" data-parent-only>
           <article class="dark-card section-card">
             <div class="section-head">
               <div>
@@ -510,7 +563,7 @@
           </article>
         </section>
 
-        <section class="tab-panel" data-tab-panel="controls">
+        <section class="tab-panel" data-tab-panel="controls" data-parent-only>
           <article class="dark-card section-card">
             <div class="section-head">
               <div>
@@ -576,7 +629,7 @@
           </article>
         </section>
 
-        <section class="tab-panel" data-tab-panel="goals-admin">
+        <section class="tab-panel" data-tab-panel="goals-admin" data-parent-only>
           <article class="dark-card section-card">
             <div class="section-head">
               <div>
@@ -687,13 +740,34 @@
       </aside>
 
       <nav class="bottom-nav" aria-label="Programėlės skiltys">
-        <button class="bottom-nav-button active" data-tab-target="overview" type="button">Pradžia</button>
-        <button class="bottom-nav-button" data-tab-target="savings" type="button">Taupyklė</button>
-        <button class="bottom-nav-button" data-tab-target="permissions" type="button">Leidimai</button>
-        <button class="bottom-nav-button" data-tab-target="transfers" type="button">Duoti</button>
-        <button class="bottom-nav-button" data-tab-target="learn" type="button">Mokytis</button>
-        <button class="bottom-nav-button" data-tab-target="quiz" type="button">Klausimai</button>
-        <button class="bottom-nav-button" data-tab-target="feed" type="button">Push</button>
+        <button class="bottom-nav-button active" data-tab-target="overview" type="button">
+          <span class="bottom-nav-icon" aria-hidden="true">🏠</span>
+          <span class="bottom-nav-label">Pradžia</span>
+        </button>
+        <button class="bottom-nav-button" data-tab-target="savings" type="button">
+          <span class="bottom-nav-icon" aria-hidden="true">🐷</span>
+          <span class="bottom-nav-label">Taupyklė</span>
+        </button>
+        <button class="bottom-nav-button" data-tab-target="permissions" data-parent-only type="button">
+          <span class="bottom-nav-icon" aria-hidden="true">✅</span>
+          <span class="bottom-nav-label">Leidimai</span>
+        </button>
+        <button class="bottom-nav-button" data-tab-target="transfers" data-parent-only type="button">
+          <span class="bottom-nav-icon" aria-hidden="true">💸</span>
+          <span class="bottom-nav-label">Duoti</span>
+        </button>
+        <button class="bottom-nav-button" data-tab-target="learn" type="button">
+          <span class="bottom-nav-icon" aria-hidden="true">📘</span>
+          <span class="bottom-nav-label">Mokytis</span>
+        </button>
+        <button class="bottom-nav-button" data-tab-target="quiz" type="button">
+          <span class="bottom-nav-icon" aria-hidden="true">❓</span>
+          <span class="bottom-nav-label">Klausimai</span>
+        </button>
+        <button class="bottom-nav-button" data-tab-target="feed" type="button">
+          <span class="bottom-nav-icon" aria-hidden="true">🔔</span>
+          <span class="bottom-nav-label">Push</span>
+        </button>
       </nav>
 
       <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
