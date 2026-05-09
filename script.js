@@ -38,6 +38,31 @@ function saveAuthStore() {
   window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authStore));
 }
 
+function getBiometricPlugin() {
+  return window.Capacitor?.Plugins?.KidFundBiometric ?? null;
+}
+
+async function refreshBiometricAvailability() {
+  const plugin = getBiometricPlugin();
+  if (!plugin || typeof plugin.isAvailable !== "function") {
+    authSession.biometricAvailable = false;
+    authSession.biometricReason = "Biometrija veikia tik Android APK versijoje";
+    renderAuth();
+    return;
+  }
+
+  try {
+    const result = await plugin.isAvailable();
+    authSession.biometricAvailable = Boolean(result?.available);
+    authSession.biometricReason = result?.reason || "Biometrija neprieinama";
+  } catch (error) {
+    authSession.biometricAvailable = false;
+    authSession.biometricReason = "Biometrija neprieinama šiame įrenginyje";
+  }
+
+  renderAuth();
+}
+
 const authStore = loadAuthStore();
 
 const state = {
@@ -140,6 +165,10 @@ const state = {
 const authSession = {
   open: true,
   role: state.mode,
+  activeField: "pin",
+  biometricAvailable: false,
+  biometricReason: "Tik Android APK versijoje",
+  biometricScanning: false,
 };
 
 const investmentProfiles = {
@@ -454,6 +483,7 @@ const elements = {
   authStatus: document.querySelector("#authStatus"),
   authPrimaryButton: document.querySelector("#authPrimaryButton"),
   authFingerprintButton: document.querySelector("#authFingerprintButton"),
+  authFingerprintHint: document.querySelector("#authFingerprintHint"),
   authResetPin: document.querySelector("#authResetPin"),
   activeProfileLabel: document.querySelector("#activeProfileLabel"),
   modeBadge: document.querySelector("#modeBadge"),
@@ -605,6 +635,8 @@ function getAuthMode() {
 function openAuth(role) {
   authSession.role = role;
   authSession.open = true;
+  authSession.activeField = "pin";
+  authSession.biometricScanning = false;
   elements.authPin.value = "";
   elements.authPinConfirm.value = "";
   renderAuth();
@@ -639,20 +671,27 @@ function renderAuth() {
   elements.authTitle.textContent = isRegister ? "Sukurti PIN kodą" : "Prisijungti prie KidFund";
   elements.authText.textContent = isRegister
     ? `Pirmą kartą prisijungiant kaip ${authSession.role === "parent" ? "tėvai" : "vaikas"}, reikia susikurti 4 skaitmenų PIN kodą.`
-    : `Įvesk ${authSession.role === "parent" ? "tėvų" : "vaiko"} PIN kodą arba naudok piršto skeno demonstraciją.`;
+    : `Įvesk ${authSession.role === "parent" ? "tėvų" : "vaiko"} PIN kodą arba naudok Android biometrinį patvirtinimą.`;
   elements.authPinConfirmWrap.hidden = !isRegister;
   elements.authPrimaryButton.textContent = isRegister ? "Sukurti PIN" : "Prisijungti";
-  elements.authFingerprintButton.disabled = isRegister;
-  elements.authFingerprintButton.textContent = isRegister
-    ? "Piršto skenas po registracijos"
-    : "Prisijungti piršto skenu";
+  elements.authFingerprintButton.disabled = isRegister || !authSession.biometricAvailable;
+  elements.authFingerprintButton.classList.toggle("scanning", authSession.biometricScanning);
   elements.authResetPin.hidden = isRegister;
   elements.authStatus.textContent = isRegister
     ? "PIN išsaugomas šiame įrenginyje ir naudojamas tik demonstracijai."
-    : "Demo režime galima jungtis PIN kodu arba pseudo biometriniu skenu.";
+    : authSession.biometricAvailable
+      ? "Prisijungti gali PIN kodu arba Android biometriniu patvirtinimu."
+      : authSession.biometricReason;
+  elements.authFingerprintHint.textContent = isRegister
+    ? "Biometrija aktyvuosis po PIN registracijos"
+    : authSession.biometricAvailable
+      ? "Tikras Android biometric prompt"
+      : authSession.biometricReason;
 
   renderPinSlots(elements.authPinSlotItems, elements.authPin.value);
   renderPinSlots(elements.authPinConfirmSlotItems, elements.authPinConfirm.value);
+  elements.authPinSlots.classList.toggle("active", authSession.activeField === "pin");
+  elements.authPinConfirmSlots.classList.toggle("active", authSession.activeField === "confirm");
 }
 
 function renderPinSlots(slotElements, value) {
@@ -662,6 +701,45 @@ function renderPinSlots(slotElements, value) {
     slot.textContent = filled ? "•" : "";
     slot.classList.toggle("filled", Boolean(filled));
   });
+}
+
+function updateAuthValue(field, nextValue) {
+  const sanitized = sanitizePin(nextValue);
+  if (field === "pin") {
+    elements.authPin.value = sanitized;
+    renderPinSlots(elements.authPinSlotItems, sanitized);
+    if (sanitized.length === 4 && getAuthMode() === "register") {
+      authSession.activeField = "confirm";
+    }
+  } else {
+    elements.authPinConfirm.value = sanitized;
+    renderPinSlots(elements.authPinConfirmSlotItems, sanitized);
+  }
+  renderAuth();
+}
+
+function appendDigitToActivePin(digit) {
+  if (authSession.activeField === "confirm" && !elements.authPinConfirmWrap.hidden) {
+    updateAuthValue("confirm", `${elements.authPinConfirm.value}${digit}`);
+    return;
+  }
+  updateAuthValue("pin", `${elements.authPin.value}${digit}`);
+}
+
+function clearActivePin() {
+  if (authSession.activeField === "confirm" && !elements.authPinConfirmWrap.hidden) {
+    updateAuthValue("confirm", "");
+    return;
+  }
+  updateAuthValue("pin", "");
+}
+
+function backspaceActivePin() {
+  if (authSession.activeField === "confirm" && !elements.authPinConfirmWrap.hidden) {
+    updateAuthValue("confirm", elements.authPinConfirm.value.slice(0, -1));
+    return;
+  }
+  updateAuthValue("pin", elements.authPin.value.slice(0, -1));
 }
 
 function formatCurrency(value) {
@@ -1406,6 +1484,7 @@ elements.closeSectionGuide.addEventListener("click", () => {
 elements.authRoleButtons.forEach((button) => {
   button.addEventListener("click", () => {
     authSession.role = button.dataset.authRole;
+    authSession.activeField = "pin";
     elements.authPin.value = "";
     elements.authPinConfirm.value = "";
     renderAuth();
@@ -1413,21 +1492,37 @@ elements.authRoleButtons.forEach((button) => {
 });
 
 elements.authPinSlots.addEventListener("click", () => {
-  elements.authPin.focus();
+  authSession.activeField = "pin";
+  renderAuth();
 });
 
 elements.authPinConfirmSlots.addEventListener("click", () => {
-  elements.authPinConfirm.focus();
+  authSession.activeField = "confirm";
+  renderAuth();
 });
 
 elements.authPin.addEventListener("input", () => {
-  elements.authPin.value = sanitizePin(elements.authPin.value);
-  renderPinSlots(elements.authPinSlotItems, elements.authPin.value);
+  updateAuthValue("pin", elements.authPin.value);
 });
 
 elements.authPinConfirm.addEventListener("input", () => {
-  elements.authPinConfirm.value = sanitizePin(elements.authPinConfirm.value);
-  renderPinSlots(elements.authPinConfirmSlotItems, elements.authPinConfirm.value);
+  updateAuthValue("confirm", elements.authPinConfirm.value);
+});
+
+Array.from(document.querySelectorAll("[data-keypad-value]")).forEach((button) => {
+  button.addEventListener("click", () => {
+    appendDigitToActivePin(button.dataset.keypadValue);
+  });
+});
+
+Array.from(document.querySelectorAll("[data-keypad-action]")).forEach((button) => {
+  button.addEventListener("click", () => {
+    if (button.dataset.keypadAction === "clear") {
+      clearActivePin();
+    } else {
+      backspaceActivePin();
+    }
+  });
 });
 
 elements.authPrimaryButton.addEventListener("click", () => {
@@ -1466,10 +1561,37 @@ elements.authFingerprintButton.addEventListener("click", () => {
     return;
   }
 
-  elements.authStatus.textContent = "Vyksta piršto skeno demonstracija...";
-  window.setTimeout(() => {
-    completeAuth(authSession.role, "Biometrinis prisijungimas sėkmingas.");
-  }, 700);
+  if (!authSession.biometricAvailable) {
+    elements.authStatus.textContent = authSession.biometricReason;
+    return;
+  }
+
+  const plugin = getBiometricPlugin();
+  if (!plugin || typeof plugin.authenticate !== "function") {
+    elements.authStatus.textContent = "Biometrinis prisijungimas neprieinamas šiame režime.";
+    return;
+  }
+
+  authSession.biometricScanning = true;
+  elements.authStatus.textContent = "Laukiama biometrinio patvirtinimo...";
+  renderAuth();
+
+  plugin
+    .authenticate({
+      title: "KidFund prisijungimas",
+      subtitle: authSession.role === "parent" ? "Patvirtinkite tėvų prisijungimą" : "Patvirtinkite vaiko prisijungimą",
+      description: "Patvirtinkite savo tapatybę biometriniu būdu",
+      cancelTitle: "Atšaukti",
+    })
+    .then(() => {
+      authSession.biometricScanning = false;
+      completeAuth(authSession.role, "Biometrinis prisijungimas sėkmingas.");
+    })
+    .catch((error) => {
+      authSession.biometricScanning = false;
+      elements.authStatus.textContent = error?.message || "Biometrinis prisijungimas nepavyko.";
+      renderAuth();
+    });
 });
 
 elements.authResetPin.addEventListener("click", () => {
@@ -1738,3 +1860,4 @@ elements.randomQuestion.addEventListener("click", () => {
 renderAll();
 restartPromptRotation();
 openAuth(state.mode);
+refreshBiometricAvailability();
