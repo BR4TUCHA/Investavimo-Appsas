@@ -1,47 +1,59 @@
 # Investavimo-Appsas
 
-`TaupykLab` yra vieno puslapio MVP prototipas, skirtas parodyti vaikų
+`TaupykLab` yra mobiliai pritaikytas MVP prototipas, skirtas parodyti vaikų
 kišenpinigių, taupymo, investavimo edukacijos ir tėvų kontrolės idėją.
 
 ## Kas įdėta
 
-- apatinė navigacija su atskiromis skiltimis:
-  - `Pagrindas`,
-  - `Tikslai`,
-  - `Limitai`,
+- tamsus `banking app` stiliaus dizainas, artimesnis realiai finansų programėlei;
+- fiksuota apatinė shortcut juosta su skiltimis:
+  - `Pradžia`,
+  - `Taupyti`,
+  - `Leidimai`,
+  - `Pervedimai`,
   - `Mokymasis`,
-  - `Viktorina`;
-- skirtingi rolės režimai:
-  - `Vaiko prisijungimas`,
-  - `Tėvų prisijungimas`;
-- tikslų modulis:
-  - vaikas gali pats siūlyti ir kurti naujus tikslus,
-  - tėvai gali pridėti savo tikslus,
-  - tėvai gali redaguoti ir ištrinti esamus tikslus;
-- atskira limitų skiltis su:
-  - savaitės limitu,
-  - išleista suma,
-  - perspėjimais apie artėjimą prie ribos arba jos viršijimą,
-  - push notification imitacija;
-- atskira investavimo ir bendro valdymo logika pagrindinėje skiltyje;
-- avataro-asistento kortelė su atsitiktiniais patarimais;
-- daugiau nei 100 mokymosi patarimų / mini pamokų;
-- daugiau nei 100 viktorinos klausimų.
+  - `Viktorina`,
+  - `Push`;
+- viršuje dešinėje visada matoma maža rolės ikona su:
+  - `Vaiko prisijungimu`,
+  - `Tėvų prisijungimu`;
+- reklamos / partnerio vieta produkto finansavimui;
+- pradžiamokslio blokas pagrindiniame ekrane;
+- taupyklės veiksmai:
+  - vaikas gali pateikti prašymą įdėti į taupyklę,
+  - vaikas gali pateikti prašymą išimti iš taupyklės,
+  - tėvai gali veikti tiesiogiai be papildomo leidimo;
+- leidimų centras, kuriame tėvai:
+  - leidžia arba neleidžia vaiko prašymų,
+  - keičia leidimų politiką;
+- tėvų pinigų skiltis:
+  - pervesti į vaiko piniginę,
+  - pridėti į pasirinktą taupyklę,
+  - skirti premiją / `match`;
+- push pranešimų istorija apie:
+  - papildymus,
+  - išėmimus,
+  - leidimų prašymus,
+  - patvirtinimus ir atmetimus;
+- 140 mokymosi patarimų;
+- 140 viktorinos klausimų;
+- asistentas, kuris:
+  - rodo atsitiktinius promptus,
+  - trumpai supažindina su kiekviena skiltimi ją atidarius.
 
 ## MVP logika
 
-- Tėvai nustato, kokia kišenpinigių dalis lieka išleidimui, taupymui ir
-  investavimo mokymuisi.
-- Vaiko režime valdymo elementai užrakinami, tačiau vaikas vis tiek gali:
-  - matyti taisykles,
-  - kurti savo tikslų pasiūlymus,
-  - spręsti viktorinos klausimus,
-  - skaityti mokymosi patarimus.
-- Tikslai saugomi atskiroje skiltyje, kur tėvai gali juos koreguoti arba trinti.
-- Jei išleidžiama suma priartėja prie limito arba jį viršija, rodomi
-  įspėjamieji pranešimai ir avataro-asistento promptai.
-- Mokymosi ir viktorinos turinys išplėstas iki 100+ įrašų kiekvienoje skiltyje,
-  kad ekranai būtų atskirti ir nebūtų perkrauti vienoje vietoje.
+- Tėvai nustato, kokia kišenpinigių dalis lieka išlaidoms, taupymui ir investavimo mokymuisi.
+- Vaikas gali inicijuoti taupyklės veiksmus, bet kai leidimų politika įjungta, galutinį sprendimą priima tėvai.
+- Tėvai gali:
+  - duoti kišenpinigius,
+  - pervesti pinigus,
+  - papildyti taupyklę,
+  - skirti premiją,
+  - patvirtinti arba atmesti prašymus.
+- Push istorija simuliuoja bankinio tipo notif’ikacijas ir rodo, kas vyko programėlėje.
+- Mokymosi ir viktorinos turinys išplėstas iki 140 įrašų kiekvienoje dalyje,
+  kad programa atrodytų kaip realus mokymosi ir taupymo produktas.
 
 ## Paleidimas
 
@@ -98,7 +110,6 @@ cd android
 
 - Šiuo metu tai yra `debug` APK versija.
 - Android telefone gali reikėti leisti diegimą iš nežinomų šaltinių.
-- Parsisiunčiamo failo kontrolinė suma (`SHA-256`):
-  `0b5fb998de5c1c88be613293bd49a1cbc674e0c835917934d113535c31d7c7fe`
+- Parsisiunčiamo failo kontrolinė suma (`SHA-256`) bus atnaujinta po naujo build'o.
 - Jei norėsi, kitame etape galima padaryti pasirašytą `release` APK arba AAB
   failą Google Play įkėlimui.
