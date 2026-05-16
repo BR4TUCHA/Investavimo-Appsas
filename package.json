@@ -1,7 +1,7 @@
 {
   "name": "kidfund",
   "version": "1.0.0",
-  "description": "`KidFund` yra paprastas vieno puslapio MVP prototipas, skirtas parodyti vaikų kišenpinigių, taupymo, investavimo edukacijos ir tėvų kontrolės idėją.",
+  "description": "`KidFund` yra statinis mobilus prototipas su pilno ekrano prisijungimu, vaikų taupymo ir investavimo prašymais bei tėvų patvirtinimais.",
   "private": true,
   "scripts": {
     "verify:web": "node --check script.js",

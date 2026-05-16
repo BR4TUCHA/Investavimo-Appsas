@@ -13,929 +13,326 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="mobile-app-shell">
-      <header class="app-topbar">
-        <div>
-          <p class="screen-title">Apžvalga</p>
-          <p class="screen-subtitle" id="activeProfileLabel">Augustas Vaičiulis</p>
-          <p class="screen-subtitle" id="roleDescription">
-            Tėvai valdo limitus, leidimus ir pervedimus, o vaikas mokosi ir taupo per aiškias skiltis.
+    <div class="auth-screen" id="authScreen">
+      <div class="auth-shell">
+        <section class="auth-brand card">
+          <p class="eyebrow">KidFund</p>
+          <h1>Pilno ekrano prisijungimas, o ne pop-up</h1>
+          <p class="muted-copy">
+            Atskirai prisijunk arba registruokis kaip vaikas ar tėvas. Jautriems
+            veiksmams programėlė rodys mažą patvirtinimo langą su atskira PIN
+            validacija.
           </p>
+          <div class="feature-list">
+            <div class="feature-item">
+              <span class="feature-icon">01</span>
+              <div>
+                <strong>Atskiras login page</strong>
+                <p>Vaikui ir tėvams rodoma normali pilno ekrano prisijungimo zona.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">02</span>
+              <div>
+                <strong>Child-safe vaizdas</strong>
+                <p>
+                  Vaikas nemato „Duoti“ skirtuko, leidimų politikos ir tėvų investavimo
+                  valdymo.
+                </p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">03</span>
+              <div>
+                <strong>Investavimas su leidimu</strong>
+                <p>
+                  Vaikas gali siųsti prašymus investuoti į akcijas ar kriptovaliutas, o
+                  tėvai juos patvirtina atskiru PIN.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="auth-card card">
+          <div class="auth-top">
+            <div>
+              <p class="eyebrow">Prisijungimas</p>
+              <h2 id="authTitle">Prisijungti prie KidFund</h2>
+            </div>
+            <span class="status-pill" id="authRoleBadge">Vaiko paskyra</span>
+          </div>
+
+          <div class="segmented-group" id="authRoleSwitch">
+            <button class="segment active" type="button" data-auth-role="child">Vaikas</button>
+            <button class="segment" type="button" data-auth-role="parent">Tėvai</button>
+          </div>
+
+          <div class="segmented-group" id="authModeSwitch">
+            <button class="segment active" type="button" data-auth-mode="login">Prisijungti</button>
+            <button class="segment" type="button" data-auth-mode="register">Registruotis</button>
+          </div>
+
+          <p class="auth-copy" id="authCopy"></p>
+          <div class="pin-slots" id="authPinSlots" aria-label="PIN laukeliai"></div>
+          <p class="validation-text" id="authMessage"></p>
+
+          <div class="action-row">
+            <button class="button primary" id="authSubmitButton" type="button">Prisijungti</button>
+            <button class="button secondary" id="authClearButton" type="button">Išvalyti</button>
+          </div>
+
+          <div class="keypad" id="authKeypad" aria-label="PIN klaviatūra"></div>
+        </section>
+      </div>
+    </div>
+
+    <div class="app-shell hidden" id="appShell">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">KidFund</p>
+          <h1>Pocket money banking demo</h1>
+          <p class="muted-copy" id="headerSubtitle"></p>
         </div>
-
-        <button
-          class="profile-fab"
-          id="profileFab"
-          type="button"
-          aria-expanded="false"
-          aria-controls="profileMenu"
-        >
-          <span class="profile-fab-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img">
-              <path
-                d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-3.6 0-6.5 1.8-6.5 4v1h13v-1c0-2.2-2.9-4-6.5-4Z"
-                fill="currentColor"
-              />
-            </svg>
-          </span>
-          <span class="profile-fab-text" id="profileFabText">Tėvai</span>
-        </button>
-
-        <div class="profile-menu" id="profileMenu" hidden>
-          <button class="profile-menu-button" data-role-target="child" type="button">
-            Vaiko prisijungimas
-          </button>
-          <button class="profile-menu-button active" data-role-target="parent" type="button">
-            Tėvų prisijungimas
+        <div class="header-actions">
+          <span class="role-chip" id="activeRoleChip"></span>
+          <button class="button secondary compact-button" id="logoutButton" type="button">
+            Atsijungti
           </button>
         </div>
       </header>
 
-      <div class="auth-overlay" id="authOverlay">
-        <div class="auth-card">
-          <div class="auth-brand">
-            <div class="auth-brand-logo" aria-hidden="true">
-              <svg viewBox="0 0 64 64" role="img">
-                <circle cx="32" cy="32" r="32" fill="#1F8FFF" />
-                <circle cx="45" cy="16" r="8" fill="#2BC176" />
-                <path
-                  d="M15 36c0-8.7 7.6-15.8 17-15.8 3.6 0 6.8 1 9.5 2.7H48l-2.1 3.8c0.9 1.4 1.4 3 1.4 4.7 0 8.1-6.7 14.8-15 14.8h-6.6l-4 3.1-.4-4c-4.1-1.8-6.3-5.2-6.3-9.3Z"
-                  fill="#fff"
-                />
-                <circle cx="36.5" cy="30.5" r="2" fill="#12203F" />
-                <circle cx="27.5" cy="30.5" r="2" fill="#12203F" />
-                <path
-                  d="M27.5 38.5c1.8 1.6 7.2 1.6 9 0"
-                  fill="none"
-                  stroke="#12203F"
-                  stroke-linecap="round"
-                  stroke-width="2.2"
-                />
-              </svg>
-            </div>
-            <div>
-              <p class="card-eyebrow">KidFund prisijungimas</p>
-              <h2 id="authTitle">Sukurti PIN kodą</h2>
-            </div>
-          </div>
-          <p class="card-copy" id="authText">
-            Pasirink rolę ir susikurk 4 skaitmenų PIN kodą. Vėliau galėsi jungtis PIN arba piršto skenu.
-          </p>
-
-          <div class="auth-role-switch">
-            <button class="auth-role-button active" data-auth-role="parent" type="button">
-              Tėvai
-            </button>
-            <button class="auth-role-button" data-auth-role="child" type="button">
-              Vaikas
-            </button>
-          </div>
-
-          <div class="auth-form-grid">
-            <div class="pin-block">
-              <label class="pin-label" for="authPin">PIN kodas</label>
-              <button class="pin-slots" id="authPinSlots" type="button">
-                <span class="pin-slot" data-slot-group="pin" data-slot-index="0"></span>
-                <span class="pin-slot" data-slot-group="pin" data-slot-index="1"></span>
-                <span class="pin-slot" data-slot-group="pin" data-slot-index="2"></span>
-                <span class="pin-slot" data-slot-group="pin" data-slot-index="3"></span>
-              </button>
-              <input
-                id="authPin"
-                class="pin-hidden-input"
-                type="password"
-                inputmode="numeric"
-                maxlength="4"
-                autocomplete="one-time-code"
-              />
-            </div>
-
-            <div class="pin-block" id="authPinConfirmWrap">
-              <label class="pin-label" for="authPinConfirm">Pakartok PIN</label>
-              <button class="pin-slots" id="authPinConfirmSlots" type="button">
-                <span class="pin-slot" data-slot-group="confirm" data-slot-index="0"></span>
-                <span class="pin-slot" data-slot-group="confirm" data-slot-index="1"></span>
-                <span class="pin-slot" data-slot-group="confirm" data-slot-index="2"></span>
-                <span class="pin-slot" data-slot-group="confirm" data-slot-index="3"></span>
-              </button>
-              <input
-                id="authPinConfirm"
-                class="pin-hidden-input"
-                type="password"
-                inputmode="numeric"
-                maxlength="4"
-                autocomplete="one-time-code"
-              />
-            </div>
-          </div>
-
-          <div class="auth-keypad" id="authKeypad">
-            <button class="keypad-key" data-keypad-value="1" type="button">1</button>
-            <button class="keypad-key" data-keypad-value="2" type="button">2</button>
-            <button class="keypad-key" data-keypad-value="3" type="button">3</button>
-            <button class="keypad-key" data-keypad-value="4" type="button">4</button>
-            <button class="keypad-key" data-keypad-value="5" type="button">5</button>
-            <button class="keypad-key" data-keypad-value="6" type="button">6</button>
-            <button class="keypad-key" data-keypad-value="7" type="button">7</button>
-            <button class="keypad-key" data-keypad-value="8" type="button">8</button>
-            <button class="keypad-key" data-keypad-value="9" type="button">9</button>
-            <button class="keypad-key ghost" data-keypad-action="clear" type="button">Valyti</button>
-            <button class="keypad-key" data-keypad-value="0" type="button">0</button>
-            <button class="keypad-key ghost" data-keypad-action="backspace" type="button">⌫</button>
-          </div>
-
-          <p class="auth-status" id="authStatus">
-            Demo režime PIN saugomas tik šiame įrenginyje.
-          </p>
-
-          <button class="biometric-card" id="authFingerprintButton" type="button">
-            <span class="biometric-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" role="img">
-                <path
-                  d="M12 2a6 6 0 0 0-6 6v2M18 10V8a6 6 0 1 0-12 0m9 7a3 3 0 0 1-6 0m6-3v3a6 6 0 1 1-12 0v-3m9-3v6m-6-6v6"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="1.8"
-                />
-              </svg>
-            </span>
-            <span class="biometric-copy">
-              <strong>Prisijungti piršto skenu</strong>
-              <small id="authFingerprintHint">Android biometric prisijungimas</small>
-            </span>
-          </button>
-
-          <div class="action-row">
-            <button class="button primary" id="authPrimaryButton" type="button">
-              Sukurti PIN
-            </button>
-          </div>
-
-          <button class="link-button auth-reset-button" id="authResetPin" type="button" hidden>
-            Registruoti PIN iš naujo
-          </button>
-        </div>
+      <div class="section-banner card" id="sectionBanner">
+        <p class="eyebrow">Skilties aprašymas</p>
+        <h2 id="sectionBannerTitle"></h2>
+        <p id="sectionBannerCopy"></p>
       </div>
 
-      <section class="status-hero">
-        <article class="dark-card hero-card hero-card-primary">
-          <p class="card-eyebrow">Aktyvus režimas</p>
-          <h2 id="roleCaption">Tėvų režimas</h2>
-          <p class="hero-copy" id="heroCopy">
-            Tėvai gali duoti pinigus, pildyti taupyklę, tvirtinti prašymus ir valdyti investavimo profilį.
-          </p>
-          <div class="hero-metrics">
-            <div class="metric-pill">
-              <span>Aktyvus tikslas</span>
-              <strong id="heroGoalName">🚲 Dviratis</strong>
-            </div>
-            <div class="metric-pill">
-              <span>Savaitės limitas</span>
-              <strong id="heroWeeklyLimit">28.00 EUR</strong>
-            </div>
-            <div class="metric-pill">
-              <span>Biblioteka</span>
-              <strong id="heroLibraryCount">140 klaus. / 140 patarimų</strong>
-            </div>
-          </div>
-        </article>
+      <main class="app-main">
+        <section class="tab-panel active" data-panel="home">
+          <div class="stats-grid" id="homeStats"></div>
 
-        <article class="dark-card hero-card advisor-card">
-          <div class="advisor-head">
-            <div class="assistant-avatar" aria-hidden="true">
-              <svg viewBox="0 0 120 120" role="img">
-                <defs>
-                  <linearGradient id="avatarBg" x1="0%" x2="100%" y1="0%" y2="100%">
-                    <stop offset="0%" stop-color="#8f99ff" />
-                    <stop offset="100%" stop-color="#4f46e5" />
-                  </linearGradient>
-                </defs>
-                <circle cx="60" cy="60" r="56" fill="url(#avatarBg)" />
-                <circle cx="60" cy="66" r="30" fill="#ffffff" />
-                <circle cx="48" cy="60" r="5" fill="#172033" />
-                <circle cx="72" cy="60" r="5" fill="#172033" />
-                <path
-                  d="M47 77c5 6 21 6 26 0"
-                  fill="none"
-                  stroke="#172033"
-                  stroke-linecap="round"
-                  stroke-width="4"
-                />
-                <path
-                  d="M36 44c7-10 17-16 24-16s17 6 24 16"
-                  fill="none"
-                  stroke="#ffffff"
-                  stroke-linecap="round"
-                  stroke-width="8"
-                />
-                <circle cx="92" cy="28" r="14" fill="#ffd166" />
-              </svg>
-            </div>
-            <div>
-              <p class="card-eyebrow">Taupytukas</p>
-              <h3>Skilties asistentas</h3>
-            </div>
-          </div>
-          <p class="card-copy" id="assistantMessage">
-            Tėvų režime verta pradėti nuo leidimų skilties, nes ten matosi visi vaiko prašymai.
-          </p>
-          <div class="assistant-tags" id="assistantTags"></div>
-          <div class="action-row">
-            <button class="button secondary compact-button" id="nextPrompt" type="button">
-              Kitas patarimas
-            </button>
-            <button class="button primary compact-button" id="enablePush" type="button">
-              Išjungti push
-            </button>
-          </div>
-        </article>
-      </section>
-
-      <main class="tab-container">
-        <section class="tab-panel active" data-tab-panel="overview">
-          <article class="promo-card">
-            <div class="promo-media"></div>
-            <div class="promo-copy">
-              <p class="card-eyebrow">Partnerio reklama</p>
-              <h2>AuginK savo santaupas</h2>
-              <p>
-                Reklamos vieta edukaciniam partneriui, kuris galėtų prisidėti prie programėlės
-                finansavimo.
-              </p>
-              <button class="link-button" type="button">Atidaryti</button>
-            </div>
-          </article>
-
-          <article class="dark-card beginner-card">
-            <div class="section-head">
-              <div>
-                <p class="card-eyebrow">Pradžiamokslis</p>
-                <h2>Trumpa pradžia vaikui</h2>
-              </div>
-              <span class="badge-pill" id="modeBadge">Tėvų režimas</span>
-            </div>
-            <p class="card-copy" id="beginnerCopy">
-              Pirmiausia verta suprasti, kiek pinigų yra piniginėje, kiek leidžiama išleisti ir kiek verta perkelti į taupyklę.
-            </p>
-            <div class="beginner-points">
-              <div class="info-pill">
-                <span>Aktyvus tikslas</span>
-                <strong id="activeGoalName">🚲 Dviratis</strong>
-              </div>
-              <div class="info-pill">
-                <span>Savaitės limitas</span>
-                <strong id="weeklyLimitPreview">28.00 EUR</strong>
-              </div>
-              <div class="info-pill">
-                <span>Biblioteka</span>
-                <strong id="libraryPreview">140 klaus. / 140 patarimų</strong>
-              </div>
-            </div>
-          </article>
-
-          <div class="asset-grid">
-            <article class="dark-card account-card">
-              <div class="section-head">
+          <div class="content-grid">
+            <article class="card">
+              <div class="card-header">
                 <div>
-                  <p class="card-eyebrow">Pinigų likutis</p>
-                  <h2 id="walletBalance">152.40 EUR</h2>
+                  <p class="eyebrow">Greiti veiksmai</p>
+                  <h3>Ką nori daryti dabar?</h3>
                 </div>
-                <span class="currency-pill">EUR</span>
               </div>
-              <p class="card-copy" id="walletSummary">
-                Vaiko kasdienė piniginė stebima kartu su limitais ir taupymo sprendimais.
-              </p>
-              <div class="quick-expense-list" id="expenseFeed"></div>
+              <div class="stack-list" id="quickActions"></div>
             </article>
 
-            <article class="dark-card asset-card">
-              <div class="section-head">
+            <article class="card">
+              <div class="card-header">
                 <div>
-                  <p class="card-eyebrow">Taupyklė</p>
-                  <h2 id="savingsBalance">0.00 EUR</h2>
-                </div>
-                <span class="currency-pill">EUR</span>
-              </div>
-              <p class="card-copy" id="savingsDelta">+0.00 per mėnesio ciklą</p>
-              <div class="asset-subgrid">
-                <div>
-                  <span>Aktyvus tikslas</span>
-                  <strong id="selectedGoalHeadline">🚲 Dviratis</strong>
-                </div>
-                <div>
-                  <span>Pažanga</span>
-                  <strong id="selectedGoalProgress">44%</strong>
+                  <p class="eyebrow">Svarbiausi atnaujinimai</p>
+                  <h3>Pranešimų peržiūra</h3>
                 </div>
               </div>
+              <div class="stack-list" id="homeFeedPreview"></div>
             </article>
-
-            <article class="dark-card asset-card">
-              <div class="section-head">
-                <div>
-                  <p class="card-eyebrow">Investavimas</p>
-                  <h2>Pradėk kelionę</h2>
-                </div>
-                <span class="currency-pill" id="investmentProfileBadge">Subalansuotas</span>
-              </div>
-              <p class="card-copy">
-                Investavimo kišenė aiškiai suskirstyta į kategorijas, kad vaikui būtų lengviau suprasti riziką.
-              </p>
-              <div class="asset-subgrid compact">
-                <div>
-                  <span>Skirta investavimui</span>
-                  <strong id="investPocketAmount">0.00 EUR</strong>
-                </div>
-                <div>
-                  <span>Kategorijos</span>
-                  <strong id="investCategoryCount">3 kryptys</strong>
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <div class="dashboard-grid">
-            <article class="dark-card stat-card">
-              <p class="card-eyebrow">Paskirstymas</p>
-              <div class="stat-list">
-                <div class="stat-row">
-                  <span>Išleidimui</span>
-                  <strong id="spendAmount">0.00 EUR</strong>
-                </div>
-                <div class="stat-row">
-                  <span>Taupymui</span>
-                  <strong id="saveAmount">0.00 EUR</strong>
-                </div>
-                <div class="stat-row">
-                  <span>Investavimui</span>
-                  <strong id="investAmount">0.00 EUR</strong>
-                </div>
-              </div>
-            </article>
-
-            <article class="dark-card stat-card">
-              <p class="card-eyebrow">Limitai</p>
-              <div class="stat-highlight">
-                <strong id="limitStatus">Viskas pagal planą</strong>
-                <span id="limitDetail">Vaikas dar nepriartėjo prie savaitės ribos.</span>
-              </div>
-              <div class="mini-grid">
-                <div>
-                  <span>Išleista</span>
-                  <strong id="spentAmount">0.00 EUR</strong>
-                </div>
-                <div>
-                  <span>Likęs limitas</span>
-                  <strong id="remainingLimitAmount">0.00 EUR</strong>
-                </div>
-              </div>
-            </article>
-
-            <article class="dark-card stat-card">
-              <p class="card-eyebrow">Aktyvus tikslas</p>
-              <h3 id="selectedGoalTitleHome">🚲 Dviratis</h3>
-              <div class="progress-track">
-                <div class="progress-fill" id="progressFill"></div>
-              </div>
-              <div class="mini-grid">
-                <div>
-                  <span>Sutaupyta</span>
-                  <strong id="savedAmount">0.00 EUR</strong>
-                </div>
-                <div>
-                  <span>Pažanga</span>
-                  <strong id="savedPercent">0%</strong>
-                </div>
-                <div>
-                  <span>Tėvų įnašas</span>
-                  <strong id="parentContribution">0.00 EUR</strong>
-                </div>
-              </div>
-              <p class="notification-banner pending" id="notificationBanner">
-                Tėvų prisidėjimas bus siūlomas, kai tikslas pasieks 50%.
-              </p>
-            </article>
-
-            <article class="dark-card stat-card">
-              <div class="section-head">
-                <div>
-                  <p class="card-eyebrow">Gyvas push</p>
-                  <h3 id="pushPreviewTitle">Push aktyvūs</h3>
-                </div>
-                <span class="badge-pill" id="pushPreviewBadge">Naujausia žinutė</span>
-              </div>
-              <p class="card-copy" id="pushPreviewText">
-                Čia bus rodoma paskutinė svarbi push žinutė apie taupyklę, leidimus ar pervedimus.
-              </p>
-              <p class="card-copy" id="pushPreviewTime">Ką tik</p>
-            </article>
-          </div>
-
-          <div class="action-button-row">
-            <button class="primary-action-button" data-tab-target="transfers" type="button">
-              Mokėti / duoti
-            </button>
-            <button class="primary-action-button secondary" data-tab-target="savings" type="button">
-              Taupyti
-            </button>
           </div>
         </section>
 
-        <section class="tab-panel" data-tab-panel="savings">
-          <article class="dark-card section-card">
-            <div class="section-head">
-              <div>
-                <p class="card-eyebrow">Taupyklė</p>
-                <h2>Vaiko taupymo veiksmai</h2>
+        <section class="tab-panel" data-panel="savings">
+          <div class="content-grid">
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Taupymas</p>
+                  <h3>Vaiko tikslai ir progresas</h3>
+                </div>
               </div>
-              <span class="badge-pill" id="savingsModeBadge">Leidimai aktyvūs</span>
-            </div>
-            <div class="goal-selector" id="goalSelector"></div>
-            <div class="asset-subgrid">
-              <div>
-                <span>Tikslui sukaupta</span>
-                <strong id="selectedGoalSavingsAmount">0.00 EUR</strong>
-              </div>
-              <div>
-                <span>Likę iki tikslo</span>
-                <strong id="selectedGoalRemainingAmount">0.00 EUR</strong>
-              </div>
-              <div data-parent-only>
-                <span>Politika</span>
-                <strong id="permissionPolicyLabel">Reikia patvirtinimo</strong>
-              </div>
-            </div>
+              <div class="stack-list" id="goalsList"></div>
+            </article>
 
-            <form class="request-form" id="childSavingsRequestForm">
-              <h3>Vaiko prašymas dėl taupyklės</h3>
-              <div class="form-grid">
-                <label>
-                  Veiksmas
-                  <select id="requestType">
-                    <option value="deposit">Įdėti į taupyklę</option>
-                    <option value="withdraw">Išimti iš taupyklės</option>
-                  </select>
-                </label>
-                <label>
-                  Suma
-                  <input id="requestAmount" type="number" min="1" step="1" placeholder="10" />
-                </label>
-                <label class="full-width">
-                  Paaiškinimas
-                  <input id="requestReason" type="text" maxlength="80" placeholder="Pvz. noriu atsidėti dar daugiau dviračiui" />
-                </label>
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Balansas</p>
+                  <h3>Taupymo santrauka</h3>
+                </div>
               </div>
-              <div class="action-row">
-                <button class="button primary" id="submitSavingsRequest" type="submit">
-                  Pateikti prašymą
-                </button>
-                <button class="button secondary" id="childQuickSave" type="button">
-                  Greitai pridėti 5 EUR
-                </button>
-              </div>
-            </form>
+              <div class="stack-list" id="savingsSummary"></div>
+            </article>
+          </div>
 
-            <div class="parent-direct-actions" data-parent-only>
-              <h3>Tėvų greiti veiksmai</h3>
-              <p class="card-copy">
-                Tėvams leidimų nereikia - jie gali tiesiogiai papildyti ar sumažinti taupyklę.
-              </p>
-              <div class="action-row">
-                <button class="button primary" id="parentAddToSavings" type="button">
-                  +10 EUR į taupyklę
-                </button>
-                <button class="button secondary" id="parentWithdrawFromSavings" type="button">
-                  -10 EUR iš taupyklės
-                </button>
+          <article class="card" data-parent-only>
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Leidimų politika</p>
+                <h3>Tėvų nustatoma kontrolė</h3>
               </div>
             </div>
+            <div class="stack-list" id="permissionPolicyList"></div>
           </article>
         </section>
 
-        <section class="tab-panel" data-tab-panel="permissions" data-parent-only>
-          <article class="dark-card section-card">
-            <div class="section-head">
-              <div>
-                <p class="card-eyebrow">Leidimai</p>
-                <h2>Tėvų sprendimų centras</h2>
+        <section class="tab-panel" data-panel="invest">
+          <div class="content-grid">
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Investavimo rinka</p>
+                  <h3>Akcijos ir kriptovaliutos</h3>
+                </div>
               </div>
-              <span class="badge-pill" id="permissionsCountBadge">0 laukia</span>
-            </div>
-            <div class="permission-policy-card">
-              <div>
-                <span>Ar taupyklės veiksmai reikalauja leidimo?</span>
-                <strong id="permissionsPolicyText">Taip, visada</strong>
+              <div class="asset-grid" id="investmentCatalog"></div>
+            </article>
+
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Veiksmas</p>
+                  <h3 id="investPanelTitle"></h3>
+                </div>
               </div>
-              <button class="button secondary" id="togglePermissionPolicy" type="button">
-                Keisti politiką
-              </button>
-            </div>
-            <div class="request-list" id="requestList"></div>
-          </article>
+              <div class="stack-list" id="investActionPanel"></div>
+            </article>
+          </div>
+
+          <div class="content-grid">
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Portfelis</p>
+                  <h3>Patvirtintos investicijos</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="portfolioList"></div>
+            </article>
+
+            <article class="card" data-parent-only>
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Tėvų funkcijos</p>
+                  <h3>Investavimo valdymas</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="parentInvestControls"></div>
+            </article>
+          </div>
         </section>
 
-        <section class="tab-panel" data-tab-panel="transfers" data-parent-only>
-          <article class="dark-card section-card">
-            <div class="section-head">
+        <section class="tab-panel" data-panel="learn">
+          <article class="card">
+            <div class="card-header">
               <div>
-                <p class="card-eyebrow">Tėvų veiksmai</p>
-                <h2>Duoti / pervesti pinigus</h2>
+                <p class="eyebrow">Mokymasis</p>
+                <h3>Trumpi paaiškinimai apie pinigus</h3>
               </div>
-              <span class="badge-pill success">Leidimų nereikia</span>
             </div>
-            <form class="transfer-form" id="parentTransferForm">
-              <div class="form-grid">
-                <label>
-                  Veiksmas
-                  <select id="parentTransferType">
-                    <option value="wallet">Pervesti į vaiko piniginę</option>
-                    <option value="savings">Įdėti į taupyklę</option>
-                    <option value="bonus">Skirti premiją / match</option>
-                  </select>
-                </label>
-                <label>
-                  Suma
-                  <input id="parentTransferAmount" type="number" min="1" step="1" placeholder="15" />
-                </label>
-                <label>
-                  Tikslas / paskirtis
-                  <select id="parentTransferGoal"></select>
-                </label>
-                <label class="full-width">
-                  Komentaras
-                  <input id="parentTransferNote" type="text" maxlength="80" placeholder="Pvz. savaitės kišenpinigiai" />
-                </label>
-              </div>
-              <div class="action-row">
-                <button class="button primary" type="submit">Įvykdyti pervedimą</button>
-                <button class="button secondary" id="addWeeklyAllowance" type="button">
-                  +20 EUR kišenpinigių
-                </button>
-              </div>
-            </form>
+            <div class="lesson-grid" id="lessonGrid"></div>
           </article>
-        </section>
 
-        <section class="tab-panel" data-tab-panel="learn">
-          <article class="dark-card section-card">
-            <div class="section-head">
+          <article class="card quiz-card">
+            <div class="card-header">
               <div>
-                <p class="card-eyebrow">Mokymasis</p>
-                <h2>140 unikalių patarimų</h2>
+                <p class="eyebrow">Mini viktorina</p>
+                <h3 id="quizQuestion"></h3>
               </div>
-              <span class="badge-pill" id="learningCounter">1 / 140</span>
             </div>
-            <p class="learning-tag" id="learningTag">Tema: Limitai</p>
-            <h3 id="learningTitle">Kodėl verta planuoti savaitės išlaidas?</h3>
-            <p class="learning-copy" id="learningText">
-              Kai vaikas mato savaitės ribą, jis lengviau supranta, kad pinigus verta planuoti per laiką.
-            </p>
-            <p class="learning-meta" id="learningMeta">
-              Trumpi tekstai skirti telefonui, kad mokymasis būtų greitas ir aiškus.
-            </p>
-            <div class="preview-list" id="learningPreviewList"></div>
-            <div class="action-row">
-              <button class="button secondary" id="nextLearningTip" type="button">Kitas patarimas</button>
-              <button class="button primary" id="randomLearningTip" type="button">Atsitiktinis patarimas</button>
-            </div>
-          </article>
-        </section>
-
-        <section class="tab-panel" data-tab-panel="quiz">
-          <article class="dark-card section-card">
-            <div class="section-head">
-              <div>
-                <p class="card-eyebrow">Viktorina</p>
-                <h2>140 klausimų apie pinigus</h2>
-              </div>
-              <span class="badge-pill" id="quizCounter">1 / 140</span>
-            </div>
-            <p class="quiz-helper" id="quizHelper">
-              Pagalvok apie planavimą, o ne tik apie draudimą ką nors nusipirkti.
-            </p>
-            <h3 id="quizQuestion">Ką reiškia savaitės išlaidų limitas?</h3>
-            <p class="quiz-role-note" id="quizRoleNote">Dabartinis režimas: tėvai.</p>
+            <p class="muted-copy" id="quizHelper"></p>
             <div class="quiz-options" id="quizOptions"></div>
-            <div class="quiz-feedback" id="quizFeedback"></div>
-            <div class="action-row">
-              <button class="button secondary" id="nextQuestion" type="button">Kitas klausimas</button>
-              <button class="button primary" id="randomQuestion" type="button">Atsitiktinis klausimas</button>
-            </div>
+            <p class="validation-text" id="quizFeedback"></p>
+            <button class="button secondary" id="nextQuestionButton" type="button">
+              Kitas klausimas
+            </button>
           </article>
         </section>
 
-        <section class="tab-panel" data-tab-panel="feed">
-          <article class="dark-card section-card">
-            <div class="section-head">
+        <section class="tab-panel" data-panel="feed">
+          <article class="card">
+            <div class="card-header">
               <div>
-                <p class="card-eyebrow">Push pranešimai</p>
-                <h2>Kas įdėta, išimta ir ko prašoma</h2>
+                <p class="eyebrow">Istorija</p>
+                <h3>Visi pranešimai ir veiksmai</h3>
               </div>
-              <span class="badge-pill" id="feedBadge">8 įvykiai</span>
             </div>
-            <div class="notifications-feed" id="notificationsFeed"></div>
+            <div class="stack-list" id="feedList"></div>
           </article>
         </section>
 
-        <section class="tab-panel" data-tab-panel="controls" data-parent-only>
-          <article class="dark-card section-card">
-            <div class="section-head">
-              <div>
-                <p class="card-eyebrow">Limitai ir taisyklės</p>
-                <h2>Kas valdoma iš tėvų pusės</h2>
+        <section class="tab-panel" data-panel="transfers" data-parent-only>
+          <div class="content-grid">
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Duoti pinigų</p>
+                  <h3>Greitas papildymas vaikui</h3>
+                </div>
               </div>
-              <span class="badge-pill success" id="pushStatus">Push aktyvūs</span>
-            </div>
-            <div class="form-grid controls-grid">
-              <label>
-                Mėnesio kišenpinigiai
-                <input id="allowance" data-parent-control type="range" min="20" max="300" step="5" value="70" />
-                <strong id="allowanceValue">70.00 EUR</strong>
-              </label>
-              <label>
-                Savaitės limitas
-                <input id="weeklyLimit" data-parent-control type="range" min="5" max="90" step="1" value="28" />
-                <strong id="weeklyLimitValue">28.00 EUR</strong>
-              </label>
-              <label>
-                Jau išleista
-                <input id="spentThisWeek" data-parent-control type="range" min="0" max="120" step="1" value="18" />
-                <strong id="spentThisWeekValue">18.00 EUR</strong>
-              </label>
-              <label>
-                Taupymui
-                <input id="savePercent" data-parent-control type="range" min="10" max="70" step="5" value="32" />
-                <strong id="savePercentValue">32%</strong>
-              </label>
-              <label>
-                Investavimui
-                <input id="investPercent" data-parent-control type="range" min="0" max="40" step="5" value="18" />
-                <strong id="investPercentValue">18%</strong>
-              </label>
-              <label>
-                Match po 50%
-                <input id="matchPercent" data-parent-control type="range" min="0" max="100" step="10" value="50" />
-                <strong id="matchPercentValue">50%</strong>
-              </label>
-            </div>
-            <div class="section-head">
-              <div>
-                <p class="card-eyebrow">Investavimo profilis</p>
-                <h3 id="investmentProfileTitle">Subalansuotas profilis</h3>
-              </div>
-              <span class="badge-pill" id="investmentProfileStatus">3 kryptys</span>
-            </div>
-            <div class="profile-switch">
-              <button class="profile-button" data-profile="safe" data-parent-control type="button">Saugus</button>
-              <button class="profile-button active" data-profile="balanced" data-parent-control type="button">
-                Subalansuotas
-              </button>
-              <button class="profile-button" data-profile="growth" data-parent-control type="button">Augimo</button>
-            </div>
-            <div class="investment-grid" id="investmentGrid"></div>
-            <div class="request-list">
-              <article class="dark-card stat-card">
-                <p class="card-eyebrow">Automatinės taisyklės</p>
-                <ul class="notification-list" id="notificationList"></ul>
-                <ul class="notification-list" id="rulesList"></ul>
-              </article>
-            </div>
-          </article>
-        </section>
+              <div class="stack-list" id="transferActions"></div>
+            </article>
 
-        <section class="tab-panel" data-tab-panel="goals-admin" data-parent-only>
-          <article class="dark-card section-card">
-            <div class="section-head">
-              <div>
-                <p class="card-eyebrow">Tikslų valdymas</p>
-                <h2>Vaiko ir tėvų tikslai</h2>
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Prašymų eilė</p>
+                  <h3>Laukia tėvų sprendimo</h3>
+                </div>
               </div>
-              <span class="badge-pill" id="goalModePill">Valdymas aktyvus</span>
-            </div>
-            <p class="card-copy" id="goalsRoleDescription">
-              Vaiko režime galima kurti naujus tikslus. Tėvų režime galima juos redaguoti, ištrinti arba pridėti savo.
-            </p>
-            <h3 id="goalCountLabel">3 tikslai</h3>
-            <div class="goal-list" id="goalList"></div>
-            <div class="section-head">
-              <div>
-                <p class="card-eyebrow">Pasirinktas tikslas</p>
-                <h3 id="goalDetailTitle">🚲 Dviratis</h3>
-              </div>
-              <span class="badge-pill" id="goalCreatorPill">Sukūrė vaikas</span>
-            </div>
-            <p class="goal-detail-copy" id="goalDetailCopy">
-              Tikslas pasirinktas peržiūrai. Tėvai gali jį koreguoti, o vaikas gali stebėti pažangą.
-            </p>
-            <div class="progress-track large-progress">
-              <div class="progress-fill" id="goalDetailProgress"></div>
-            </div>
-            <div class="goal-stats">
-              <div>
-                <span>Tikslas</span>
-                <strong id="goalTargetAmount">180.00 EUR</strong>
-              </div>
-              <div>
-                <span>Sutaupyta</span>
-                <strong id="goalSavedAmount">79.20 EUR</strong>
-              </div>
-              <div>
-                <span>Likę</span>
-                <strong id="goalRemainingAmount">100.80 EUR</strong>
-              </div>
-              <div>
-                <span>Pažanga</span>
-                <strong id="goalProgressPercent">44%</strong>
-              </div>
-            </div>
-
-            <form class="goal-form" id="parentGoalForm">
-              <h4>Tėvų tikslų redagavimas</h4>
-              <div class="form-grid">
-                <label>
-                  Pavadinimas
-                  <input id="parentGoalTitle" type="text" maxlength="40" />
-                </label>
-                <label>
-                  Emoji
-                  <input id="parentGoalEmoji" type="text" maxlength="2" />
-                </label>
-                <label>
-                  Tikslinė suma
-                  <input id="parentGoalTarget" type="number" min="10" step="5" />
-                </label>
-                <label>
-                  Jau sukaupta
-                  <input id="parentGoalSaved" type="number" min="0" step="5" />
-                </label>
-              </div>
-              <div class="action-row">
-                <button class="button primary" type="submit">Išsaugoti</button>
-                <button class="button secondary" id="addParentGoalButton" type="button">Pridėti naują</button>
-                <button class="button danger" id="deleteGoalButton" type="button">Ištrinti</button>
-              </div>
-            </form>
-
-            <form class="goal-form" id="childGoalForm" hidden>
-              <h4>Vaiko naujas tikslas</h4>
-              <div class="form-grid">
-                <label>
-                  Pavadinimas
-                  <input id="childGoalTitle" type="text" maxlength="40" placeholder="Pvz. Nauji riedučiai" />
-                </label>
-                <label>
-                  Emoji
-                  <input id="childGoalEmoji" type="text" maxlength="2" placeholder="🛼" />
-                </label>
-                <label class="full-width">
-                  Kiek nori sutaupyti?
-                  <input id="childGoalTarget" type="number" min="10" step="5" placeholder="120" />
-                </label>
-              </div>
-              <div class="action-row">
-                <button class="button primary" type="submit">Sukurti tikslą</button>
-              </div>
-            </form>
-          </article>
+              <div class="stack-list" id="transferQueue"></div>
+            </article>
+          </div>
         </section>
       </main>
 
-      <aside class="section-guide" id="sectionGuide" hidden>
-        <div>
-          <p class="card-eyebrow">Skilties intro</p>
-          <h3 id="sectionGuideTitle">Apžvalga</h3>
-          <p class="section-guide-copy" id="sectionGuideText">
-            Čia matai bendrą vaiko pinigų santrauką, reklamos vietą ir pradžiamokslio bloką.
-          </p>
-        </div>
-        <button class="button secondary compact-button" id="closeSectionGuide" type="button">
-          Supratau
+      <nav class="bottom-nav" id="bottomNav">
+        <button class="nav-item active" type="button" data-tab="home">
+          <span class="nav-icon">H</span>
+          <span>Pagr.</span>
         </button>
-      </aside>
-
-      <nav class="bottom-nav" aria-label="Programėlės skiltys">
-        <button class="bottom-nav-button active" data-tab-target="overview" type="button">
-          <span class="bottom-nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img">
-              <path
-                d="M4 10.5 12 4l8 6.5M6.5 9.5V20h11V9.5"
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.8"
-              />
-            </svg>
-          </span>
-          <span class="bottom-nav-label">Pradžia</span>
+        <button class="nav-item" type="button" data-tab="savings">
+          <span class="nav-icon">T</span>
+          <span>Taupyti</span>
         </button>
-        <button class="bottom-nav-button" data-tab-target="savings" type="button">
-          <span class="bottom-nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img">
-              <path
-                d="M6 14.5c0-3.6 3.1-6.5 7-6.5 1.5 0 2.9.4 4 1.1h2.5l-1.2 2.1c.4.7.7 1.5.7 2.3 0 3.4-2.8 6.1-6.3 6.1H9.8l-1.8 1.4-.2-1.8C6.7 18.6 6 16.7 6 14.5Z"
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.8"
-              />
-              <circle cx="14.3" cy="12.7" r="0.9" fill="currentColor" />
-            </svg>
-          </span>
-          <span class="bottom-nav-label">Taupyklė</span>
+        <button class="nav-item" type="button" data-tab="invest">
+          <span class="nav-icon">I</span>
+          <span>Invest.</span>
         </button>
-        <button class="bottom-nav-button" data-tab-target="permissions" data-parent-only type="button">
-          <span class="bottom-nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img">
-              <path
-                d="M5 12.5 9.2 17 19 7.5"
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-              />
-            </svg>
-          </span>
-          <span class="bottom-nav-label">Leidimai</span>
+        <button class="nav-item" type="button" data-tab="learn">
+          <span class="nav-icon">M</span>
+          <span>Mokytis</span>
         </button>
-        <button class="bottom-nav-button" data-tab-target="transfers" data-parent-only type="button">
-          <span class="bottom-nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img">
-              <path
-                d="M4 12h13m0 0-3.5-3.5M17 12l-3.5 3.5"
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.9"
-              />
-              <rect
-                x="3"
-                y="5"
-                width="18"
-                height="14"
-                rx="3"
-                ry="3"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.6"
-              />
-            </svg>
-          </span>
-          <span class="bottom-nav-label">Duoti</span>
+        <button class="nav-item" type="button" data-tab="feed">
+          <span class="nav-icon">N</span>
+          <span>Naujienos</span>
         </button>
-        <button class="bottom-nav-button" data-tab-target="learn" type="button">
-          <span class="bottom-nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img">
-              <path
-                d="M6 5.5h9.5A2.5 2.5 0 0 1 18 8v10.5H8a2 2 0 0 0-2 2V5.5Zm0 0v15a2 2 0 0 1 2-2"
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.7"
-              />
-            </svg>
-          </span>
-          <span class="bottom-nav-label">Mokytis</span>
-        </button>
-        <button class="bottom-nav-button" data-tab-target="quiz" type="button">
-          <span class="bottom-nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img">
-              <path
-                d="M9.5 9a2.5 2.5 0 1 1 4 2l-1.2 1a2 2 0 0 0-.8 1.6V14m0 4h.01"
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.9"
-              />
-            </svg>
-          </span>
-          <span class="bottom-nav-label">Klausimai</span>
-        </button>
-        <button class="bottom-nav-button" data-tab-target="feed" type="button">
-          <span class="bottom-nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="img">
-              <path
-                d="M12 5a4 4 0 0 1 4 4v2.4c0 .9.3 1.8.9 2.5l1.1 1.3H6l1.1-1.3c.6-.7.9-1.6.9-2.5V9a4 4 0 0 1 4-4Zm-1.8 13a1.8 1.8 0 0 0 3.6 0"
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.8"
-              />
-            </svg>
-          </span>
-          <span class="bottom-nav-label">Push</span>
+        <button class="nav-item" type="button" data-tab="transfers" data-parent-only>
+          <span class="nav-icon">D</span>
+          <span>Duoti</span>
         </button>
       </nav>
-
-      <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
     </div>
+
+    <div class="modal-overlay hidden" id="confirmModal" aria-hidden="true">
+      <div class="modal-card card">
+        <div class="card-header">
+          <div>
+            <p class="eyebrow">Patvirtinti veiksmą</p>
+            <h3 id="confirmTitle"></h3>
+          </div>
+        </div>
+        <p class="muted-copy" id="confirmCopy"></p>
+        <div class="pin-slots compact" id="confirmPinSlots"></div>
+        <p class="validation-text" id="confirmMessage"></p>
+
+        <div class="action-row">
+          <button class="button primary" id="confirmSubmitButton" type="button">
+            Patvirtinti
+          </button>
+          <button class="button secondary" id="confirmCancelButton" type="button">
+            Atšaukti
+          </button>
+        </div>
+
+        <div class="keypad compact" id="confirmKeypad"></div>
+      </div>
+    </div>
+
+    <div class="toast-stack" id="toastStack"></div>
 
     <script src="script.js"></script>
   </body>
