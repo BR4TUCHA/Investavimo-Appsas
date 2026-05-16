@@ -391,10 +391,8 @@
         <div class="share-layout">
           <div class="qr-preview" id="shareQrCode"></div>
           <div class="stack-list">
-            <div class="account-card">
-              <h4>Tekstas pervedimui</h4>
-              <span class="account-number" id="shareRequestText"></span>
-            </div>
+            <div class="bank-request-card" id="shareRequestBankCard"></div>
+            <div class="account-card" id="shareRequestMeta"></div>
             <div class="copy-row">
               <button class="button primary compact-button" id="shareRequestSystemButton" type="button">
                 Dalintis
@@ -413,7 +411,12 @@
 
     <div class="toast-stack" id="toastStack"></div>
 
-    <script src="vendor/qrcode.min.js"></script>
+    <script src="qrcode.min.js"></script>
+    <script>
+      if (!window.QRCode) {
+        document.write('<script src="node_modules/qrcodejs/qrcode.min.js"><\\/script>');
+      }
+    </script>
     <script src="script.js"></script>
   </body>
 </html>
