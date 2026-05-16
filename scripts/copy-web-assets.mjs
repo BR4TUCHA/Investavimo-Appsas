@@ -7,7 +7,7 @@ const filesToCopy = ["index.html", "styles.css", "script.js"];
 const extraCopies = [
   {
     from: resolve(rootDir, "node_modules/qrcodejs/qrcode.min.js"),
-    to: resolve(distDir, "vendor/qrcode.min.js"),
+    to: resolve(distDir, "qrcode.min.js"),
   },
 ];
 

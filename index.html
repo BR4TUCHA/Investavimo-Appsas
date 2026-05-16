@@ -413,7 +413,12 @@
 
     <div class="toast-stack" id="toastStack"></div>
 
-    <script src="vendor/qrcode.min.js"></script>
+    <script src="qrcode.min.js"></script>
+    <script>
+      if (!window.QRCode) {
+        document.write('<script src="node_modules/qrcodejs/qrcode.min.js"><\\/script>');
+      }
+    </script>
     <script src="script.js"></script>
   </body>
 </html>
