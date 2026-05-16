@@ -146,6 +146,46 @@ const QUIZ_QUESTIONS = [
   },
 ];
 
+const PARTNER_SPOTLIGHTS = [
+  {
+    title: "Partnerio vieta: Junior Bank",
+    copy: "Vaikiška bankininkystė, tėvų kontrolė ir saugios pirmos finansų pamokos vienoje vietoje.",
+    badge: "Partneriai",
+  },
+  {
+    title: "Rėmėjo vieta: EduCrypto Lab",
+    copy: "Trumpi paaiškinimai apie kripto riziką ir saugų investavimo pradžios supratimą.",
+    badge: "Edukacija",
+  },
+];
+
+const ACTION_LIMITS = {
+  childInvestRequest: {
+    cooldownMs: 45 * 1000,
+    windowMs: 10 * 60 * 1000,
+    maxInWindow: 4,
+    label: "investavimo prašymai",
+  },
+  parentTransferWallet: {
+    cooldownMs: 20 * 1000,
+    windowMs: 10 * 60 * 1000,
+    maxInWindow: 8,
+    label: "pinigų papildymai",
+  },
+  parentTopupInvestPocket: {
+    cooldownMs: 20 * 1000,
+    windowMs: 10 * 60 * 1000,
+    maxInWindow: 8,
+    label: "investavimo kišenės papildymai",
+  },
+  paymentRequest: {
+    cooldownMs: 40 * 1000,
+    windowMs: 10 * 60 * 1000,
+    maxInWindow: 4,
+    label: "pavedimo užklausos",
+  },
+};
+
 const elements = {
   authScreen: document.querySelector("#authScreen"),
   authRoleSwitch: document.querySelector("#authRoleSwitch"),
@@ -153,6 +193,11 @@ const elements = {
   authRoleBadge: document.querySelector("#authRoleBadge"),
   authTitle: document.querySelector("#authTitle"),
   authCopy: document.querySelector("#authCopy"),
+  authBrandEyebrow: document.querySelector("#authBrandEyebrow"),
+  authBrandTitle: document.querySelector("#authBrandTitle"),
+  authBrandCopy: document.querySelector("#authBrandCopy"),
+  authEmojiRow: document.querySelector("#authEmojiRow"),
+  authFeatureList: document.querySelector("#authFeatureList"),
   authPinSlots: document.querySelector("#authPinSlots"),
   authMessage: document.querySelector("#authMessage"),
   authSubmitButton: document.querySelector("#authSubmitButton"),
@@ -166,7 +211,12 @@ const elements = {
   sectionBannerCopy: document.querySelector("#sectionBannerCopy"),
   bottomNav: document.querySelector("#bottomNav"),
   homeStats: document.querySelector("#homeStats"),
+  homeMoodTitle: document.querySelector("#homeMoodTitle"),
+  homeMoodSpot: document.querySelector("#homeMoodSpot"),
+  partnerSpot: document.querySelector("#partnerSpot"),
+  accountHub: document.querySelector("#accountHub"),
   quickActions: document.querySelector("#quickActions"),
+  kidMissionSpot: document.querySelector("#kidMissionSpot"),
   homeFeedPreview: document.querySelector("#homeFeedPreview"),
   goalsList: document.querySelector("#goalsList"),
   savingsSummary: document.querySelector("#savingsSummary"),
@@ -213,6 +263,8 @@ function buildDefaultAppData() {
       parentReserve: 260,
       weeklyLimit: 25,
       spentThisWeek: 12,
+      walletAccountNumber: "KF-2710-0001-4455",
+      savingsAccountNumber: "KF-2710-9999-1200",
     },
     goals: [
       {
@@ -256,6 +308,7 @@ function buildDefaultAppData() {
         createdAt: nowIso(),
       },
     ],
+    actionAudit: [],
     feed: [
       {
         id: "feed-1",
@@ -306,6 +359,7 @@ function normalizeAppData(raw) {
     },
     portfolio: Array.isArray(raw.portfolio) ? raw.portfolio : fallback.portfolio,
     requests: Array.isArray(raw.requests) ? raw.requests : fallback.requests,
+    actionAudit: Array.isArray(raw.actionAudit) ? raw.actionAudit : fallback.actionAudit,
     feed: Array.isArray(raw.feed) && raw.feed.length ? raw.feed : fallback.feed,
   };
 }
@@ -339,7 +393,10 @@ const state = {
   },
   selectedInvestmentId: INVESTMENTS[0].id,
   selectedInvestmentAmount: 10,
+  paymentRequestAccount: "wallet",
+  paymentRequestAmount: 15,
   quizIndex: 0,
+  quizOptionOrder: [],
   quizFeedback: "",
   quizFeedbackTone: "",
   selectedQuizAnswer: null,
@@ -384,8 +441,169 @@ function sanitizeAmount(value) {
   return Math.max(1, Math.round(number));
 }
 
+function shuffleArray(items) {
+  const copy = [...items];
+  for (let index = copy.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [copy[index], copy[randomIndex]] = [copy[randomIndex], copy[index]];
+  }
+  return copy;
+}
+
+function resetQuizQuestion(index = state.quizIndex) {
+  state.quizIndex = index;
+  state.quizOptionOrder = shuffleArray(
+    QUIZ_QUESTIONS[index].options.map((_, optionIndex) => optionIndex),
+  );
+  state.selectedQuizAnswer = null;
+  state.quizFeedback = "";
+  state.quizFeedbackTone = "";
+}
+
 function getRoleLabel(role) {
   return role === "parent" ? "Tėvai" : "Vaikas";
+}
+
+function getAuthBrandContent() {
+  if (state.authRole === "child") {
+    return {
+      eyebrow: state.authMode === "register" ? "🎮 Vaiko startas" : "🎉 Sveikas sugrįžęs",
+      title:
+        state.authMode === "register"
+          ? "Susikurk trumpą PIN ir pirmyn į KidFund"
+          : "Įrašyk 4 skaičius ir pirmyn į savo misijas",
+      copy:
+        state.authMode === "register"
+          ? "Trumpai ir aiškiai: susikurk 4 skaičių kodą, kad galėtum taupyti, siųsti prašymus ir rinkti savo progresą."
+          : "Jokių ilgų tekstų - tik tavo PIN, emoji ir kelios aiškios užduotys.",
+      emojis: ["🎯 Taupau", "🪙 Kaupiu", "🚀 Augu"],
+      features: [
+        {
+          icon: "🐷",
+          title: "Trumpas tekstas",
+          copy: "Vaikui rodoma mažiau sudėtingos informacijos ir daugiau aiškių žingsnių.",
+        },
+        {
+          icon: "✨",
+          title: "Emoji ir misijos",
+          copy: "Prisijungus lauks mažos misijos, tikslai ir paprastesni paaiškinimai.",
+        },
+        {
+          icon: "🔒",
+          title: "Saugus PIN",
+          copy: "Jautrūs veiksmai turi atskirą patvirtinimo langą, todėl viskas išlieka saugu.",
+        },
+      ],
+    };
+  }
+
+  return {
+    eyebrow: "🛡️ Tėvų prieiga",
+    title:
+      state.authMode === "register"
+        ? "Sukurkite saugų tėvų PIN valdymui"
+        : "Prisijunkite prie KidFund valdymo centro",
+    copy:
+      state.authMode === "register"
+        ? "Tėvų paskyra skirta leidimams, papildymams, investavimo patvirtinimams ir pranešimų kontrolei."
+        : "Profesionalesnis valdymas, aiški kontrolė ir atskiras PIN kiekvienam jautriam veiksmui.",
+    emojis: ["👨‍👩‍👧 Šeima", "📊 Kontrolė", "🔔 Pranešimai"],
+    features: [
+      {
+        icon: "01",
+        title: "Atskira autorizacija",
+        copy: "Tėvų veiksmai atskirti nuo vaiko prisijungimo ir turi savo validaciją.",
+      },
+      {
+        icon: "02",
+        title: "Patvirtinimų centras",
+        copy: "Investavimo, papildymų ir kitų jautrių veiksmų patvirtinimai atliekami per atskirą PIN modalą.",
+      },
+      {
+        icon: "03",
+        title: "KidFund partneriai ir paskyros",
+        copy: "Papildytas pagrindinis ekranas su partnerių vieta, sąskaitų numeriais ir pavedimo užklausa.",
+      },
+    ],
+  };
+}
+
+function getAccountConfig(accountType) {
+  if (accountType === "savings") {
+    return {
+      type: "savings",
+      title: "Taupyklės sąskaita",
+      badge: "Taupyklė",
+      accountNumber: appData.accounts.savingsAccountNumber,
+      description: "Šis numeris skirtas kaupti tiesiai į taupyklę ir ilgalaikiams tikslams.",
+    };
+  }
+
+  return {
+    type: "wallet",
+    title: "Pagrindinė mokėjimų sąskaita",
+    badge: "Pagrindinė",
+    accountNumber: appData.accounts.walletAccountNumber,
+    description: "Šis numeris skirtas pagrindiniams papildymams į vaiko piniginę.",
+  };
+}
+
+function formatRelativeSeconds(milliseconds) {
+  const seconds = Math.max(1, Math.ceil(milliseconds / 1000));
+  return `${seconds} s`;
+}
+
+function pruneActionAudit() {
+  const maxWindow = Math.max(...Object.values(ACTION_LIMITS).map((limit) => limit.windowMs));
+  const threshold = Date.now() - maxWindow;
+  appData.actionAudit = appData.actionAudit.filter((entry) => entry.at >= threshold);
+}
+
+function getRateLimitMessage(actionKey) {
+  const limit = ACTION_LIMITS[actionKey];
+  if (!limit) {
+    return "";
+  }
+
+  pruneActionAudit();
+  const now = Date.now();
+  const matchingEntries = appData.actionAudit
+    .filter((entry) => entry.key === actionKey)
+    .sort((left, right) => right.at - left.at);
+
+  const recentEntry = matchingEntries[0];
+  if (recentEntry && now - recentEntry.at < limit.cooldownMs) {
+    return `Anti-spam: palauk ${formatRelativeSeconds(limit.cooldownMs - (now - recentEntry.at))} prieš kitą veiksmą.`;
+  }
+
+  const inWindow = matchingEntries.filter((entry) => now - entry.at <= limit.windowMs).length;
+  if (inWindow >= limit.maxInWindow) {
+    return `Anti-spam: pasiektas ${limit.label} limitas. Pabandyk vėliau.`;
+  }
+
+  return "";
+}
+
+function recordAction(actionKey) {
+  pruneActionAudit();
+  appData.actionAudit.unshift({
+    key: actionKey,
+    at: Date.now(),
+  });
+  appData.actionAudit = appData.actionAudit.slice(0, 100);
+  saveAppData();
+}
+
+async function copyTextValue(value) {
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(value);
+      return true;
+    }
+  } catch (error) {
+    return false;
+  }
+  return false;
 }
 
 function getPinKey(role) {
@@ -420,7 +638,71 @@ function createToast(message, tone = "success") {
   }, 3200);
 }
 
-function appendFeed(message, tone = "success") {
+async function ensureNotificationPermission() {
+  const localNotifications = window.Capacitor?.Plugins?.LocalNotifications;
+  if (localNotifications?.checkPermissions && localNotifications?.requestPermissions) {
+    try {
+      let permissions = await localNotifications.checkPermissions();
+      if (permissions.display !== "granted") {
+        permissions = await localNotifications.requestPermissions();
+      }
+      return permissions.display === "granted";
+    } catch (error) {
+      return false;
+    }
+  }
+
+  if ("Notification" in window) {
+    if (Notification.permission === "granted") {
+      return true;
+    }
+    if (Notification.permission !== "denied") {
+      const permission = await Notification.requestPermission();
+      return permission === "granted";
+    }
+  }
+
+  return false;
+}
+
+async function sendDeviceNotification(message, tone = "success") {
+  const title = tone === "warning" ? "KidFund perspėjimas" : "KidFund pranešimas";
+  const localNotifications = window.Capacitor?.Plugins?.LocalNotifications;
+
+  if (localNotifications?.schedule) {
+    const granted = await ensureNotificationPermission();
+    if (!granted) {
+      return;
+    }
+
+    try {
+      await localNotifications.schedule({
+        notifications: [
+          {
+            id: Date.now() % 2147483000,
+            title,
+            body: message,
+            schedule: {
+              at: new Date(Date.now() + 250),
+            },
+          },
+        ],
+      });
+      return;
+    } catch (error) {
+      // Fall through to browser notifications if available.
+    }
+  }
+
+  if ("Notification" in window) {
+    const granted = await ensureNotificationPermission();
+    if (granted) {
+      new Notification(title, { body: message });
+    }
+  }
+}
+
+function appendFeed(message, tone = "success", options = {}) {
   appData.feed.unshift({
     id: uid("feed"),
     tone,
@@ -429,6 +711,10 @@ function appendFeed(message, tone = "success") {
   });
   appData.feed = appData.feed.slice(0, 40);
   saveAppData();
+
+  if (!options.skipDeviceNotification) {
+    void sendDeviceNotification(message, tone);
+  }
 }
 
 function renderPinSlots(container, buffer) {
@@ -469,10 +755,15 @@ function setConfirmMessage(message, tone = "") {
 
 function renderAuth() {
   const hasPin = Boolean(getPinForRole(state.authRole));
+  const brand = getAuthBrandContent();
   const authText =
-    state.authMode === "login"
-      ? `Prisijunk kaip ${getRoleLabel(state.authRole).toLowerCase()} ir iškart pateksi į pagrindinį ekraną.`
-      : `Sukurk 4 skaitmenų PIN ${getRoleLabel(state.authRole).toLowerCase()} paskyrai.`;
+    state.authRole === "child"
+      ? state.authMode === "login"
+        ? "Įvesk PIN ir iškart pateksi į savo taupymo bei investavimo nuotykius."
+        : "Susikurk 4 skaičių PIN, kad galėtum prisijungti prie KidFund."
+      : state.authMode === "login"
+        ? "Prisijunkite su PIN ir iškart pateksite į tėvų valdymo ekraną."
+        : "Sukurkite 4 skaitmenų PIN tėvų paskyrai ir patvirtinimų valdymui.";
 
   elements.authScreen.classList.toggle("hidden", Boolean(state.mode));
   elements.appShell.classList.toggle("hidden", !state.mode);
@@ -486,6 +777,25 @@ function renderAuth() {
   });
 
   elements.authRoleBadge.textContent = `${getRoleLabel(state.authRole)} paskyra`;
+  elements.authBrandEyebrow.textContent = brand.eyebrow;
+  elements.authBrandTitle.textContent = brand.title;
+  elements.authBrandCopy.textContent = brand.copy;
+  elements.authEmojiRow.innerHTML = brand.emojis
+    .map((emoji) => `<span class="emoji-chip">${emoji}</span>`)
+    .join("");
+  elements.authFeatureList.innerHTML = brand.features
+    .map(
+      (item) => `
+        <div class="feature-item">
+          <span class="feature-icon">${item.icon}</span>
+          <div>
+            <strong>${item.title}</strong>
+            <p>${item.copy}</p>
+          </div>
+        </div>
+      `,
+    )
+    .join("");
   elements.authTitle.textContent =
     state.authMode === "login"
       ? `Prisijungti kaip ${getRoleLabel(state.authRole).toLowerCase()}`
@@ -494,7 +804,13 @@ function renderAuth() {
     ? authText
     : `Šiai rolei PIN dar nesukurtas. Rinkis „Registruotis“ ir išsaugok 4 skaitmenų kodą.`;
   elements.authSubmitButton.textContent =
-    state.authMode === "login" ? "Prisijungti" : "Registruoti paskyrą";
+    state.authRole === "child"
+      ? state.authMode === "login"
+        ? "Pirmyn"
+        : "Susikurti PIN"
+      : state.authMode === "login"
+        ? "Prisijungti"
+        : "Registruoti paskyrą";
   elements.authSubmitButton.disabled = state.authPinBuffer.length !== 4;
   renderPinSlots(elements.authPinSlots, state.authPinBuffer);
   elements.authMessage.textContent = state.authMessage;
@@ -507,6 +823,7 @@ function completeAuth(role, message) {
   state.authPinBuffer = "";
   setAuthMessage("", "");
   ensureChildSafeTab();
+  void ensureNotificationPermission();
   renderAll();
   createToast(message, "success");
 }
@@ -640,6 +957,13 @@ function executeConfirmAction() {
   }
 
   if (action.type === "child-invest-request") {
+    const rateLimitMessage = getRateLimitMessage("childInvestRequest");
+    if (rateLimitMessage) {
+      setConfirmMessage(rateLimitMessage, "error");
+      renderConfirmModal();
+      return;
+    }
+
     const asset = getSelectedInvestment();
     const amount = sanitizeAmount(action.amount);
 
@@ -673,11 +997,45 @@ function executeConfirmAction() {
       createdBy: "child",
       createdAt: nowIso(),
     });
+    recordAction("childInvestRequest");
     appendFeed(`Vaikas pateikė investavimo prašymą į ${asset.name} už ${formatCurrency(amount)}.`, "warning");
     saveAppData();
     closeConfirm();
     renderAll();
     createToast("Investavimo prašymas išsiųstas tėvams.", "success");
+    return;
+  }
+
+  if (action.type === "payment-request") {
+    const rateLimitMessage = getRateLimitMessage("paymentRequest");
+    if (rateLimitMessage) {
+      setConfirmMessage(rateLimitMessage, "error");
+      renderConfirmModal();
+      return;
+    }
+
+    const account = getAccountConfig(action.accountType);
+    const amount = sanitizeAmount(action.amount);
+    const shareText = `KidFund pavedimo užklausa: pervesk ${formatCurrency(amount)} į ${account.title} (${account.accountNumber}).`;
+
+    appData.requests.unshift({
+      id: uid("request"),
+      type: "payment-request",
+      accountType: account.type,
+      accountNumber: account.accountNumber,
+      amount,
+      status: "open",
+      createdBy: state.mode || "child",
+      shareText,
+      createdAt: nowIso(),
+    });
+    recordAction("paymentRequest");
+    appendFeed(`${getRoleLabel(state.mode)} sukūrė pavedimo užklausą į ${account.title} už ${formatCurrency(amount)}.`, "warning");
+    saveAppData();
+    void copyTextValue(shareText);
+    closeConfirm();
+    renderAll();
+    createToast("Pavedimo užklausa sukurta ir paruošta kopijavimui.", "success");
     return;
   }
 
@@ -737,6 +1095,13 @@ function executeConfirmAction() {
   }
 
   if (action.type === "parent-transfer-wallet") {
+    const rateLimitMessage = getRateLimitMessage("parentTransferWallet");
+    if (rateLimitMessage) {
+      setConfirmMessage(rateLimitMessage, "error");
+      renderConfirmModal();
+      return;
+    }
+
     const amount = sanitizeAmount(action.amount);
     if (appData.accounts.parentReserve < amount) {
       setConfirmMessage("Tėvų rezervas per mažas šiam papildymui.", "error");
@@ -746,6 +1111,7 @@ function executeConfirmAction() {
 
     appData.accounts.parentReserve -= amount;
     appData.accounts.wallet += amount;
+    recordAction("parentTransferWallet");
     appendFeed(`Tėvai davė vaikui ${formatCurrency(amount)} į piniginę.`, "success");
     saveAppData();
     closeConfirm();
@@ -755,6 +1121,13 @@ function executeConfirmAction() {
   }
 
   if (action.type === "parent-topup-invest-pocket") {
+    const rateLimitMessage = getRateLimitMessage("parentTopupInvestPocket");
+    if (rateLimitMessage) {
+      setConfirmMessage(rateLimitMessage, "error");
+      renderConfirmModal();
+      return;
+    }
+
     const amount = sanitizeAmount(action.amount);
     if (appData.accounts.parentReserve < amount) {
       setConfirmMessage("Tėvų rezervas per mažas investavimo kišenei papildyti.", "error");
@@ -764,6 +1137,7 @@ function executeConfirmAction() {
 
     appData.accounts.parentReserve -= amount;
     appData.accounts.investPocket += amount;
+    recordAction("parentTopupInvestPocket");
     appendFeed(`Tėvai papildė investavimo kišenę ${formatCurrency(amount)}.`, "success");
     saveAppData();
     closeConfirm();
@@ -890,6 +1264,113 @@ function renderHome() {
     .join("");
 
   if (state.mode === "parent") {
+    elements.homeMoodTitle.textContent = "Tėvų valdymas be triukšmo";
+    elements.homeMoodSpot.innerHTML = `
+      <div class="kid-card">
+        <h4>📌 Šiandienos fokusas</h4>
+        <p class="list-copy">Matote vaiko balansą, leidimus, investavimo prašymus ir atskiras sąskaitas vienoje vietoje.</p>
+      </div>
+      <div class="kid-card">
+        <h4>🔔 App pranešimai</h4>
+        <p class="list-copy">Kiekvienas KidFund feed pranešimas siunčiamas ir kaip telefono notification, kai tik leidimai suteikti.</p>
+      </div>
+    `;
+  } else {
+    const spendingPercent = Math.min(
+      100,
+      Math.round((appData.accounts.spentThisWeek / appData.accounts.weeklyLimit) * 100),
+    );
+    elements.homeMoodTitle.textContent = "Tavo vaikiškas startas";
+    elements.homeMoodSpot.innerHTML = `
+      <div class="kid-card">
+        <h4>🥳 Šaunu, prisijungei!</h4>
+        <p class="list-copy">Mažiau teksto, daugiau aiškių mygtukų, emoji ir tavo taupymo misijų.</p>
+      </div>
+      <div class="kid-card">
+        <h4>🎯 Šios savaitės limitas</h4>
+        <p class="list-copy">${formatCurrency(appData.accounts.spentThisWeek)} iš ${formatCurrency(appData.accounts.weeklyLimit)} jau panaudota.</p>
+        <div class="mini-progress"><span style="width: ${spendingPercent}%"></span></div>
+      </div>
+    `;
+  }
+
+  elements.partnerSpot.innerHTML = PARTNER_SPOTLIGHTS.map(
+    (partner) => `
+      <div class="promo-card">
+        <div class="inline-row">
+          <h4>${partner.title}</h4>
+          <span class="promo-badge">${partner.badge}</span>
+        </div>
+        <p class="list-copy">${partner.copy}</p>
+        <div class="copy-row">
+          <button class="button secondary compact-button" type="button" data-switch-tab="learn">
+            Peržiūrėti
+          </button>
+          <button class="button secondary compact-button" type="button" data-switch-tab="feed">
+            Rodyti naujienose
+          </button>
+        </div>
+      </div>
+    `,
+  ).join("");
+
+  const walletAccount = getAccountConfig("wallet");
+  const savingsAccount = getAccountConfig("savings");
+  const selectedRequestAccount = getAccountConfig(state.paymentRequestAccount);
+  const selectedRequestCopy = `KidFund pavedimo užklausa: pervesk ${formatCurrency(state.paymentRequestAmount)} į ${selectedRequestAccount.title} (${selectedRequestAccount.accountNumber}).`;
+
+  elements.accountHub.innerHTML = `
+    ${[walletAccount, savingsAccount]
+      .map(
+        (account) => `
+          <div class="account-card">
+            <div class="inline-row">
+              <h4>${account.title}</h4>
+              <span class="account-tag">${account.badge}</span>
+            </div>
+            <p class="list-copy">${account.description}</p>
+            <span class="account-number">${account.accountNumber}</span>
+            <div class="copy-row">
+              <button class="button secondary compact-button" type="button" data-action="copy-account" data-account-type="${account.type}">
+                Kopijuoti numerį
+              </button>
+              <button class="button secondary compact-button" type="button" data-action="set-request-account" data-account-type="${account.type}">
+                Naudoti užklausai
+              </button>
+            </div>
+          </div>
+        `,
+      )
+      .join("")}
+    <div class="account-card">
+      <div class="inline-row">
+        <h4>Gauti pavedimą</h4>
+        <span class="account-tag">Užklausa</span>
+      </div>
+      <p class="list-copy">Pasirink sąskaitą, įrašyk sumą ir sugeneruok pavedimo užklausą be sistemos apkrovimo.</p>
+      <div class="mission-row">
+        <button class="chip-button ${state.paymentRequestAccount === "wallet" ? "active" : ""}" type="button" data-action="set-request-account" data-account-type="wallet">
+          Pagrindinė
+        </button>
+        <button class="chip-button ${state.paymentRequestAccount === "savings" ? "active" : ""}" type="button" data-action="set-request-account" data-account-type="savings">
+          Taupyklė
+        </button>
+      </div>
+      <label class="field-label" for="paymentRequestAmountInput">Užklausos suma</label>
+      <input id="paymentRequestAmountInput" class="number-input" type="number" min="1" step="1" value="${state.paymentRequestAmount}" />
+      <span class="account-number" id="paymentRequestPreview">${selectedRequestCopy}</span>
+      <div class="copy-row">
+        <button class="button primary compact-button" type="button" data-action="open-payment-request-confirm">
+          Sukurti užklausą
+        </button>
+        <button class="button secondary compact-button" type="button" data-action="copy-request-text">
+          Kopijuoti užklausą
+        </button>
+      </div>
+    </div>
+  `;
+
+  if (state.mode === "parent") {
     elements.quickActions.innerHTML = `
       <div class="stack-item">
         <span class="feature-icon">D</span>
@@ -917,13 +1398,23 @@ function renderHome() {
         </div>
       </div>
     `;
+    elements.kidMissionSpot.innerHTML = `
+      <div class="kid-card">
+        <h4>🧾 Tėvų santrauka</h4>
+        <p class="list-copy">Galite sekti, kiek užklausų buvo išsiųsta ir ar anti-spam taisyklės neleidžia perkrauti KidFund sistemos.</p>
+      </div>
+      <div class="kid-card">
+        <h4>📲 Push į telefoną</h4>
+        <p class="list-copy">Papildymai, investavimo sprendimai ir naujos užklausos rodomi ne tik viduje, bet ir telefono notification juostoje.</p>
+      </div>
+    `;
   } else {
     elements.quickActions.innerHTML = `
       <div class="stack-item">
         <span class="feature-icon">I</span>
         <div>
-          <strong>Prašyti investuoti</strong>
-          <p class="list-copy">Pasirink aktyvą ir siųsk prašymą. Patvirtinti jį gali tik tėvai.</p>
+          <strong>🚀 Nori investuoti?</strong>
+          <p class="list-copy">Pasirink aktyvą, spausk mygtuką ir tėvai gaus tavo prašymą.</p>
           <button class="button primary compact-button" type="button" data-switch-tab="invest">
             Eiti į investavimą
           </button>
@@ -932,12 +1423,27 @@ function renderHome() {
       <div class="stack-item">
         <span class="feature-icon">T</span>
         <div>
-          <strong>Peržiūrėti taupymo tikslus</strong>
-          <p class="list-copy">Matysi progresą, tačiau neleidimų politiką ar tėvų valdymo blokus.</p>
+          <strong>🐷 Peržiūrėti taupymą</strong>
+          <p class="list-copy">Čia matai tik savo progresą, o tėvų valdymo dalys lieka paslėptos.</p>
           <button class="button secondary compact-button" type="button" data-switch-tab="savings">
             Eiti į taupymą
           </button>
         </div>
+      </div>
+    `;
+    elements.kidMissionSpot.innerHTML = `
+      <div class="kid-card">
+        <h4>🏅 Mini misija</h4>
+        <p class="list-copy">Šiandien pabandyk atsakyti bent į 1 viktorinos klausimą ir pasižiūrėk, kiek jau sutaupei.</p>
+        <div class="mission-row">
+          <span class="mini-pill">🎯 1 klausimas</span>
+          <span class="mini-pill">💰 1 tikslas</span>
+          <span class="mini-pill">🧠 1 pamoka</span>
+        </div>
+      </div>
+      <div class="kid-card">
+        <h4>😎 Emoji patarimas</h4>
+        <p class="list-copy">Jei nori gauti pinigų į taupyklę, nukopijuok taupyklės numerį arba sukurk pavedimo užklausą.</p>
       </div>
     `;
   }
@@ -1060,7 +1566,9 @@ function renderInvestmentCatalog() {
 
 function renderInvestActionPanel() {
   const selectedInvestment = getSelectedInvestment();
-  const pendingRequests = appData.requests.filter((request) => request.status === "pending");
+  const pendingRequests = appData.requests.filter(
+    (request) => request.type === "investment" && request.status === "pending",
+  );
 
   if (state.mode === "child") {
     elements.investPanelTitle.textContent = "Siųsti prašymą tėvams";
@@ -1175,6 +1683,7 @@ function renderPortfolio() {
   });
 
   const requestHistory = appData.requests
+    .filter((request) => request.type === "investment")
     .slice(0, 4)
     .map((request) => {
       const asset = INVESTMENTS.find((investment) => investment.id === request.assetId);
@@ -1269,19 +1778,20 @@ function renderQuiz() {
   elements.quizHelper.textContent = question.helper;
   elements.quizFeedback.textContent = state.quizFeedback;
   elements.quizFeedback.className = `validation-text ${state.quizFeedbackTone}`.trim();
-  elements.quizOptions.innerHTML = question.options
-    .map((option, index) => {
+  elements.quizOptions.innerHTML = state.quizOptionOrder
+    .map((optionIndex, shuffledIndex) => {
+      const option = question.options[optionIndex];
       let optionClass = "";
       if (state.selectedQuizAnswer !== null) {
-        if (index === question.correctIndex) {
+        if (optionIndex === question.correctIndex) {
           optionClass = "correct";
-        } else if (index === state.selectedQuizAnswer) {
+        } else if (shuffledIndex === state.selectedQuizAnswer) {
           optionClass = "wrong";
         }
       }
 
       return `
-        <button class="quiz-option ${optionClass}" type="button" data-quiz-option="${index}">
+        <button class="quiz-option ${optionClass}" type="button" data-quiz-option="${shuffledIndex}">
           ${option}
         </button>
       `;
@@ -1327,10 +1837,35 @@ function renderTransfers() {
     </div>
   `;
 
-  const pending = appData.requests.filter((request) => request.status === "pending");
-  elements.transferQueue.innerHTML = pending.length
-    ? pending
+  const queueItems = appData.requests.filter(
+    (request) => request.status === "pending" || request.type === "payment-request",
+  );
+
+  elements.transferQueue.innerHTML = queueItems.length
+    ? queueItems
         .map((request) => {
+          if (request.type === "payment-request") {
+            const account = getAccountConfig(request.accountType);
+            return `
+              <div class="stack-item">
+                <span class="feature-icon">€</span>
+                <div>
+                  <div class="inline-row">
+                    <strong>${account.title}</strong>
+                    <span class="status-tag active">Užklausa</span>
+                  </div>
+                  <p class="list-copy">Suma: ${formatCurrency(request.amount)}</p>
+                  <p class="list-copy">${request.accountNumber}</p>
+                  <div class="inline-actions">
+                    <button class="button secondary compact-button" type="button" data-action="copy-request-text" data-request-id="${request.id}">
+                      Kopijuoti tekstą
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+
           const asset = INVESTMENTS.find((investment) => investment.id === request.assetId);
           return `
             <div class="stack-item">
@@ -1400,6 +1935,55 @@ function handleActionClick(actionButton) {
   if (action === "select-asset") {
     state.selectedInvestmentId = actionButton.dataset.assetId || INVESTMENTS[0].id;
     renderAll();
+    return;
+  }
+
+  if (action === "set-request-account") {
+    state.paymentRequestAccount = actionButton.dataset.accountType || "wallet";
+    renderAll();
+    return;
+  }
+
+  if (action === "copy-account") {
+    const account = getAccountConfig(actionButton.dataset.accountType || "wallet");
+    void copyTextValue(account.accountNumber).then((copied) => {
+      createToast(
+        copied
+          ? `${account.title} numeris nukopijuotas.`
+          : "Nepavyko nukopijuoti automatiškai, bet numeris rodomas ekrane.",
+        copied ? "success" : "warning",
+      );
+    });
+    return;
+  }
+
+  if (action === "copy-request-text") {
+    const requestId = actionButton.dataset.requestId;
+    const request = requestId
+      ? appData.requests.find((item) => item.id === requestId)
+      : null;
+    const requestText =
+      request?.shareText ||
+      `KidFund pavedimo užklausa: pervesk ${formatCurrency(state.paymentRequestAmount)} į ${getAccountConfig(state.paymentRequestAccount).title} (${getAccountConfig(state.paymentRequestAccount).accountNumber}).`;
+    void copyTextValue(requestText).then((copied) => {
+      createToast(copied ? "Pavedimo užklausos tekstas nukopijuotas." : "Nepavyko nukopijuoti teksto.", copied ? "success" : "warning");
+    });
+    return;
+  }
+
+  if (action === "open-payment-request-confirm") {
+    const account = getAccountConfig(state.paymentRequestAccount);
+    openConfirm({
+      role: state.mode === "parent" ? "parent" : "child",
+      title: "Sukurti pavedimo užklausą",
+      copy: `Įvesk ${state.mode === "parent" ? "tėvų" : "vaiko"} PIN, kad sugeneruotum užklausą į ${account.title}.`,
+      action: {
+        type: "payment-request",
+        accountType: state.paymentRequestAccount,
+        amount: state.paymentRequestAmount,
+      },
+      buttonLabel: "Sukurti užklausą",
+    });
     return;
   }
 
@@ -1498,9 +2082,10 @@ function handleActionClick(actionButton) {
 
 function handleQuizAnswer(index) {
   const question = QUIZ_QUESTIONS[state.quizIndex];
+  const originalIndex = state.quizOptionOrder[index];
   state.selectedQuizAnswer = index;
 
-  if (index === question.correctIndex) {
+  if (originalIndex === question.correctIndex) {
     state.quizFeedback = question.feedback;
     state.quizFeedbackTone = "success";
   } else {
@@ -1527,10 +2112,7 @@ elements.confirmCancelButton.addEventListener("click", closeConfirm);
 elements.confirmSubmitButton.addEventListener("click", submitConfirm);
 
 elements.nextQuestionButton.addEventListener("click", () => {
-  state.quizIndex = (state.quizIndex + 1) % QUIZ_QUESTIONS.length;
-  state.selectedQuizAnswer = null;
-  state.quizFeedback = "";
-  state.quizFeedbackTone = "";
+  resetQuizQuestion((state.quizIndex + 1) % QUIZ_QUESTIONS.length);
   renderQuiz();
 });
 
@@ -1609,6 +2191,14 @@ document.addEventListener("input", (event) => {
   if (target.id === "investmentAmountInput") {
     state.selectedInvestmentAmount = sanitizeAmount(target.value);
   }
+  if (target.id === "paymentRequestAmountInput") {
+    state.paymentRequestAmount = sanitizeAmount(target.value);
+    const preview = document.querySelector("#paymentRequestPreview");
+    const account = getAccountConfig(state.paymentRequestAccount);
+    if (preview) {
+      preview.textContent = `KidFund pavedimo užklausa: pervesk ${formatCurrency(state.paymentRequestAmount)} į ${account.title} (${account.accountNumber}).`;
+    }
+  }
 });
 
 document.addEventListener("click", (event) => {
@@ -1621,4 +2211,5 @@ document.addEventListener("click", (event) => {
   renderAll();
 });
 
+resetQuizQuestion(0);
 renderAll();
