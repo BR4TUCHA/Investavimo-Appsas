@@ -71,5 +71,5 @@ apk/KidFund-debug.apk
 SHA-256:
 
 ```text
-3f00deb8d6180e2dc3c7315ceebbb8c740b7d0f6c0985e3e62022191d48d9595
+fffc59dd0f103c524372c77ce91f4a087c807dc25b0877ab913e7bbf81e1ba76
 ```
