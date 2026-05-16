@@ -312,6 +312,7 @@ const elements = {
   shareRequestMeta: document.querySelector("#shareRequestMeta"),
   shareQrCode: document.querySelector("#shareQrCode"),
   shareRequestReviewButton: document.querySelector("#shareRequestReviewButton"),
+  shareRequestScanButton: document.querySelector("#shareRequestScanButton"),
   shareRequestSystemButton: document.querySelector("#shareRequestSystemButton"),
   shareRequestCopyButton: document.querySelector("#shareRequestCopyButton"),
   shareRequestCloseButton: document.querySelector("#shareRequestCloseButton"),
@@ -488,6 +489,12 @@ const state = {
     open: false,
     payload: null,
     source: "",
+  },
+  scanner: {
+    busy: false,
+    message: "",
+    messageTone: "",
+    pendingStartAfterInstall: false,
   },
   quizIndex: 0,
   quizOptionOrder: [],
@@ -720,6 +727,196 @@ function updateModalBodyLock() {
   const hasOpenModal = state.confirm.open || Boolean(state.shareRequestId) || state.paymentReview.open;
   document.body.classList.toggle("modal-open", hasOpenModal);
   document.documentElement.classList.toggle("modal-open", hasOpenModal);
+}
+
+function setScannerMessage(message, tone = "") {
+  state.scanner.message = message;
+  state.scanner.messageTone = tone;
+}
+
+function setScannerBusy(isBusy) {
+  state.scanner.busy = isBusy;
+}
+
+function getBarcodeScannerPlugin() {
+  return window.Capacitor?.Plugins?.BarcodeScanner || null;
+}
+
+function extractKidFundDeepLink(value) {
+  if (!value) {
+    return "";
+  }
+
+  const text = String(value).trim();
+  if (text.startsWith("kidfund://pay/review")) {
+    return text;
+  }
+
+  const match = text.match(/kidfund:\/\/pay\/review[^\s<>"']*/i);
+  return match ? match[0] : "";
+}
+
+function getBarcodeDeepLink(barcode) {
+  if (!barcode || typeof barcode !== "object") {
+    return "";
+  }
+
+  return (
+    extractKidFundDeepLink(barcode.rawValue) ||
+    extractKidFundDeepLink(barcode.displayValue) ||
+    extractKidFundDeepLink(barcode.urlBookmark?.url)
+  );
+}
+
+async function ensureScannerModuleReady(scanner) {
+  if (!scanner) {
+    return false;
+  }
+
+  const platform = window.Capacitor?.getPlatform?.();
+  if (platform !== "android" || !scanner.isGoogleBarcodeScannerModuleAvailable || !scanner.installGoogleBarcodeScannerModule) {
+    return true;
+  }
+
+  try {
+    const availability = await scanner.isGoogleBarcodeScannerModuleAvailable();
+    if (availability?.available) {
+      return true;
+    }
+
+    state.scanner.pendingStartAfterInstall = true;
+    setScannerBusy(false);
+    setScannerMessage("Diegiamas telefono QR skenerio modulis. Kai baigsis diegimas, kamera atsidarys automatiškai.", "warning");
+    renderAll();
+    await scanner.installGoogleBarcodeScannerModule();
+    return false;
+  } catch (error) {
+    setScannerBusy(false);
+    setScannerMessage("Nepavyko paruošti telefono QR skenerio modulio.", "error");
+    renderAll();
+    createToast("Nepavyko paruošti telefono QR skenerio.", "warning");
+    return false;
+  }
+}
+
+async function startInAppQrScan() {
+  const scanner = getBarcodeScannerPlugin();
+  if (!scanner?.scan || !scanner?.isSupported) {
+    setScannerBusy(false);
+    setScannerMessage("Šioje aplinkoje kamera QR skenavimui nepalaikoma.", "warning");
+    renderAll();
+    createToast("In-app QR skeneris šiame įrenginyje nepalaikomas.", "warning");
+    return;
+  }
+
+  if (state.shareRequestId) {
+    closeShareRequest();
+  }
+  if (state.paymentReview.open) {
+    closePaymentReview();
+  }
+
+  setScannerBusy(true);
+  setScannerMessage("Atidaroma kamera KidFund QR skenavimui...", "");
+  renderAll();
+
+  try {
+    const support = await scanner.isSupported();
+    if (!support?.supported) {
+      setScannerBusy(false);
+      setScannerMessage("Šiame įrenginyje QR skeneris nepalaikomas.", "warning");
+      renderAll();
+      createToast("QR skeneris šiame įrenginyje nepalaikomas.", "warning");
+      return;
+    }
+
+    const moduleReady = await ensureScannerModuleReady(scanner);
+    if (!moduleReady) {
+      return;
+    }
+
+    const result = await scanner.scan({
+      formats: ["QR_CODE"],
+      autoZoom: true,
+    });
+    const barcode = result?.barcodes?.[0] || null;
+    const deepLink = getBarcodeDeepLink(barcode);
+
+    setScannerBusy(false);
+
+    if (!barcode) {
+      setScannerMessage("Skenavimas uždarytas arba QR kodas nerastas.", "warning");
+      renderAll();
+      createToast("QR skenavimas nutrauktas arba nieko nerasta.", "warning");
+      return;
+    }
+
+    if (!deepLink) {
+      setScannerMessage("QR nuskaitytas, bet tai ne KidFund mokėjimo QR kodas.", "warning");
+      renderAll();
+      createToast("Nuskaitytas QR nėra KidFund mokėjimo užklausa.", "warning");
+      return;
+    }
+
+    setScannerMessage("QR nuskaitytas. Atidaromas KidFund review ekranas.", "success");
+    renderAll();
+    handleIncomingDeepLink(deepLink);
+  } catch (error) {
+    setScannerBusy(false);
+    setScannerMessage("QR skenerio paleisti nepavyko. Pabandyk dar kartą.", "error");
+    renderAll();
+    createToast("Nepavyko paleisti in-app QR skenerio.", "warning");
+  }
+}
+
+async function initBarcodeScanner() {
+  const scanner = getBarcodeScannerPlugin();
+  if (!scanner?.addListener) {
+    return;
+  }
+
+  if (window.Capacitor?.getPlatform?.() === "android") {
+    try {
+      await scanner.addListener("googleBarcodeScannerModuleInstallProgress", (event) => {
+        const progress = Number.isFinite(event?.progress) ? Math.round(event.progress) : 0;
+        const stateCode = event?.state;
+
+        if (stateCode === 4) {
+          setScannerMessage("Telefono QR skenerio modulis paruoštas.", "success");
+          renderAll();
+          if (state.scanner.pendingStartAfterInstall) {
+            state.scanner.pendingStartAfterInstall = false;
+            void startInAppQrScan();
+          }
+          return;
+        }
+
+        if (stateCode === 5 || stateCode === 3) {
+          state.scanner.pendingStartAfterInstall = false;
+          setScannerBusy(false);
+          setScannerMessage(
+            stateCode === 3 ? "QR skenerio modulio diegimas atšauktas." : "QR skenerio modulio diegimas nepavyko.",
+            "error",
+          );
+          renderAll();
+          return;
+        }
+
+        if (stateCode === 2) {
+          setScannerMessage(`Atsiunčiamas telefono QR skenerio modulis: ${progress}%.`, "warning");
+        } else if (stateCode === 6) {
+          setScannerMessage("Diegiamas telefono QR skenerio modulis...", "warning");
+        } else if (stateCode === 1) {
+          setScannerMessage("Paruoštas QR skenerio modulio diegimas...", "warning");
+        } else if (stateCode === 7) {
+          setScannerMessage("QR skenerio modulio atsiuntimas pristabdytas.", "warning");
+        }
+        renderAll();
+      });
+    } catch (error) {
+      // Ignore listener failures on unsupported platforms.
+    }
+  }
 }
 
 function getPaymentRequestById(requestId) {
@@ -2538,6 +2735,19 @@ function renderFeed() {
 function renderTransfers() {
   elements.transferActions.innerHTML = `
     <div class="stack-item">
+      ${renderUiIcon("camera")}
+      <div>
+        <strong>In-app QR skeneris</strong>
+        <p class="list-copy">Atidaro tikrą telefono kamerą programėlės viduje. Nuskenavus KidFund QR, iškart atsidaro payment review ekranas.</p>
+        <div class="inline-actions">
+          <button class="button primary compact-button" type="button" data-action="scan-payment-qr" ${state.scanner.busy ? "disabled" : ""}>
+            ${state.scanner.busy ? "Atidaroma kamera..." : "Skenuoti QR su kamera"}
+          </button>
+        </div>
+        <p class="${`validation-text ${state.scanner.messageTone}`.trim()}">${escapeHtml(state.scanner.message)}</p>
+      </div>
+    </div>
+    <div class="stack-item">
       ${renderUiIcon("gift")}
       <div>
         <strong>Greitas papildymas į piniginę</strong>
@@ -2770,6 +2980,11 @@ function handleActionClick(actionButton) {
     return;
   }
 
+  if (action === "scan-payment-qr") {
+    void startInAppQrScan();
+    return;
+  }
+
   if (action === "open-payment-review") {
     const requestId = actionButton.dataset.requestId || state.shareRequestId;
     if (requestId) {
@@ -2922,6 +3137,9 @@ elements.shareRequestReviewButton.addEventListener("click", () => {
   if (state.shareRequestId) {
     openPaymentReviewForRequest(state.shareRequestId);
   }
+});
+elements.shareRequestScanButton.addEventListener("click", () => {
+  void startInAppQrScan();
 });
 elements.shareRequestCopyButton.addEventListener("click", () => {
   const request = state.shareRequestId ? getPaymentRequestById(state.shareRequestId) : null;
@@ -3103,3 +3321,4 @@ document.addEventListener("click", (event) => {
 resetQuizQuestion(0);
 renderAll();
 void initDeepLinkHandling();
+void initBarcodeScanner();
