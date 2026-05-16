@@ -311,14 +311,32 @@ const elements = {
   shareRequestBankCard: document.querySelector("#shareRequestBankCard"),
   shareRequestMeta: document.querySelector("#shareRequestMeta"),
   shareQrCode: document.querySelector("#shareQrCode"),
+  shareRequestReviewButton: document.querySelector("#shareRequestReviewButton"),
+  shareRequestScanButton: document.querySelector("#shareRequestScanButton"),
   shareRequestSystemButton: document.querySelector("#shareRequestSystemButton"),
   shareRequestCopyButton: document.querySelector("#shareRequestCopyButton"),
   shareRequestCloseButton: document.querySelector("#shareRequestCloseButton"),
+  paymentReviewModal: document.querySelector("#paymentReviewModal"),
+  paymentReviewTitle: document.querySelector("#paymentReviewTitle"),
+  paymentReviewCopy: document.querySelector("#paymentReviewCopy"),
+  paymentReviewBankCard: document.querySelector("#paymentReviewBankCard"),
+  paymentReviewMeta: document.querySelector("#paymentReviewMeta"),
+  paymentReviewConfirmButton: document.querySelector("#paymentReviewConfirmButton"),
+  paymentReviewCancelButton: document.querySelector("#paymentReviewCancelButton"),
   toastStack: document.querySelector("#toastStack"),
 };
 
 function deepClone(value) {
   return JSON.parse(JSON.stringify(value));
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 function nowIso() {
@@ -467,6 +485,17 @@ const state = {
   paymentRequestAccount: "wallet",
   paymentRequestAmount: 15,
   shareRequestId: null,
+  paymentReview: {
+    open: false,
+    payload: null,
+    source: "",
+  },
+  scanner: {
+    busy: false,
+    message: "",
+    messageTone: "",
+    pendingStartAfterInstall: false,
+  },
   quizIndex: 0,
   quizOptionOrder: [],
   quizFeedback: "",
@@ -694,21 +723,466 @@ async function copyTextValue(value) {
   return false;
 }
 
+function updateModalBodyLock() {
+  const hasOpenModal = state.confirm.open || Boolean(state.shareRequestId) || state.paymentReview.open;
+  document.body.classList.toggle("modal-open", hasOpenModal);
+  document.documentElement.classList.toggle("modal-open", hasOpenModal);
+}
+
+function setScannerMessage(message, tone = "") {
+  state.scanner.message = message;
+  state.scanner.messageTone = tone;
+}
+
+function setScannerBusy(isBusy) {
+  state.scanner.busy = isBusy;
+}
+
+function getBarcodeScannerPlugin() {
+  return window.Capacitor?.Plugins?.BarcodeScanner || null;
+}
+
+function extractKidFundDeepLink(value) {
+  if (!value) {
+    return "";
+  }
+
+  const text = String(value).trim();
+  if (text.startsWith("kidfund://pay/review")) {
+    return text;
+  }
+
+  const match = text.match(/kidfund:\/\/pay\/review[^\s<>"']*/i);
+  return match ? match[0] : "";
+}
+
+function getBarcodeDeepLink(barcode) {
+  if (!barcode || typeof barcode !== "object") {
+    return "";
+  }
+
+  return (
+    extractKidFundDeepLink(barcode.rawValue) ||
+    extractKidFundDeepLink(barcode.displayValue) ||
+    extractKidFundDeepLink(barcode.urlBookmark?.url)
+  );
+}
+
+async function ensureScannerModuleReady(scanner) {
+  if (!scanner) {
+    return false;
+  }
+
+  const platform = window.Capacitor?.getPlatform?.();
+  if (platform !== "android" || !scanner.isGoogleBarcodeScannerModuleAvailable || !scanner.installGoogleBarcodeScannerModule) {
+    return true;
+  }
+
+  try {
+    const availability = await scanner.isGoogleBarcodeScannerModuleAvailable();
+    if (availability?.available) {
+      return true;
+    }
+
+    state.scanner.pendingStartAfterInstall = true;
+    setScannerBusy(false);
+    setScannerMessage("Diegiamas telefono QR skenerio modulis. Kai baigsis diegimas, kamera atsidarys automatiškai.", "warning");
+    renderAll();
+    await scanner.installGoogleBarcodeScannerModule();
+    return false;
+  } catch (error) {
+    setScannerBusy(false);
+    setScannerMessage("Nepavyko paruošti telefono QR skenerio modulio.", "error");
+    renderAll();
+    createToast("Nepavyko paruošti telefono QR skenerio.", "warning");
+    return false;
+  }
+}
+
+async function startInAppQrScan() {
+  const scanner = getBarcodeScannerPlugin();
+  if (!scanner?.scan || !scanner?.isSupported) {
+    setScannerBusy(false);
+    setScannerMessage("Šioje aplinkoje kamera QR skenavimui nepalaikoma.", "warning");
+    renderAll();
+    createToast("In-app QR skeneris šiame įrenginyje nepalaikomas.", "warning");
+    return;
+  }
+
+  if (state.shareRequestId) {
+    closeShareRequest();
+  }
+  if (state.paymentReview.open) {
+    closePaymentReview();
+  }
+
+  setScannerBusy(true);
+  setScannerMessage("Atidaroma kamera KidFund QR skenavimui...", "");
+  renderAll();
+
+  try {
+    const support = await scanner.isSupported();
+    if (!support?.supported) {
+      setScannerBusy(false);
+      setScannerMessage("Šiame įrenginyje QR skeneris nepalaikomas.", "warning");
+      renderAll();
+      createToast("QR skeneris šiame įrenginyje nepalaikomas.", "warning");
+      return;
+    }
+
+    const moduleReady = await ensureScannerModuleReady(scanner);
+    if (!moduleReady) {
+      return;
+    }
+
+    const result = await scanner.scan({
+      formats: ["QR_CODE"],
+      autoZoom: true,
+    });
+    const barcode = result?.barcodes?.[0] || null;
+    const deepLink = getBarcodeDeepLink(barcode);
+
+    setScannerBusy(false);
+
+    if (!barcode) {
+      setScannerMessage("Skenavimas uždarytas arba QR kodas nerastas.", "warning");
+      renderAll();
+      createToast("QR skenavimas nutrauktas arba nieko nerasta.", "warning");
+      return;
+    }
+
+    if (!deepLink) {
+      setScannerMessage("QR nuskaitytas, bet tai ne KidFund mokėjimo QR kodas.", "warning");
+      renderAll();
+      createToast("Nuskaitytas QR nėra KidFund mokėjimo užklausa.", "warning");
+      return;
+    }
+
+    setScannerMessage("QR nuskaitytas. Atidaromas KidFund review ekranas.", "success");
+    renderAll();
+    handleIncomingDeepLink(deepLink);
+  } catch (error) {
+    setScannerBusy(false);
+    setScannerMessage("QR skenerio paleisti nepavyko. Pabandyk dar kartą.", "error");
+    renderAll();
+    createToast("Nepavyko paleisti in-app QR skenerio.", "warning");
+  }
+}
+
+async function initBarcodeScanner() {
+  const scanner = getBarcodeScannerPlugin();
+  if (!scanner?.addListener) {
+    return;
+  }
+
+  if (window.Capacitor?.getPlatform?.() === "android") {
+    try {
+      await scanner.addListener("googleBarcodeScannerModuleInstallProgress", (event) => {
+        const progress = Number.isFinite(event?.progress) ? Math.round(event.progress) : 0;
+        const stateCode = event?.state;
+
+        if (stateCode === 4) {
+          setScannerMessage("Telefono QR skenerio modulis paruoštas.", "success");
+          renderAll();
+          if (state.scanner.pendingStartAfterInstall) {
+            state.scanner.pendingStartAfterInstall = false;
+            void startInAppQrScan();
+          }
+          return;
+        }
+
+        if (stateCode === 5 || stateCode === 3) {
+          state.scanner.pendingStartAfterInstall = false;
+          setScannerBusy(false);
+          setScannerMessage(
+            stateCode === 3 ? "QR skenerio modulio diegimas atšauktas." : "QR skenerio modulio diegimas nepavyko.",
+            "error",
+          );
+          renderAll();
+          return;
+        }
+
+        if (stateCode === 2) {
+          setScannerMessage(`Atsiunčiamas telefono QR skenerio modulis: ${progress}%.`, "warning");
+        } else if (stateCode === 6) {
+          setScannerMessage("Diegiamas telefono QR skenerio modulis...", "warning");
+        } else if (stateCode === 1) {
+          setScannerMessage("Paruoštas QR skenerio modulio diegimas...", "warning");
+        } else if (stateCode === 7) {
+          setScannerMessage("QR skenerio modulio atsiuntimas pristabdytas.", "warning");
+        }
+        renderAll();
+      });
+    } catch (error) {
+      // Ignore listener failures on unsupported platforms.
+    }
+  }
+}
+
 function getPaymentRequestById(requestId) {
   return appData.requests.find((request) => request.id === requestId) || null;
+}
+
+function buildPaymentReviewPayloadFromRequest(request) {
+  if (!request) {
+    return null;
+  }
+
+  const account = getAccountConfig(request.accountType || "wallet");
+  return {
+    requestId: request.id,
+    amount: sanitizeAmount(request.amount),
+    accountType: account.type,
+    accountTitle: account.title,
+    accountBadge: account.badge,
+    accountNumber: request.accountNumber || account.accountNumber,
+    recipientName: request.recipientName || "KidFund",
+    requestDate: request.createdAt || nowIso(),
+    requestStatus: request.status || "open",
+    source: "request",
+  };
+}
+
+function buildPaymentDeepLink(payload) {
+  if (!payload) {
+    return "";
+  }
+
+  const params = new URLSearchParams({
+    requestId: payload.requestId || uid("scan"),
+    amount: String(sanitizeAmount(payload.amount)),
+    accountType: payload.accountType || "wallet",
+    accountNumber: payload.accountNumber || getAccountConfig(payload.accountType || "wallet").accountNumber,
+    recipientName: payload.recipientName || "KidFund",
+    accountTitle: payload.accountTitle || getAccountConfig(payload.accountType || "wallet").title,
+    requestDate: payload.requestDate || nowIso(),
+  });
+  return `kidfund://pay/review?${params.toString()}`;
+}
+
+function buildPaymentShareTextFromPayload(payload) {
+  if (!payload) {
+    return "";
+  }
+
+  return [
+    "KidFund pavedimo užklausa",
+    `Suma: ${formatCurrency(payload.amount)}`,
+    `Gavėjas: ${payload.recipientName || "KidFund"}`,
+    `Sąskaita: ${payload.accountNumber}`,
+    `Skiltis: ${payload.accountTitle}`,
+    `Review nuoroda: ${buildPaymentDeepLink(payload)}`,
+  ].join("\n");
+}
+
+function getPaymentDeepLink(request) {
+  const payload = buildPaymentReviewPayloadFromRequest(request);
+  if (!payload) {
+    return "";
+  }
+
+  return request.deepLink || buildPaymentDeepLink(payload);
+}
+
+function parsePaymentReviewUrl(url) {
+  if (!url) {
+    return null;
+  }
+
+  try {
+    const parsed = new URL(url);
+    const pathName = (parsed.pathname || "").replace(/\/+$/, "");
+    if (parsed.protocol !== "kidfund:" || parsed.host !== "pay" || pathName !== "/review") {
+      return null;
+    }
+
+    const accountType = parsed.searchParams.get("accountType") || "wallet";
+    const fallbackAccount = getAccountConfig(accountType);
+    return {
+      requestId: parsed.searchParams.get("requestId") || uid("scan"),
+      amount: sanitizeAmount(parsed.searchParams.get("amount")),
+      accountType,
+      accountTitle: parsed.searchParams.get("accountTitle") || fallbackAccount.title,
+      accountBadge: fallbackAccount.badge,
+      accountNumber: parsed.searchParams.get("accountNumber") || fallbackAccount.accountNumber,
+      recipientName: parsed.searchParams.get("recipientName") || "KidFund",
+      requestDate: parsed.searchParams.get("requestDate") || nowIso(),
+      requestStatus: "open",
+      source: "deep-link",
+    };
+  } catch (error) {
+    return null;
+  }
 }
 
 function getShareRequestText(request) {
   if (!request) {
     const account = getAccountConfig(state.paymentRequestAccount);
-    return `KidFund pavedimo užklausa: pervesk ${formatCurrency(state.paymentRequestAmount)} į ${account.title} (${account.accountNumber}).`;
+    return buildPaymentShareTextFromPayload({
+      requestId: uid("preview"),
+      amount: state.paymentRequestAmount,
+      accountType: account.type,
+      accountTitle: account.title,
+      accountNumber: account.accountNumber,
+      recipientName: "KidFund",
+      requestDate: nowIso(),
+    });
   }
-  return (
-    request.shareText ||
-    `KidFund pavedimo užklausa: pervesk ${formatCurrency(request.amount)} į ${
-      getAccountConfig(request.accountType || "wallet").title
-    } (${request.accountNumber || getAccountConfig(request.accountType || "wallet").accountNumber}).`
-  );
+  return request.shareText || buildPaymentShareTextFromPayload(buildPaymentReviewPayloadFromRequest(request));
+}
+
+function openPaymentReview(payload, source = "manual") {
+  if (!payload) {
+    return;
+  }
+
+  state.paymentReview = {
+    open: true,
+    payload: {
+      ...payload,
+      amount: sanitizeAmount(payload.amount),
+      requestStatus: payload.requestStatus || "open",
+    },
+    source,
+  };
+  renderPaymentReviewModal();
+}
+
+function closePaymentReview() {
+  state.paymentReview = {
+    open: false,
+    payload: null,
+    source: "",
+  };
+  renderPaymentReviewModal();
+}
+
+function openPaymentReviewForRequest(requestId) {
+  const request = getPaymentRequestById(requestId);
+  if (!request) {
+    createToast("Ši pavedimo užklausa nerasta.", "warning");
+    return;
+  }
+
+  if (state.shareRequestId) {
+    state.shareRequestId = null;
+    renderShareRequestModal();
+  }
+
+  openPaymentReview(buildPaymentReviewPayloadFromRequest(request), "request");
+}
+
+function renderPaymentReviewModal() {
+  const isOpen = state.paymentReview.open && state.paymentReview.payload;
+  elements.paymentReviewModal.classList.toggle("hidden", !isOpen);
+  elements.paymentReviewModal.setAttribute("aria-hidden", String(!isOpen));
+  updateModalBodyLock();
+
+  if (!isOpen) {
+    elements.paymentReviewBankCard.innerHTML = "";
+    elements.paymentReviewMeta.innerHTML = "";
+    return;
+  }
+
+  const payload = state.paymentReview.payload;
+  const safeStatus = payload.requestStatus === "completed" ? "completed" : "open";
+  const statusLabel = safeStatus === "completed" ? "Patvirtinta" : "Laukia review";
+  const statusClass = safeStatus === "completed" ? "success" : "active";
+  const requestDate = formatDate(payload.requestDate);
+
+  elements.paymentReviewTitle.textContent = "KidFund payment review";
+  elements.paymentReviewCopy.textContent =
+    safeStatus === "completed"
+      ? "Ši užklausa jau buvo patvirtinta. Gali peržiūrėti detales arba uždaryti ekraną."
+      : "Po scan pirmiausia rodomas review ekranas. Tik paspaudus patvirtinimą įvykdoma demo pervedimo logika.";
+  elements.paymentReviewBankCard.innerHTML = `
+    <div class="bank-card-top">
+      <div>
+        <p class="eyebrow">KidFund review</p>
+        <h4>${escapeHtml(payload.accountTitle)}</h4>
+      </div>
+      ${renderUiIcon("qr", "feature-icon bank-icon")}
+    </div>
+    <div class="bank-card-amount">${formatCurrency(payload.amount)}</div>
+    <div class="bank-card-meta">
+      <div>
+        <span class="stack-meta">Gavėjas</span>
+        <strong>${escapeHtml(payload.recipientName)}</strong>
+      </div>
+      <div>
+        <span class="stack-meta">Sąskaita</span>
+        <strong>${escapeHtml(payload.accountNumber)}</strong>
+      </div>
+      <div>
+        <span class="stack-meta">Request ID</span>
+        <strong>${escapeHtml(payload.requestId)}</strong>
+      </div>
+      <div>
+        <span class="stack-meta">Statusas</span>
+        <strong>${statusLabel}</strong>
+      </div>
+    </div>
+  `;
+  elements.paymentReviewMeta.innerHTML = `
+    <div class="share-meta-header">
+      ${renderUiIcon("shield", "feature-icon subtle-icon")}
+      <div>
+        <h4>Review prieš mokėjimą</h4>
+        <p class="list-copy">Taip atrodo saugus srautas po scan: peržiūra, tada patvirtinimas.</p>
+      </div>
+    </div>
+    <div class="mission-row">
+      <span class="mini-pill">🔗 ${escapeHtml(state.paymentReview.source === "deep-link" ? "Deep link / QR" : "KidFund vidus")}</span>
+      <span class="mini-pill">📅 ${escapeHtml(requestDate)}</span>
+      <span class="mini-pill">🏦 ${escapeHtml(payload.accountBadge || "KidFund")}</span>
+    </div>
+    <div class="review-status-row">
+      <span class="status-tag ${statusClass}">${statusLabel}</span>
+      <span class="list-copy">Mokėjimas nebus atliktas vien tik po scan.</span>
+    </div>
+    <span class="account-number review-link">${escapeHtml(buildPaymentDeepLink(payload))}</span>
+  `;
+  elements.paymentReviewConfirmButton.disabled = safeStatus === "completed";
+}
+
+function handleIncomingDeepLink(url) {
+  const payload = parsePaymentReviewUrl(url);
+  if (!payload) {
+    return false;
+  }
+
+  const existingRequest = getPaymentRequestById(payload.requestId);
+  openPaymentReview(existingRequest ? buildPaymentReviewPayloadFromRequest(existingRequest) : payload, "deep-link");
+  createToast("Atidarytas mokėjimo review ekranas po scan.", "success");
+  return true;
+}
+
+async function initDeepLinkHandling() {
+  handleIncomingDeepLink(window.location.href);
+
+  const appPlugin = window.Capacitor?.Plugins?.App;
+  if (!appPlugin?.addListener) {
+    return;
+  }
+
+  try {
+    await appPlugin.addListener("appUrlOpen", ({ url }) => {
+      handleIncomingDeepLink(url);
+    });
+  } catch (error) {
+    // Ignore if the plugin is unavailable on the current platform.
+  }
+
+  if (appPlugin.getLaunchUrl) {
+    try {
+      const launchData = await appPlugin.getLaunchUrl();
+      if (launchData?.url) {
+        handleIncomingDeepLink(launchData.url);
+      }
+    } catch (error) {
+      // Ignore missing launch URL support.
+    }
+  }
 }
 
 function openShareRequest(requestId) {
@@ -726,6 +1200,7 @@ function renderShareRequestModal() {
   const isOpen = Boolean(request);
   elements.shareRequestModal.classList.toggle("hidden", !isOpen);
   elements.shareRequestModal.setAttribute("aria-hidden", String(!isOpen));
+  updateModalBodyLock();
 
   if (!isOpen) {
     elements.shareQrCode.innerHTML = "";
@@ -736,16 +1211,17 @@ function renderShareRequestModal() {
 
   const account = getAccountConfig(request.accountType || "wallet");
   const shareText = getShareRequestText(request);
+  const deepLink = getPaymentDeepLink(request);
   const requestDate = formatDate(request.createdAt);
 
   elements.shareRequestTitle.textContent = `KidFund mokėjimo kortelė`;
   elements.shareRequestCopy.textContent =
-    "Gavėjas gali nuskenuoti QR, nukopijuoti duomenis arba gauti šią užklausą per share.";
+    "Gavėjas gali nuskenuoti QR, atidaryti review ekraną, nukopijuoti duomenis arba gauti šią užklausą per share.";
   elements.shareRequestBankCard.innerHTML = `
     <div class="bank-card-top">
       <div>
         <p class="eyebrow">KidFund transfer request</p>
-        <h4>${account.title}</h4>
+        <h4>${escapeHtml(account.title)}</h4>
       </div>
       ${renderUiIcon("bank", "feature-icon bank-icon")}
     </div>
@@ -757,11 +1233,11 @@ function renderShareRequestModal() {
       </div>
       <div>
         <span class="stack-meta">Sąskaita</span>
-        <strong>${account.accountNumber}</strong>
+        <strong>${escapeHtml(account.accountNumber)}</strong>
       </div>
       <div>
         <span class="stack-meta">Request ID</span>
-        <strong>${request.id}</strong>
+        <strong>${escapeHtml(request.id)}</strong>
       </div>
       <div>
         <span class="stack-meta">Data</span>
@@ -774,28 +1250,40 @@ function renderShareRequestModal() {
       ${renderUiIcon("copy", "feature-icon subtle-icon")}
       <div>
         <h4>Tekstas pavedimui</h4>
-        <p class="list-copy">Šį tekstą gali kopijuoti arba siųsti tam, kas atliks pervedimą.</p>
+        <p class="list-copy">Šį tekstą gali kopijuoti arba siųsti tam, kas atliks pervedimą. QR atidaro review ekraną.</p>
       </div>
     </div>
-    <span class="account-number" id="shareRequestText">${shareText}</span>
+    <span class="account-number" id="shareRequestText">${escapeHtml(shareText)}</span>
     <div class="mission-row">
       <span class="mini-pill">👤 Gavėjas: KidFund</span>
       <span class="mini-pill">💸 Suma: ${formatCurrency(request.amount)}</span>
       <span class="mini-pill">🏦 ${account.badge}</span>
     </div>
+    <span class="account-number review-link">${escapeHtml(deepLink)}</span>
   `;
   elements.shareQrCode.innerHTML = "";
 
   if (typeof window.QRCode === "function") {
     // qrcodejs renders a real QR image/canvas directly into the target element.
-    new window.QRCode(elements.shareQrCode, {
-      text: shareText,
+    const qrInstance = new window.QRCode(elements.shareQrCode, {
+      text: deepLink,
       width: 180,
       height: 180,
       colorDark: "#08101c",
       colorLight: "#ffffff",
       correctLevel: window.QRCode.CorrectLevel?.M || 0,
     });
+
+    // Prefer the original canvas on Android WebView because the generated
+    // PNG fallback image can appear blank even when the canvas was drawn.
+    const qrDrawing = qrInstance?._oDrawing;
+    if (qrDrawing?._elCanvas) {
+      qrDrawing._elCanvas.style.display = "block";
+    }
+    if (qrDrawing?._elImage) {
+      qrDrawing._elImage.style.display = "none";
+      qrDrawing._elImage.removeAttribute("src");
+    }
   } else {
     elements.shareQrCode.innerHTML = '<div class="list-copy">QR nepavyko įkelti.</div>';
   }
@@ -1391,10 +1879,22 @@ function executeConfirmAction() {
 
     const account = getAccountConfig(action.accountType);
     const amount = sanitizeAmount(action.amount);
-    const shareText = `KidFund pavedimo užklausa: pervesk ${formatCurrency(amount)} į ${account.title} (${account.accountNumber}).`;
+    const requestId = uid("request");
+    const createdAt = nowIso();
+    const payload = {
+      requestId,
+      amount,
+      accountType: account.type,
+      accountTitle: account.title,
+      accountNumber: account.accountNumber,
+      recipientName: "KidFund",
+      requestDate: createdAt,
+    };
+    const shareText = buildPaymentShareTextFromPayload(payload);
+    const deepLink = buildPaymentDeepLink(payload);
 
     appData.requests.unshift({
-      id: uid("request"),
+      id: requestId,
       type: "payment-request",
       accountType: account.type,
       accountNumber: account.accountNumber,
@@ -1402,7 +1902,8 @@ function executeConfirmAction() {
       status: "open",
       createdBy: state.mode || "child",
       shareText,
-      createdAt: nowIso(),
+      deepLink,
+      createdAt,
     });
     const createdRequest = appData.requests[0];
     recordAction("paymentRequest");
@@ -2234,6 +2735,19 @@ function renderFeed() {
 function renderTransfers() {
   elements.transferActions.innerHTML = `
     <div class="stack-item">
+      ${renderUiIcon("camera")}
+      <div>
+        <strong>In-app QR skeneris</strong>
+        <p class="list-copy">Atidaro tikrą telefono kamerą programėlės viduje. Nuskenavus KidFund QR, iškart atsidaro payment review ekranas.</p>
+        <div class="inline-actions">
+          <button class="button primary compact-button" type="button" data-action="scan-payment-qr" ${state.scanner.busy ? "disabled" : ""}>
+            ${state.scanner.busy ? "Atidaroma kamera..." : "Skenuoti QR su kamera"}
+          </button>
+        </div>
+        <p class="${`validation-text ${state.scanner.messageTone}`.trim()}">${escapeHtml(state.scanner.message)}</p>
+      </div>
+    </div>
+    <div class="stack-item">
       ${renderUiIcon("gift")}
       <div>
         <strong>Greitas papildymas į piniginę</strong>
@@ -2262,19 +2776,24 @@ function renderTransfers() {
         .map((request) => {
           if (request.type === "payment-request") {
             const account = getAccountConfig(request.accountType);
+            const requestStatusLabel = request.status === "completed" ? "Patvirtinta" : "Užklausa";
+            const requestStatusClass = request.status === "completed" ? "success" : "active";
             return `
               <div class="stack-item">
                 ${renderUiIcon("qr")}
                 <div>
                   <div class="inline-row">
                     <strong>${account.title}</strong>
-                    <span class="status-tag active">Užklausa</span>
+                    <span class="status-tag ${requestStatusClass}">${requestStatusLabel}</span>
                   </div>
                   <p class="list-copy">Suma: ${formatCurrency(request.amount)}</p>
                   <p class="list-copy">${request.accountNumber}</p>
                   <div class="inline-actions">
                     <button class="button primary compact-button" type="button" data-action="open-share-request" data-request-id="${request.id}">
                       Rodyti QR
+                    </button>
+                    <button class="button secondary compact-button" type="button" data-action="open-payment-review" data-request-id="${request.id}">
+                      Review
                     </button>
                     <button class="button secondary compact-button" type="button" data-action="copy-request-text" data-request-id="${request.id}">
                       Kopijuoti tekstą
@@ -2319,6 +2838,7 @@ function renderTransfers() {
 function renderConfirmModal() {
   elements.confirmModal.classList.toggle("hidden", !state.confirm.open);
   elements.confirmModal.setAttribute("aria-hidden", String(!state.confirm.open));
+  updateModalBodyLock();
   elements.confirmTitle.textContent = state.confirm.title;
   elements.confirmCopy.textContent = state.confirm.copy;
   elements.confirmSubmitButton.disabled = state.confirm.pinBuffer.length !== 4;
@@ -2332,6 +2852,7 @@ function renderAll() {
   renderAuth();
   renderConfirmModal();
   renderShareRequestModal();
+  renderPaymentReviewModal();
 
   if (!state.mode) {
     return;
@@ -2455,6 +2976,19 @@ function handleActionClick(actionButton) {
     const requestId = actionButton.dataset.requestId;
     if (requestId) {
       openShareRequest(requestId);
+    }
+    return;
+  }
+
+  if (action === "scan-payment-qr") {
+    void startInAppQrScan();
+    return;
+  }
+
+  if (action === "open-payment-review") {
+    const requestId = actionButton.dataset.requestId || state.shareRequestId;
+    if (requestId) {
+      openPaymentReviewForRequest(requestId);
     }
     return;
   }
@@ -2599,6 +3133,14 @@ elements.logoutButton.addEventListener("click", logout);
 elements.confirmCancelButton.addEventListener("click", closeConfirm);
 elements.confirmSubmitButton.addEventListener("click", submitConfirm);
 elements.shareRequestCloseButton.addEventListener("click", closeShareRequest);
+elements.shareRequestReviewButton.addEventListener("click", () => {
+  if (state.shareRequestId) {
+    openPaymentReviewForRequest(state.shareRequestId);
+  }
+});
+elements.shareRequestScanButton.addEventListener("click", () => {
+  void startInAppQrScan();
+});
 elements.shareRequestCopyButton.addEventListener("click", () => {
   const request = state.shareRequestId ? getPaymentRequestById(state.shareRequestId) : null;
   if (!request) {
@@ -2631,6 +3173,49 @@ elements.shareRequestSystemButton.addEventListener("click", async () => {
 
   const copied = await copyTextValue(shareText);
   createToast(copied ? "Share nepalaikomas - tekstas nukopijuotas." : "Nepavyko pasidalinti užklausa.", copied ? "success" : "warning");
+});
+elements.paymentReviewCancelButton.addEventListener("click", closePaymentReview);
+elements.paymentReviewConfirmButton.addEventListener("click", () => {
+  const payload = state.paymentReview.payload;
+  if (!payload) {
+    closePaymentReview();
+    return;
+  }
+
+  const request = getPaymentRequestById(payload.requestId);
+  if (request && request.status === "completed") {
+    createToast("Ši užklausa jau patvirtinta.", "warning");
+    renderPaymentReviewModal();
+    return;
+  }
+
+  const amount = sanitizeAmount(payload.amount);
+  if (payload.accountType === "savings") {
+    appData.accounts.savings += amount;
+  } else {
+    appData.accounts.wallet += amount;
+  }
+
+  if (request) {
+    request.status = "completed";
+  }
+
+  appendFeed(
+    `Mock Stripe review patvirtintas: ${formatCurrency(amount)} įkrito į ${
+      payload.accountType === "savings" ? "taupyklę" : "piniginę"
+    } per ${state.paymentReview.source === "deep-link" ? "deep link scan" : "review ekraną"}.`,
+    "success",
+  );
+  saveAppData();
+  openPaymentReview(
+    {
+      ...payload,
+      requestStatus: "completed",
+    },
+    state.paymentReview.source,
+  );
+  renderAll();
+  createToast("Review patvirtintas. Demo papildymas įvykdytas tik po tavo confirm.", "success");
 });
 
 elements.nextQuestionButton.addEventListener("click", () => {
@@ -2735,3 +3320,5 @@ document.addEventListener("click", (event) => {
 
 resetQuizQuestion(0);
 renderAll();
+void initDeepLinkHandling();
+void initBarcodeScanner();

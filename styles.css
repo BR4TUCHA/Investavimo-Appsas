@@ -564,6 +564,7 @@ p {
   font-size: 0.95rem;
   font-weight: 800;
   line-height: 1.5;
+  white-space: pre-wrap;
   word-break: break-all;
 }
 
@@ -678,7 +679,18 @@ p {
   align-items: start;
 }
 
+.review-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 320px);
+  gap: 18px;
+  align-items: start;
+}
+
 .share-card {
+  width: min(760px, 100%);
+}
+
+.payment-review-card {
   width: min(760px, 100%);
 }
 
@@ -718,6 +730,34 @@ p {
   gap: 14px;
 }
 
+.review-callout {
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(124, 140, 255, 0.24);
+  background: rgba(124, 140, 255, 0.08);
+}
+
+.review-callout strong,
+.review-callout p {
+  margin: 0;
+}
+
+.review-callout p {
+  margin-top: 6px;
+}
+
+.review-status-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 0;
+}
+
+.review-link {
+  margin-bottom: 0;
+}
+
 .bank-card-meta strong {
   display: block;
   margin-top: 6px;
@@ -747,6 +787,25 @@ p {
   border-radius: 16px;
   background: #fff;
   padding: 10px;
+}
+
+.qr-preview table,
+.qr-preview svg {
+  max-width: 100%;
+  height: auto;
+  border-radius: 16px;
+  background: #fff;
+  padding: 10px;
+  image-rendering: pixelated;
+}
+
+.qr-preview canvas {
+  display: block;
+  image-rendering: pixelated;
+}
+
+.qr-preview table td {
+  border: 0;
 }
 
 .game-score {
@@ -903,10 +962,24 @@ p {
   background: rgba(3, 8, 16, 0.7);
   backdrop-filter: blur(10px);
   z-index: 40;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .modal-card {
   width: min(440px, 100%);
+  max-height: calc(100dvh - 36px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+html.modal-open {
+  overflow: hidden;
 }
 
 .toast-stack {
@@ -950,6 +1023,10 @@ p {
   }
 
   .share-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .review-layout {
     grid-template-columns: 1fr;
   }
 
