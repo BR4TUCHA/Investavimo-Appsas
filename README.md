@@ -20,13 +20,16 @@ ir investavimo mokymuisi su aiškia tėvų kontrole.
   - pagrindiniam mokėjimui;
   - taupyklei;
 - pavedimo užklausų kūrimas ir numerio kopijavimas;
+- atskiras pavedimo užklausos share ekranas su QR kodu;
 - anti-spam apsauga dažnoms užklausoms;
 - lokalių telefono pranešimų siuntimas už kiekvieną naują KidFund veiksmą;
 - taupymo tikslų, balanso ir limitų suvestinė;
 - mokymosi kortelės ir mini viktorina;
 - pranešimų istorija;
 - atsitiktine tvarka maišomi viktorinos atsakymai;
-- vaikiškesnis vaiko režimo tonas su emoji ir mini misijomis.
+- vaikiškesnis vaiko režimo tonas su emoji ir mini misijomis;
+- tikros apatinės navigacijos ikonėlės vietoj raidžių;
+- keli mini žaidimukai vaikams.
 
 ## Naudojimo logika
 
@@ -85,5 +88,5 @@ apk/KidFund-debug.apk
 SHA-256:
 
 ```text
-a7192fec1907db567036aeb76aa266110c7a4c395e5a0092cfc3ff8d968c4c57
+cf329626727fd3228f1901da3e397a3899466f9d94c9fed0def9042a27b42801
 ```

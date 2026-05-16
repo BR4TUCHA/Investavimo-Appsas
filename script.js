@@ -232,6 +232,7 @@ const elements = {
   quizOptions: document.querySelector("#quizOptions"),
   quizFeedback: document.querySelector("#quizFeedback"),
   nextQuestionButton: document.querySelector("#nextQuestionButton"),
+  miniGamesBoard: document.querySelector("#miniGamesBoard"),
   feedList: document.querySelector("#feedList"),
   transferActions: document.querySelector("#transferActions"),
   transferQueue: document.querySelector("#transferQueue"),
@@ -243,6 +244,14 @@ const elements = {
   confirmSubmitButton: document.querySelector("#confirmSubmitButton"),
   confirmCancelButton: document.querySelector("#confirmCancelButton"),
   confirmKeypad: document.querySelector("#confirmKeypad"),
+  shareRequestModal: document.querySelector("#shareRequestModal"),
+  shareRequestTitle: document.querySelector("#shareRequestTitle"),
+  shareRequestCopy: document.querySelector("#shareRequestCopy"),
+  shareQrCode: document.querySelector("#shareQrCode"),
+  shareRequestText: document.querySelector("#shareRequestText"),
+  shareRequestSystemButton: document.querySelector("#shareRequestSystemButton"),
+  shareRequestCopyButton: document.querySelector("#shareRequestCopyButton"),
+  shareRequestCloseButton: document.querySelector("#shareRequestCloseButton"),
   toastStack: document.querySelector("#toastStack"),
 };
 
@@ -395,11 +404,18 @@ const state = {
   selectedInvestmentAmount: 10,
   paymentRequestAccount: "wallet",
   paymentRequestAmount: 15,
+  shareRequestId: null,
   quizIndex: 0,
   quizOptionOrder: [],
   quizFeedback: "",
   quizFeedbackTone: "",
   selectedQuizAnswer: null,
+  miniGames: {
+    piggyTaps: 0,
+    choiceAnswered: false,
+    choiceSelected: null,
+    cardPick: null,
+  },
 };
 
 function saveAuthStore() {
@@ -604,6 +620,156 @@ async function copyTextValue(value) {
     return false;
   }
   return false;
+}
+
+function getPaymentRequestById(requestId) {
+  return appData.requests.find((request) => request.id === requestId) || null;
+}
+
+function getShareRequestText(request) {
+  if (!request) {
+    const account = getAccountConfig(state.paymentRequestAccount);
+    return `KidFund pavedimo užklausa: pervesk ${formatCurrency(state.paymentRequestAmount)} į ${account.title} (${account.accountNumber}).`;
+  }
+  return (
+    request.shareText ||
+    `KidFund pavedimo užklausa: pervesk ${formatCurrency(request.amount)} į ${
+      getAccountConfig(request.accountType || "wallet").title
+    } (${request.accountNumber || getAccountConfig(request.accountType || "wallet").accountNumber}).`
+  );
+}
+
+function openShareRequest(requestId) {
+  state.shareRequestId = requestId;
+  renderShareRequestModal();
+}
+
+function closeShareRequest() {
+  state.shareRequestId = null;
+  renderShareRequestModal();
+}
+
+function renderShareRequestModal() {
+  const request = state.shareRequestId ? getPaymentRequestById(state.shareRequestId) : null;
+  const isOpen = Boolean(request);
+  elements.shareRequestModal.classList.toggle("hidden", !isOpen);
+  elements.shareRequestModal.setAttribute("aria-hidden", String(!isOpen));
+
+  if (!isOpen) {
+    elements.shareQrCode.innerHTML = "";
+    elements.shareRequestText.textContent = "";
+    return;
+  }
+
+  const account = getAccountConfig(request.accountType || "wallet");
+  const shareText = getShareRequestText(request);
+
+  elements.shareRequestTitle.textContent = `${account.title} · ${formatCurrency(request.amount)}`;
+  elements.shareRequestCopy.textContent =
+    "Nusiųsk šį ekraną arba nukopijuok tekstą tam, kas turi pervesti pinigus į KidFund.";
+  elements.shareRequestText.textContent = shareText;
+  elements.shareQrCode.innerHTML = "";
+
+  if (typeof window.QRCode === "function") {
+    // qrcodejs renders a real QR image/canvas directly into the target element.
+    new window.QRCode(elements.shareQrCode, {
+      text: shareText,
+      width: 180,
+      height: 180,
+      colorDark: "#08101c",
+      colorLight: "#ffffff",
+      correctLevel: window.QRCode.CorrectLevel?.M || 0,
+    });
+  } else {
+    elements.shareQrCode.innerHTML = '<div class="list-copy">QR nepavyko įkelti.</div>';
+  }
+}
+
+function renderMiniGames() {
+  const piggyRewardReached = state.miniGames.piggyTaps >= 8;
+  const choiceOptions = [
+    { id: "snack", label: "Užkandis šiandien", correct: false },
+    { id: "bike", label: "Dviratis vasarai", correct: true },
+    { id: "skin", label: "Žaidimo skin dabar", correct: false },
+  ];
+  const luckyCards = [
+    { id: "coin", emoji: "🪙", label: "Gavai +1 taupymo žvaigždę!" },
+    { id: "rocket", emoji: "🚀", label: "Laikas peržiūrėti investavimo pamoką!" },
+    { id: "piggy", emoji: "🐷", label: "Patikrink savo taupyklės progresą!" },
+  ];
+
+  elements.miniGamesBoard.innerHTML = `
+    <div class="game-card">
+      <div class="inline-row">
+        <h4>🐷 Tap tap taupyklė</h4>
+        <span class="game-score">${state.miniGames.piggyTaps} tap</span>
+      </div>
+      <p class="list-copy">Paspausk taupyklę kelis kartus ir surink mažą motyvacinę žinutę.</p>
+      <div class="copy-row">
+        <button class="button primary compact-button" type="button" data-action="mini-piggy-tap">
+          Spausti taupyklę
+        </button>
+        <span class="mini-pill">${piggyRewardReached ? "🎉 Super!" : "💫 Dar keli paspaudimai"}</span>
+      </div>
+      <p class="list-copy">${piggyRewardReached ? "Šaunu! Tu jau įrodei, kad mažais žingsniais galima nueiti toli." : "Kiekvienas mažas įdėjimas į taupyklę artina prie didelio tikslo."}</p>
+    </div>
+    <div class="game-card">
+      <div class="inline-row">
+        <h4>🎯 Greitas pasirinkimas</h4>
+        <span class="game-score">${state.miniGames.choiceAnswered ? "Atsakyta" : "Laukia"}</span>
+      </div>
+      <p class="list-copy">Kas labiau tinka taupymo tikslui, o ne momentiniam norui?</p>
+      <div class="answer-grid">
+        ${choiceOptions
+          .map((option) => {
+            const optionState =
+              state.miniGames.choiceAnswered && state.miniGames.choiceSelected === option.id
+                ? option.correct
+                  ? "correct"
+                  : "wrong"
+                : state.miniGames.choiceAnswered && option.correct
+                  ? "correct"
+                  : "";
+            return `
+              <button class="game-button ${optionState}" type="button" data-action="mini-choice" data-choice-id="${option.id}">
+                ${option.label}
+              </button>
+            `;
+          })
+          .join("")}
+      </div>
+      <p class="list-copy">${
+        state.miniGames.choiceAnswered
+          ? state.miniGames.choiceSelected === "bike"
+            ? "Teisingai! Didesnis tikslas paprastai geriau tinka taupymui."
+            : "Ne visai - ilgalaikiam taupymui geriau rinktis didesnį tikslą."
+          : "Pasirink vieną variantą."
+      }</p>
+    </div>
+    <div class="game-card">
+      <div class="inline-row">
+        <h4>🎁 Laimės korta</h4>
+        <span class="game-score">${state.miniGames.cardPick ? "Atverta" : "Uždaryta"}</span>
+      </div>
+      <p class="list-copy">Pasirink vieną kortą ir gauk mažą KidFund dienos misiją.</p>
+      <div class="answer-grid">
+        ${luckyCards
+          .map(
+            (card) => `
+              <button class="game-button ${state.miniGames.cardPick === card.id ? "active" : ""}" type="button" data-action="mini-card-pick" data-card-id="${card.id}">
+                <span class="big-emoji">${state.miniGames.cardPick === card.id ? card.emoji : "❓"}</span>
+              </button>
+            `,
+          )
+          .join("")}
+      </div>
+      <p class="list-copy">${
+        state.miniGames.cardPick
+          ? luckyCards.find((card) => card.id === state.miniGames.cardPick)?.label || ""
+          : "Atverk vieną kortą."
+      }</p>
+    </div>
+  `;
 }
 
 function getPinKey(role) {
@@ -902,6 +1068,7 @@ function logout() {
   state.authPinBuffer = "";
   setAuthMessage("", "");
   closeConfirm();
+  closeShareRequest();
   renderAll();
 }
 
@@ -1029,13 +1196,14 @@ function executeConfirmAction() {
       shareText,
       createdAt: nowIso(),
     });
+    const createdRequest = appData.requests[0];
     recordAction("paymentRequest");
     appendFeed(`${getRoleLabel(state.mode)} sukūrė pavedimo užklausą į ${account.title} už ${formatCurrency(amount)}.`, "warning");
     saveAppData();
-    void copyTextValue(shareText);
     closeConfirm();
+    openShareRequest(createdRequest.id);
     renderAll();
-    createToast("Pavedimo užklausa sukurta ir paruošta kopijavimui.", "success");
+    createToast("Pavedimo užklausa sukurta. Gali rodyti QR arba dalintis tekstu.", "success");
     return;
   }
 
@@ -1857,6 +2025,9 @@ function renderTransfers() {
                   <p class="list-copy">Suma: ${formatCurrency(request.amount)}</p>
                   <p class="list-copy">${request.accountNumber}</p>
                   <div class="inline-actions">
+                    <button class="button primary compact-button" type="button" data-action="open-share-request" data-request-id="${request.id}">
+                      Rodyti QR
+                    </button>
                     <button class="button secondary compact-button" type="button" data-action="copy-request-text" data-request-id="${request.id}">
                       Kopijuoti tekstą
                     </button>
@@ -1912,6 +2083,7 @@ function renderConfirmModal() {
 function renderAll() {
   renderAuth();
   renderConfirmModal();
+  renderShareRequestModal();
 
   if (!state.mode) {
     return;
@@ -1925,12 +2097,32 @@ function renderAll() {
   renderInvest();
   renderLearn();
   renderQuiz();
+  renderMiniGames();
   renderFeed();
   renderTransfers();
 }
 
 function handleActionClick(actionButton) {
   const action = actionButton.dataset.action;
+
+  if (action === "mini-piggy-tap") {
+    state.miniGames.piggyTaps += 1;
+    renderMiniGames();
+    return;
+  }
+
+  if (action === "mini-choice") {
+    state.miniGames.choiceAnswered = true;
+    state.miniGames.choiceSelected = actionButton.dataset.choiceId;
+    renderMiniGames();
+    return;
+  }
+
+  if (action === "mini-card-pick") {
+    state.miniGames.cardPick = actionButton.dataset.cardId;
+    renderMiniGames();
+    return;
+  }
 
   if (action === "select-asset") {
     state.selectedInvestmentId = actionButton.dataset.assetId || INVESTMENTS[0].id;
@@ -1968,6 +2160,14 @@ function handleActionClick(actionButton) {
     void copyTextValue(requestText).then((copied) => {
       createToast(copied ? "Pavedimo užklausos tekstas nukopijuotas." : "Nepavyko nukopijuoti teksto.", copied ? "success" : "warning");
     });
+    return;
+  }
+
+  if (action === "open-share-request") {
+    const requestId = actionButton.dataset.requestId;
+    if (requestId) {
+      openShareRequest(requestId);
+    }
     return;
   }
 
@@ -2110,6 +2310,40 @@ elements.authSubmitButton.addEventListener("click", submitAuth);
 elements.logoutButton.addEventListener("click", logout);
 elements.confirmCancelButton.addEventListener("click", closeConfirm);
 elements.confirmSubmitButton.addEventListener("click", submitConfirm);
+elements.shareRequestCloseButton.addEventListener("click", closeShareRequest);
+elements.shareRequestCopyButton.addEventListener("click", () => {
+  const request = state.shareRequestId ? getPaymentRequestById(state.shareRequestId) : null;
+  if (!request) {
+    return;
+  }
+
+  void copyTextValue(getShareRequestText(request)).then((copied) => {
+    createToast(copied ? "Užklausos tekstas nukopijuotas." : "Nepavyko nukopijuoti teksto.", copied ? "success" : "warning");
+  });
+});
+elements.shareRequestSystemButton.addEventListener("click", async () => {
+  const request = state.shareRequestId ? getPaymentRequestById(state.shareRequestId) : null;
+  if (!request) {
+    return;
+  }
+
+  const shareText = getShareRequestText(request);
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: "KidFund pavedimo užklausa",
+        text: shareText,
+      });
+      createToast("Pavedimo užklausa pasidalinta.", "success");
+      return;
+    } catch (error) {
+      // Fallback to copy.
+    }
+  }
+
+  const copied = await copyTextValue(shareText);
+  createToast(copied ? "Share nepalaikomas - tekstas nukopijuotas." : "Nepavyko pasidalinti užklausa.", copied ? "success" : "warning");
+});
 
 elements.nextQuestionButton.addEventListener("click", () => {
   resetQuizQuestion((state.quizIndex + 1) % QUIZ_QUESTIONS.length);

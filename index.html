@@ -253,6 +253,16 @@
               Kitas klausimas
             </button>
           </article>
+
+          <article class="card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Mini žaidimukai</p>
+                <h3>Greitos misijos vaikams</h3>
+              </div>
+            </div>
+            <div class="stack-list" id="miniGamesBoard"></div>
+          </article>
         </section>
 
         <section class="tab-panel" data-panel="feed">
@@ -294,27 +304,51 @@
 
       <nav class="bottom-nav" id="bottomNav">
         <button class="nav-item active" type="button" data-tab="home">
-          <span class="nav-icon">H</span>
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"></path>
+            </svg>
+          </span>
           <span>Pagr.</span>
         </button>
         <button class="nav-item" type="button" data-tab="savings">
-          <span class="nav-icon">T</span>
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M12 3a8 8 0 0 0-8 8v1.5A3.5 3.5 0 0 0 7.5 16H9l1 5h4l1-5h1.5A3.5 3.5 0 0 0 20 12.5V11a8 8 0 0 0-8-8zm0 3a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"></path>
+            </svg>
+          </span>
           <span>Taupyti</span>
         </button>
         <button class="nav-item" type="button" data-tab="invest">
-          <span class="nav-icon">I</span>
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M5 17l4.5-4.5 3 3L19 9v4h2V5h-8v2h4.59l-5.09 5.09-3-3L3 15.5z"></path>
+            </svg>
+          </span>
           <span>Invest.</span>
         </button>
         <button class="nav-item" type="button" data-tab="learn">
-          <span class="nav-icon">M</span>
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M12 6.5c-3.8 0-7 1.1-9 2.5v10c2-1.4 5.2-2.5 9-2.5s7 1.1 9 2.5V9c-2-1.4-5.2-2.5-9-2.5zm0 2c2.6 0 5 .5 7 1.4v6.1c-2-.9-4.4-1.4-7-1.4s-5 .5-7 1.4V9.9c2-.9 4.4-1.4 7-1.4z"></path>
+            </svg>
+          </span>
           <span>Mokytis</span>
         </button>
         <button class="nav-item" type="button" data-tab="feed">
-          <span class="nav-icon">N</span>
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M12 3a6 6 0 0 0-6 6v2.2c0 .7-.2 1.4-.6 2L4 16v1h16v-1l-1.4-2.8a4.6 4.6 0 0 1-.6-2V9a6 6 0 0 0-6-6zm0 19a3 3 0 0 0 2.8-2H9.2A3 3 0 0 0 12 22z"></path>
+            </svg>
+          </span>
           <span>Naujienos</span>
         </button>
         <button class="nav-item" type="button" data-tab="transfers" data-parent-only>
-          <span class="nav-icon">D</span>
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M7 7h10v2H7zm0 4h10v2H7zm-2 8h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2zm6-11h8v8h-8z"></path>
+            </svg>
+          </span>
           <span>Duoti</span>
         </button>
       </nav>
@@ -345,8 +379,41 @@
       </div>
     </div>
 
+    <div class="modal-overlay hidden" id="shareRequestModal" aria-hidden="true">
+      <div class="modal-card card share-card">
+        <div class="card-header">
+          <div>
+            <p class="eyebrow">Pavedimo užklausa</p>
+            <h3 id="shareRequestTitle"></h3>
+          </div>
+        </div>
+        <p class="muted-copy" id="shareRequestCopy"></p>
+        <div class="share-layout">
+          <div class="qr-preview" id="shareQrCode"></div>
+          <div class="stack-list">
+            <div class="account-card">
+              <h4>Tekstas pervedimui</h4>
+              <span class="account-number" id="shareRequestText"></span>
+            </div>
+            <div class="copy-row">
+              <button class="button primary compact-button" id="shareRequestSystemButton" type="button">
+                Dalintis
+              </button>
+              <button class="button secondary compact-button" id="shareRequestCopyButton" type="button">
+                Kopijuoti
+              </button>
+              <button class="button secondary compact-button" id="shareRequestCloseButton" type="button">
+                Uždaryti
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="toast-stack" id="toastStack"></div>
 
+    <script src="vendor/qrcode.min.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
