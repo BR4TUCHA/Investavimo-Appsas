@@ -311,14 +311,31 @@ const elements = {
   shareRequestBankCard: document.querySelector("#shareRequestBankCard"),
   shareRequestMeta: document.querySelector("#shareRequestMeta"),
   shareQrCode: document.querySelector("#shareQrCode"),
+  shareRequestReviewButton: document.querySelector("#shareRequestReviewButton"),
   shareRequestSystemButton: document.querySelector("#shareRequestSystemButton"),
   shareRequestCopyButton: document.querySelector("#shareRequestCopyButton"),
   shareRequestCloseButton: document.querySelector("#shareRequestCloseButton"),
+  paymentReviewModal: document.querySelector("#paymentReviewModal"),
+  paymentReviewTitle: document.querySelector("#paymentReviewTitle"),
+  paymentReviewCopy: document.querySelector("#paymentReviewCopy"),
+  paymentReviewBankCard: document.querySelector("#paymentReviewBankCard"),
+  paymentReviewMeta: document.querySelector("#paymentReviewMeta"),
+  paymentReviewConfirmButton: document.querySelector("#paymentReviewConfirmButton"),
+  paymentReviewCancelButton: document.querySelector("#paymentReviewCancelButton"),
   toastStack: document.querySelector("#toastStack"),
 };
 
 function deepClone(value) {
   return JSON.parse(JSON.stringify(value));
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 function nowIso() {
@@ -467,6 +484,11 @@ const state = {
   paymentRequestAccount: "wallet",
   paymentRequestAmount: 15,
   shareRequestId: null,
+  paymentReview: {
+    open: false,
+    payload: null,
+    source: "",
+  },
   quizIndex: 0,
   quizOptionOrder: [],
   quizFeedback: "",
@@ -698,17 +720,265 @@ function getPaymentRequestById(requestId) {
   return appData.requests.find((request) => request.id === requestId) || null;
 }
 
+function buildPaymentReviewPayloadFromRequest(request) {
+  if (!request) {
+    return null;
+  }
+
+  const account = getAccountConfig(request.accountType || "wallet");
+  return {
+    requestId: request.id,
+    amount: sanitizeAmount(request.amount),
+    accountType: account.type,
+    accountTitle: account.title,
+    accountBadge: account.badge,
+    accountNumber: request.accountNumber || account.accountNumber,
+    recipientName: request.recipientName || "KidFund",
+    requestDate: request.createdAt || nowIso(),
+    requestStatus: request.status || "open",
+    source: "request",
+  };
+}
+
+function buildPaymentDeepLink(payload) {
+  if (!payload) {
+    return "";
+  }
+
+  const params = new URLSearchParams({
+    requestId: payload.requestId || uid("scan"),
+    amount: String(sanitizeAmount(payload.amount)),
+    accountType: payload.accountType || "wallet",
+    accountNumber: payload.accountNumber || getAccountConfig(payload.accountType || "wallet").accountNumber,
+    recipientName: payload.recipientName || "KidFund",
+    accountTitle: payload.accountTitle || getAccountConfig(payload.accountType || "wallet").title,
+    requestDate: payload.requestDate || nowIso(),
+  });
+  return `kidfund://pay/review?${params.toString()}`;
+}
+
+function buildPaymentShareTextFromPayload(payload) {
+  if (!payload) {
+    return "";
+  }
+
+  return [
+    "KidFund pavedimo užklausa",
+    `Suma: ${formatCurrency(payload.amount)}`,
+    `Gavėjas: ${payload.recipientName || "KidFund"}`,
+    `Sąskaita: ${payload.accountNumber}`,
+    `Skiltis: ${payload.accountTitle}`,
+    `Review nuoroda: ${buildPaymentDeepLink(payload)}`,
+  ].join("\n");
+}
+
+function getPaymentDeepLink(request) {
+  const payload = buildPaymentReviewPayloadFromRequest(request);
+  if (!payload) {
+    return "";
+  }
+
+  return request.deepLink || buildPaymentDeepLink(payload);
+}
+
+function parsePaymentReviewUrl(url) {
+  if (!url) {
+    return null;
+  }
+
+  try {
+    const parsed = new URL(url);
+    const pathName = (parsed.pathname || "").replace(/\/+$/, "");
+    if (parsed.protocol !== "kidfund:" || parsed.host !== "pay" || pathName !== "/review") {
+      return null;
+    }
+
+    const accountType = parsed.searchParams.get("accountType") || "wallet";
+    const fallbackAccount = getAccountConfig(accountType);
+    return {
+      requestId: parsed.searchParams.get("requestId") || uid("scan"),
+      amount: sanitizeAmount(parsed.searchParams.get("amount")),
+      accountType,
+      accountTitle: parsed.searchParams.get("accountTitle") || fallbackAccount.title,
+      accountBadge: fallbackAccount.badge,
+      accountNumber: parsed.searchParams.get("accountNumber") || fallbackAccount.accountNumber,
+      recipientName: parsed.searchParams.get("recipientName") || "KidFund",
+      requestDate: parsed.searchParams.get("requestDate") || nowIso(),
+      requestStatus: "open",
+      source: "deep-link",
+    };
+  } catch (error) {
+    return null;
+  }
+}
+
 function getShareRequestText(request) {
   if (!request) {
     const account = getAccountConfig(state.paymentRequestAccount);
-    return `KidFund pavedimo užklausa: pervesk ${formatCurrency(state.paymentRequestAmount)} į ${account.title} (${account.accountNumber}).`;
+    return buildPaymentShareTextFromPayload({
+      requestId: uid("preview"),
+      amount: state.paymentRequestAmount,
+      accountType: account.type,
+      accountTitle: account.title,
+      accountNumber: account.accountNumber,
+      recipientName: "KidFund",
+      requestDate: nowIso(),
+    });
   }
-  return (
-    request.shareText ||
-    `KidFund pavedimo užklausa: pervesk ${formatCurrency(request.amount)} į ${
-      getAccountConfig(request.accountType || "wallet").title
-    } (${request.accountNumber || getAccountConfig(request.accountType || "wallet").accountNumber}).`
-  );
+  return request.shareText || buildPaymentShareTextFromPayload(buildPaymentReviewPayloadFromRequest(request));
+}
+
+function openPaymentReview(payload, source = "manual") {
+  if (!payload) {
+    return;
+  }
+
+  state.paymentReview = {
+    open: true,
+    payload: {
+      ...payload,
+      amount: sanitizeAmount(payload.amount),
+      requestStatus: payload.requestStatus || "open",
+    },
+    source,
+  };
+  renderPaymentReviewModal();
+}
+
+function closePaymentReview() {
+  state.paymentReview = {
+    open: false,
+    payload: null,
+    source: "",
+  };
+  renderPaymentReviewModal();
+}
+
+function openPaymentReviewForRequest(requestId) {
+  const request = getPaymentRequestById(requestId);
+  if (!request) {
+    createToast("Ši pavedimo užklausa nerasta.", "warning");
+    return;
+  }
+
+  if (state.shareRequestId) {
+    state.shareRequestId = null;
+    renderShareRequestModal();
+  }
+
+  openPaymentReview(buildPaymentReviewPayloadFromRequest(request), "request");
+}
+
+function renderPaymentReviewModal() {
+  const isOpen = state.paymentReview.open && state.paymentReview.payload;
+  elements.paymentReviewModal.classList.toggle("hidden", !isOpen);
+  elements.paymentReviewModal.setAttribute("aria-hidden", String(!isOpen));
+
+  if (!isOpen) {
+    elements.paymentReviewBankCard.innerHTML = "";
+    elements.paymentReviewMeta.innerHTML = "";
+    return;
+  }
+
+  const payload = state.paymentReview.payload;
+  const safeStatus = payload.requestStatus === "completed" ? "completed" : "open";
+  const statusLabel = safeStatus === "completed" ? "Patvirtinta" : "Laukia review";
+  const statusClass = safeStatus === "completed" ? "success" : "active";
+  const requestDate = formatDate(payload.requestDate);
+
+  elements.paymentReviewTitle.textContent = "KidFund payment review";
+  elements.paymentReviewCopy.textContent =
+    safeStatus === "completed"
+      ? "Ši užklausa jau buvo patvirtinta. Gali peržiūrėti detales arba uždaryti ekraną."
+      : "Po scan pirmiausia rodomas review ekranas. Tik paspaudus patvirtinimą įvykdoma demo pervedimo logika.";
+  elements.paymentReviewBankCard.innerHTML = `
+    <div class="bank-card-top">
+      <div>
+        <p class="eyebrow">KidFund review</p>
+        <h4>${escapeHtml(payload.accountTitle)}</h4>
+      </div>
+      ${renderUiIcon("qr", "feature-icon bank-icon")}
+    </div>
+    <div class="bank-card-amount">${formatCurrency(payload.amount)}</div>
+    <div class="bank-card-meta">
+      <div>
+        <span class="stack-meta">Gavėjas</span>
+        <strong>${escapeHtml(payload.recipientName)}</strong>
+      </div>
+      <div>
+        <span class="stack-meta">Sąskaita</span>
+        <strong>${escapeHtml(payload.accountNumber)}</strong>
+      </div>
+      <div>
+        <span class="stack-meta">Request ID</span>
+        <strong>${escapeHtml(payload.requestId)}</strong>
+      </div>
+      <div>
+        <span class="stack-meta">Statusas</span>
+        <strong>${statusLabel}</strong>
+      </div>
+    </div>
+  `;
+  elements.paymentReviewMeta.innerHTML = `
+    <div class="share-meta-header">
+      ${renderUiIcon("shield", "feature-icon subtle-icon")}
+      <div>
+        <h4>Review prieš mokėjimą</h4>
+        <p class="list-copy">Taip atrodo saugus srautas po scan: peržiūra, tada patvirtinimas.</p>
+      </div>
+    </div>
+    <div class="mission-row">
+      <span class="mini-pill">🔗 ${escapeHtml(state.paymentReview.source === "deep-link" ? "Deep link / QR" : "KidFund vidus")}</span>
+      <span class="mini-pill">📅 ${escapeHtml(requestDate)}</span>
+      <span class="mini-pill">🏦 ${escapeHtml(payload.accountBadge || "KidFund")}</span>
+    </div>
+    <div class="review-status-row">
+      <span class="status-tag ${statusClass}">${statusLabel}</span>
+      <span class="list-copy">Mokėjimas nebus atliktas vien tik po scan.</span>
+    </div>
+    <span class="account-number review-link">${escapeHtml(buildPaymentDeepLink(payload))}</span>
+  `;
+  elements.paymentReviewConfirmButton.disabled = safeStatus === "completed";
+}
+
+function handleIncomingDeepLink(url) {
+  const payload = parsePaymentReviewUrl(url);
+  if (!payload) {
+    return false;
+  }
+
+  const existingRequest = getPaymentRequestById(payload.requestId);
+  openPaymentReview(existingRequest ? buildPaymentReviewPayloadFromRequest(existingRequest) : payload, "deep-link");
+  createToast("Atidarytas mokėjimo review ekranas po scan.", "success");
+  return true;
+}
+
+async function initDeepLinkHandling() {
+  handleIncomingDeepLink(window.location.href);
+
+  const appPlugin = window.Capacitor?.Plugins?.App;
+  if (!appPlugin?.addListener) {
+    return;
+  }
+
+  try {
+    await appPlugin.addListener("appUrlOpen", ({ url }) => {
+      handleIncomingDeepLink(url);
+    });
+  } catch (error) {
+    // Ignore if the plugin is unavailable on the current platform.
+  }
+
+  if (appPlugin.getLaunchUrl) {
+    try {
+      const launchData = await appPlugin.getLaunchUrl();
+      if (launchData?.url) {
+        handleIncomingDeepLink(launchData.url);
+      }
+    } catch (error) {
+      // Ignore missing launch URL support.
+    }
+  }
 }
 
 function openShareRequest(requestId) {
@@ -736,16 +1006,17 @@ function renderShareRequestModal() {
 
   const account = getAccountConfig(request.accountType || "wallet");
   const shareText = getShareRequestText(request);
+  const deepLink = getPaymentDeepLink(request);
   const requestDate = formatDate(request.createdAt);
 
   elements.shareRequestTitle.textContent = `KidFund mokėjimo kortelė`;
   elements.shareRequestCopy.textContent =
-    "Gavėjas gali nuskenuoti QR, nukopijuoti duomenis arba gauti šią užklausą per share.";
+    "Gavėjas gali nuskenuoti QR, atidaryti review ekraną, nukopijuoti duomenis arba gauti šią užklausą per share.";
   elements.shareRequestBankCard.innerHTML = `
     <div class="bank-card-top">
       <div>
         <p class="eyebrow">KidFund transfer request</p>
-        <h4>${account.title}</h4>
+        <h4>${escapeHtml(account.title)}</h4>
       </div>
       ${renderUiIcon("bank", "feature-icon bank-icon")}
     </div>
@@ -757,11 +1028,11 @@ function renderShareRequestModal() {
       </div>
       <div>
         <span class="stack-meta">Sąskaita</span>
-        <strong>${account.accountNumber}</strong>
+        <strong>${escapeHtml(account.accountNumber)}</strong>
       </div>
       <div>
         <span class="stack-meta">Request ID</span>
-        <strong>${request.id}</strong>
+        <strong>${escapeHtml(request.id)}</strong>
       </div>
       <div>
         <span class="stack-meta">Data</span>
@@ -774,22 +1045,23 @@ function renderShareRequestModal() {
       ${renderUiIcon("copy", "feature-icon subtle-icon")}
       <div>
         <h4>Tekstas pavedimui</h4>
-        <p class="list-copy">Šį tekstą gali kopijuoti arba siųsti tam, kas atliks pervedimą.</p>
+        <p class="list-copy">Šį tekstą gali kopijuoti arba siųsti tam, kas atliks pervedimą. QR atidaro review ekraną.</p>
       </div>
     </div>
-    <span class="account-number" id="shareRequestText">${shareText}</span>
+    <span class="account-number" id="shareRequestText">${escapeHtml(shareText)}</span>
     <div class="mission-row">
       <span class="mini-pill">👤 Gavėjas: KidFund</span>
       <span class="mini-pill">💸 Suma: ${formatCurrency(request.amount)}</span>
       <span class="mini-pill">🏦 ${account.badge}</span>
     </div>
+    <span class="account-number review-link">${escapeHtml(deepLink)}</span>
   `;
   elements.shareQrCode.innerHTML = "";
 
   if (typeof window.QRCode === "function") {
     // qrcodejs renders a real QR image/canvas directly into the target element.
     new window.QRCode(elements.shareQrCode, {
-      text: shareText,
+      text: deepLink,
       width: 180,
       height: 180,
       colorDark: "#08101c",
@@ -1391,10 +1663,22 @@ function executeConfirmAction() {
 
     const account = getAccountConfig(action.accountType);
     const amount = sanitizeAmount(action.amount);
-    const shareText = `KidFund pavedimo užklausa: pervesk ${formatCurrency(amount)} į ${account.title} (${account.accountNumber}).`;
+    const requestId = uid("request");
+    const createdAt = nowIso();
+    const payload = {
+      requestId,
+      amount,
+      accountType: account.type,
+      accountTitle: account.title,
+      accountNumber: account.accountNumber,
+      recipientName: "KidFund",
+      requestDate: createdAt,
+    };
+    const shareText = buildPaymentShareTextFromPayload(payload);
+    const deepLink = buildPaymentDeepLink(payload);
 
     appData.requests.unshift({
-      id: uid("request"),
+      id: requestId,
       type: "payment-request",
       accountType: account.type,
       accountNumber: account.accountNumber,
@@ -1402,7 +1686,8 @@ function executeConfirmAction() {
       status: "open",
       createdBy: state.mode || "child",
       shareText,
-      createdAt: nowIso(),
+      deepLink,
+      createdAt,
     });
     const createdRequest = appData.requests[0];
     recordAction("paymentRequest");
@@ -2262,19 +2547,24 @@ function renderTransfers() {
         .map((request) => {
           if (request.type === "payment-request") {
             const account = getAccountConfig(request.accountType);
+            const requestStatusLabel = request.status === "completed" ? "Patvirtinta" : "Užklausa";
+            const requestStatusClass = request.status === "completed" ? "success" : "active";
             return `
               <div class="stack-item">
                 ${renderUiIcon("qr")}
                 <div>
                   <div class="inline-row">
                     <strong>${account.title}</strong>
-                    <span class="status-tag active">Užklausa</span>
+                    <span class="status-tag ${requestStatusClass}">${requestStatusLabel}</span>
                   </div>
                   <p class="list-copy">Suma: ${formatCurrency(request.amount)}</p>
                   <p class="list-copy">${request.accountNumber}</p>
                   <div class="inline-actions">
                     <button class="button primary compact-button" type="button" data-action="open-share-request" data-request-id="${request.id}">
                       Rodyti QR
+                    </button>
+                    <button class="button secondary compact-button" type="button" data-action="open-payment-review" data-request-id="${request.id}">
+                      Review
                     </button>
                     <button class="button secondary compact-button" type="button" data-action="copy-request-text" data-request-id="${request.id}">
                       Kopijuoti tekstą
@@ -2332,6 +2622,7 @@ function renderAll() {
   renderAuth();
   renderConfirmModal();
   renderShareRequestModal();
+  renderPaymentReviewModal();
 
   if (!state.mode) {
     return;
@@ -2455,6 +2746,14 @@ function handleActionClick(actionButton) {
     const requestId = actionButton.dataset.requestId;
     if (requestId) {
       openShareRequest(requestId);
+    }
+    return;
+  }
+
+  if (action === "open-payment-review") {
+    const requestId = actionButton.dataset.requestId || state.shareRequestId;
+    if (requestId) {
+      openPaymentReviewForRequest(requestId);
     }
     return;
   }
@@ -2599,6 +2898,11 @@ elements.logoutButton.addEventListener("click", logout);
 elements.confirmCancelButton.addEventListener("click", closeConfirm);
 elements.confirmSubmitButton.addEventListener("click", submitConfirm);
 elements.shareRequestCloseButton.addEventListener("click", closeShareRequest);
+elements.shareRequestReviewButton.addEventListener("click", () => {
+  if (state.shareRequestId) {
+    openPaymentReviewForRequest(state.shareRequestId);
+  }
+});
 elements.shareRequestCopyButton.addEventListener("click", () => {
   const request = state.shareRequestId ? getPaymentRequestById(state.shareRequestId) : null;
   if (!request) {
@@ -2631,6 +2935,49 @@ elements.shareRequestSystemButton.addEventListener("click", async () => {
 
   const copied = await copyTextValue(shareText);
   createToast(copied ? "Share nepalaikomas - tekstas nukopijuotas." : "Nepavyko pasidalinti užklausa.", copied ? "success" : "warning");
+});
+elements.paymentReviewCancelButton.addEventListener("click", closePaymentReview);
+elements.paymentReviewConfirmButton.addEventListener("click", () => {
+  const payload = state.paymentReview.payload;
+  if (!payload) {
+    closePaymentReview();
+    return;
+  }
+
+  const request = getPaymentRequestById(payload.requestId);
+  if (request && request.status === "completed") {
+    createToast("Ši užklausa jau patvirtinta.", "warning");
+    renderPaymentReviewModal();
+    return;
+  }
+
+  const amount = sanitizeAmount(payload.amount);
+  if (payload.accountType === "savings") {
+    appData.accounts.savings += amount;
+  } else {
+    appData.accounts.wallet += amount;
+  }
+
+  if (request) {
+    request.status = "completed";
+  }
+
+  appendFeed(
+    `Mock Stripe review patvirtintas: ${formatCurrency(amount)} įkrito į ${
+      payload.accountType === "savings" ? "taupyklę" : "piniginę"
+    } per ${state.paymentReview.source === "deep-link" ? "deep link scan" : "review ekraną"}.`,
+    "success",
+  );
+  saveAppData();
+  openPaymentReview(
+    {
+      ...payload,
+      requestStatus: "completed",
+    },
+    state.paymentReview.source,
+  );
+  renderAll();
+  createToast("Review patvirtintas. Demo papildymas įvykdytas tik po tavo confirm.", "success");
 });
 
 elements.nextQuestionButton.addEventListener("click", () => {
@@ -2735,3 +3082,4 @@ document.addEventListener("click", (event) => {
 
 resetQuizQuestion(0);
 renderAll();
+void initDeepLinkHandling();

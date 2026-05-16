@@ -394,6 +394,9 @@
             <div class="bank-request-card" id="shareRequestBankCard"></div>
             <div class="account-card" id="shareRequestMeta"></div>
             <div class="copy-row">
+              <button class="button primary compact-button" id="shareRequestReviewButton" type="button">
+                Review
+              </button>
               <button class="button primary compact-button" id="shareRequestSystemButton" type="button">
                 Dalintis
               </button>
@@ -402,6 +405,39 @@
               </button>
               <button class="button secondary compact-button" id="shareRequestCloseButton" type="button">
                 Uždaryti
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay hidden" id="paymentReviewModal" aria-hidden="true">
+      <div class="modal-card card payment-review-card">
+        <div class="card-header">
+          <div>
+            <p class="eyebrow">Payment review</p>
+            <h3 id="paymentReviewTitle"></h3>
+          </div>
+        </div>
+        <p class="muted-copy" id="paymentReviewCopy"></p>
+        <div class="review-layout">
+          <div class="bank-request-card" id="paymentReviewBankCard"></div>
+          <div class="stack-list">
+            <div class="account-card" id="paymentReviewMeta"></div>
+            <div class="review-callout">
+              <strong>Automatinio pavedimo nėra.</strong>
+              <p class="list-copy">
+                Nuskenavus QR arba atidarius deep link, KidFund tik parodo review
+                ekraną. Pavedimas vyksta tik po aiškaus patvirtinimo.
+              </p>
+            </div>
+            <div class="copy-row">
+              <button class="button primary compact-button" id="paymentReviewConfirmButton" type="button">
+                Patvirtinti review
+              </button>
+              <button class="button secondary compact-button" id="paymentReviewCancelButton" type="button">
+                Atšaukti
               </button>
             </div>
           </div>
