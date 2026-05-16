@@ -22,6 +22,7 @@ ir investavimo mokymuisi su aiškia tėvų kontrole.
 - pavedimo užklausų kūrimas ir numerio kopijavimas;
 - atskiras pavedimo užklausos share ekranas su QR kodu;
 - `kidfund://pay/review?...` deep link srautas, kad QR galėtų atidaryti review ekraną telefone;
+- tikras in-app QR skeneris su telefono kamera ir Android ML Kit integracija;
 - payment review ekranas po scan su aiškiu `review + confirm` žingsniu prieš demo papildymą;
 - anti-spam apsauga dažnoms užklausoms;
 - lokalių telefono pranešimų siuntimas už kiekvieną naują KidFund veiksmą;
@@ -50,6 +51,8 @@ ir investavimo mokymuisi su aiškia tėvų kontrole.
   suteiktas leidimas pranešimams.
 - QR kodas dabar koduoja KidFund deep link, todėl telefono kamera gali atidaryti
   review ekraną tiesiai programėlėje.
+- Transfers skiltyje galima paleisti tikrą KidFund QR skenerį su kamera tiesiai
+  programėlėje, o nuskaitytas QR iškart perduodamas į review ekraną.
 - Nuskenavus QR ar atidarius deep link, pinigai neįkrenta automatiškai:
   pirmiausia parodoma mokėjimo peržiūra, tada reikia aiškaus patvirtinimo.
 - Atidarius modal langus, foninis ekranas nebesiscrollina, o ilgas turinys
@@ -98,5 +101,5 @@ apk/KidFund-debug.apk
 SHA-256:
 
 ```text
-1a274b442013db685af3e01a087f07f648eb8bad59f1547004f697dd9f93c1e3
+9cd4933d8261e6ae2cad77c490d4fc24b6f636f65a1357ce2a57c1f9141c0b37
 ```
