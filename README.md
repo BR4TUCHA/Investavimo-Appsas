@@ -15,9 +15,18 @@ ir investavimo mokymuisi su aiškia tėvų kontrole.
   - akcijų ir kriptovaliutų pasirinkimai;
   - vaiko investavimo prašymo pateikimas;
   - tėvų patvirtinimas arba atmetimas su atskiru PIN;
+- partnerių / reklamos vieta pagrindiniame lange;
+- atskiri sąskaitų numeriai:
+  - pagrindiniam mokėjimui;
+  - taupyklei;
+- pavedimo užklausų kūrimas ir numerio kopijavimas;
+- anti-spam apsauga dažnoms užklausoms;
+- lokalių telefono pranešimų siuntimas už kiekvieną naują KidFund veiksmą;
 - taupymo tikslų, balanso ir limitų suvestinė;
 - mokymosi kortelės ir mini viktorina;
-- pranešimų istorija.
+- pranešimų istorija;
+- atsitiktine tvarka maišomi viktorinos atsakymai;
+- vaikiškesnis vaiko režimo tonas su emoji ir mini misijomis.
 
 ## Naudojimo logika
 
@@ -27,8 +36,13 @@ ir investavimo mokymuisi su aiškia tėvų kontrole.
   - pinigų davimas vaikui,
   - investavimo prašymo siuntimas,
   - investavimo prašymo patvirtinimas / atmetimas,
-  - kripto leidimo įjungimas / išjungimas
+  - kripto leidimo įjungimas / išjungimas,
+  - pavedimo užklausos kūrimas
   vyksta per atskirą patvirtinimo modal langą su savo PIN tikrinimu.
+- Nauji feed įrašai papildomai siunčiami kaip lokali telefono notifikacija, jei
+  suteiktas leidimas pranešimams.
+- Anti-spam riboja per dažnus prašymus ir papildymus, kad KidFund nebūtų
+  apkrautas pasikartojančiomis užklausomis.
 
 ## Paleidimas
 
@@ -71,5 +85,5 @@ apk/KidFund-debug.apk
 SHA-256:
 
 ```text
-fffc59dd0f103c524372c77ce91f4a087c807dc25b0877ab913e7bbf81e1ba76
+a7192fec1907db567036aeb76aa266110c7a4c395e5a0092cfc3ff8d968c4c57
 ```

@@ -16,42 +16,11 @@
     <div class="auth-screen" id="authScreen">
       <div class="auth-shell">
         <section class="auth-brand card">
-          <p class="eyebrow">KidFund</p>
-          <h1>Pilno ekrano prisijungimas, o ne pop-up</h1>
-          <p class="muted-copy">
-            Atskirai prisijunk arba registruokis kaip vaikas ar tėvas. Jautriems
-            veiksmams programėlė rodys mažą patvirtinimo langą su atskira PIN
-            validacija.
-          </p>
-          <div class="feature-list">
-            <div class="feature-item">
-              <span class="feature-icon">01</span>
-              <div>
-                <strong>Atskiras login page</strong>
-                <p>Vaikui ir tėvams rodoma normali pilno ekrano prisijungimo zona.</p>
-              </div>
-            </div>
-            <div class="feature-item">
-              <span class="feature-icon">02</span>
-              <div>
-                <strong>Child-safe vaizdas</strong>
-                <p>
-                  Vaikas nemato „Duoti“ skirtuko, leidimų politikos ir tėvų investavimo
-                  valdymo.
-                </p>
-              </div>
-            </div>
-            <div class="feature-item">
-              <span class="feature-icon">03</span>
-              <div>
-                <strong>Investavimas su leidimu</strong>
-                <p>
-                  Vaikas gali siųsti prašymus investuoti į akcijas ar kriptovaliutas, o
-                  tėvai juos patvirtina atskiru PIN.
-                </p>
-              </div>
-            </div>
-          </div>
+          <p class="eyebrow" id="authBrandEyebrow">KidFund</p>
+          <h1 id="authBrandTitle">Pilno ekrano prisijungimas, o ne pop-up</h1>
+          <p class="muted-copy" id="authBrandCopy"></p>
+          <div class="emoji-row" id="authEmojiRow"></div>
+          <div class="feature-list" id="authFeatureList"></div>
         </section>
 
         <section class="auth-card card">
@@ -116,11 +85,33 @@
             <article class="card">
               <div class="card-header">
                 <div>
-                  <p class="eyebrow">Greiti veiksmai</p>
-                  <h3>Ką nori daryti dabar?</h3>
+                  <p class="eyebrow">Nuotaika</p>
+                  <h3 id="homeMoodTitle"></h3>
                 </div>
               </div>
-              <div class="stack-list" id="quickActions"></div>
+              <div class="stack-list" id="homeMoodSpot"></div>
+            </article>
+
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Partneriai</p>
+                  <h3>KidFund partnerių vieta</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="partnerSpot"></div>
+            </article>
+          </div>
+
+          <div class="content-grid">
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Sąskaitos numeriai</p>
+                  <h3>Gauti pavedimą arba kopijuoti numerį</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="accountHub"></div>
             </article>
 
             <article class="card">
@@ -131,6 +122,28 @@
                 </div>
               </div>
               <div class="stack-list" id="homeFeedPreview"></div>
+            </article>
+          </div>
+
+          <div class="content-grid">
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Greiti veiksmai</p>
+                  <h3>Ką nori daryti dabar?</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="quickActions"></div>
+            </article>
+
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Žaidybinimas</p>
+                  <h3>Mažos misijos ir emoji</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="kidMissionSpot"></div>
             </article>
           </div>
         </section>
