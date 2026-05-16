@@ -239,6 +239,12 @@ p {
   font-weight: 800;
 }
 
+.nav-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
 .emoji-row,
 .mission-row,
 .copy-row {
@@ -489,7 +495,8 @@ p {
 
 .promo-card,
 .account-card,
-.kid-card {
+.kid-card,
+.game-card {
   padding: 18px;
   border: 1px solid var(--border);
   border-radius: 20px;
@@ -504,14 +511,22 @@ p {
 
 .promo-card h4,
 .account-card h4,
-.kid-card h4 {
+.kid-card h4,
+.game-card h4 {
   margin: 0 0 8px;
 }
 
 .promo-card p,
 .account-card p,
-.kid-card p {
+.kid-card p,
+.game-card p {
   margin: 0;
+}
+
+.game-card {
+  background:
+    linear-gradient(135deg, rgba(255, 182, 72, 0.08), rgba(124, 140, 255, 0.08)),
+    rgba(255, 255, 255, 0.03);
 }
 
 .account-number {
@@ -630,6 +645,81 @@ p {
 .choice-row .button {
   flex: 1 1 160px;
   min-width: 0;
+}
+
+.share-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.share-card {
+  width: min(760px, 100%);
+}
+
+.qr-preview {
+  min-height: 220px;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.qr-preview canvas,
+.qr-preview img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 16px;
+  background: #fff;
+  padding: 10px;
+}
+
+.game-score {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.answer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.game-button {
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.game-button.active,
+.game-button.correct {
+  background: rgba(57, 201, 146, 0.12);
+  border-color: rgba(57, 201, 146, 0.42);
+}
+
+.game-button.wrong {
+  background: rgba(255, 108, 122, 0.12);
+  border-color: rgba(255, 108, 122, 0.4);
+}
+
+.big-emoji {
+  font-size: 2.2rem;
+  line-height: 1;
 }
 
 .chip-button {
@@ -786,6 +876,10 @@ p {
   .stats-grid {
     grid-template-columns: 1fr;
   }
+
+  .share-layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 760px) {
@@ -829,6 +923,10 @@ p {
 
   .nav-item {
     min-height: 76px;
+  }
+
+  .answer-grid {
+    grid-template-columns: 1fr;
   }
 
   .toast-stack {
