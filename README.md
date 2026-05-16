@@ -1,39 +1,38 @@
-# Investavimo-Appsas
+# KidFund
 
-`TaupykLab` yra paprastas vieno puslapio MVP prototipas, skirtas parodyti vaikų
-kišenpinigių, taupymo, investavimo edukacijos ir tėvų kontrolės idėją.
+`KidFund` yra statinis mobilus prototipas, skirtas vaikų kišenpinigių, taupymo
+ir investavimo mokymuisi su aiškia tėvų kontrole.
 
-## Kas įdėta
+## Kas dabar įdėta
 
-- hero sekcija su produkto pasiūlymu;
-- interaktyvus simuliatorius:
-  - mėnesio kišenpinigių dydis,
-  - procentas taupymui,
-  - procentas investavimo kišenei,
-  - taupymo tikslas,
-  - esama pažanga,
-  - tėvų prisidėjimo procentas;
-- automatiškai perskaičiuojamas paskirstymas į:
-  - išleidimą,
-  - taupymą,
-  - investavimą;
-- tėvų pranešimo ir prisidėjimo scenarijus;
-- mini mokymosi zona su trumpomis finansų pamokomis ir viktorina.
+- pilno ekrano prisijungimo / registracijos ekranas vaikui ir tėvams;
+- atskiras PIN patvirtinimo modal langas jautriems veiksmams;
+- child-safe vaizdas:
+  - vaikas nemato `Duoti` skirtuko;
+  - vaikas nemato leidimų politikos bloko;
+  - vaikas nemato tėvų investavimo valdymo mygtukų;
+- investavimo skiltis:
+  - akcijų ir kriptovaliutų pasirinkimai;
+  - vaiko investavimo prašymo pateikimas;
+  - tėvų patvirtinimas arba atmetimas su atskiru PIN;
+- taupymo tikslų, balanso ir limitų suvestinė;
+- mokymosi kortelės ir mini viktorina;
+- pranešimų istorija.
 
-## MVP logika
+## Naudojimo logika
 
-- Tėvai nustato, kokia kišenpinigių dalis lieka išleidimui, taupymui ir
-  investavimo mokymuisi.
-- Kai vaikas pasiekia bent 50% savo tikslo, programėlė pažymi, kad galima
-  siųsti pranešimą tėvams ir aktyvuoti jų prisidėjimą.
-- Tėvų prisidėjimo procentas skaičiuojamas tik po to, kai šis slenkstis
-  pasiektas.
-- Edukacinė dalis skirta aiškinti bazines sąvokas: taupymą, riziką ir
-  sudėtinį augimą.
+- Prisijungimas vyksta atskirame pilno ekrano lange, o ne pop-up'e.
+- Registracija ir prisijungimas turi atskirą validaciją.
+- Veiksmai kaip:
+  - pinigų davimas vaikui,
+  - investavimo prašymo siuntimas,
+  - investavimo prašymo patvirtinimas / atmetimas,
+  - kripto leidimo įjungimas / išjungimas
+  vyksta per atskirą patvirtinimo modal langą su savo PIN tikrinimu.
 
 ## Paleidimas
 
-Tai statinis projektas, todėl užtenka atsidaryti `index.html` naršyklėje.
+Statinę versiją galima atsidaryti tiesiog atveriant `index.html`.
 
 Jei norisi paleisti per lokalią tarnybą:
 
@@ -47,22 +46,7 @@ Tada atidarykite:
 http://localhost:8000
 ```
 
-## Android APK
-
-Iš esamo MVP pridėtas Android apvalkalas su Capacitor, todėl galima sugeneruoti
-`apk` failą telefonui.
-
-### Kur yra sugeneruotas APK
-
-Po build'o failas yra čia:
-
-```text
-android/app/build/outputs/apk/debug/app-debug.apk
-```
-
-### Kaip perbuildinti APK
-
-Jei reikėtų perbuildinti iš naujo:
+## Android build
 
 ```bash
 npm install
@@ -72,9 +56,20 @@ cd android
 ./gradlew assembleDebug
 ```
 
-### Pastaba
+Sugeneruotas debug APK bus čia:
 
-- Šiuo metu tai yra `debug` APK versija.
-- Android telefone gali reikėti leisti diegimą iš nežinomų šaltinių.
-- Jei norėsi, kitame etape galima padaryti pasirašytą `release` APK arba AAB
-  failą Google Play įkėlimui.
+```text
+android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+Patogesnė nukopijuota versija repozitorijoje:
+
+```text
+apk/KidFund-debug.apk
+```
+
+SHA-256:
+
+```text
+3f00deb8d6180e2dc3c7315ceebbb8c740b7d0f6c0985e3e62022191d48d9595
+```

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">TaupykLab</string>
-    <string name="title_activity_main">TaupykLab</string>
+    <string name="app_name">KidFund</string>
+    <string name="title_activity_main">KidFund</string>
     <string name="package_name">lt.taupyklab.app</string>
     <string name="custom_url_scheme">lt.taupyklab.app</string>
 </resources>

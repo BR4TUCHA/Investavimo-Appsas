@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TaupykLab | Vaikų taupymo ir investavimo programėlė</title>
+    <title>KidFund | Vaikų taupymo ir investavimo programėlė</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -13,317 +13,326 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="page-shell">
-      <header class="topbar">
-        <div>
-          <p class="eyebrow">MVP demonstracija</p>
-          <h1>TaupykLab</h1>
-        </div>
-        <nav class="topbar-nav">
-          <a href="#simuliatorius">Simuliatorius</a>
-          <a href="#funkcijos">Funkcijos</a>
-          <a href="#mokymasis">Mokymasis</a>
-        </nav>
-      </header>
-
-      <main>
-        <section class="hero">
-          <div class="hero-copy">
-            <span class="badge">Vaikų kišenpinigiai + tėvų kontrolė + finansinis raštingumas</span>
-            <h2>
-              Programėlė, kuri paverčia kišenpinigius
-              <span>taupymo ir investavimo įpročiu.</span>
-            </h2>
-            <p class="lead">
-              Tėvai perveda kišenpinigius į programėlę, dalis pinigų automatiškai
-              užrakinama taupymui ar investavimui, o vaikai realiu laiku mato savo
-              pažangą, tikslus ir atlygius.
-            </p>
-            <div class="hero-actions">
-              <a class="button primary" href="#simuliatorius">Išbandyti idėją</a>
-              <a class="button secondary" href="#mokymasis">Peržiūrėti mokymosi zoną</a>
-            </div>
-            <ul class="hero-points">
-              <li>Automatinis paskirstymas: išleisti / taupyti / investuoti</li>
-              <li>Tėvų „match“ mechanika, kai vaikas pasiekia tarpinius tikslus</li>
-              <li>Mini pamokos apie pinigus, riziką ir ilgalaikį augimą</li>
-            </ul>
-          </div>
-
-          <div class="hero-panel">
-            <div class="panel-card accent-card">
-              <p class="panel-label">Vaiko piniginė</p>
-              <div class="panel-main-row">
-                <strong id="walletAmount">45 EUR</strong>
-                <span class="status-pill">Savaitės limitas aktyvus</span>
-              </div>
-              <div class="split-metrics">
-                <div>
-                  <span>Išleidimui</span>
-                  <strong id="heroSpend">22.50 EUR</strong>
-                </div>
-                <div>
-                  <span>Taupymui</span>
-                  <strong id="heroSave">15.75 EUR</strong>
-                </div>
-                <div>
-                  <span>Investavimui</span>
-                  <strong id="heroInvest">6.75 EUR</strong>
-                </div>
+    <div class="auth-screen" id="authScreen">
+      <div class="auth-shell">
+        <section class="auth-brand card">
+          <p class="eyebrow">KidFund</p>
+          <h1>Pilno ekrano prisijungimas, o ne pop-up</h1>
+          <p class="muted-copy">
+            Atskirai prisijunk arba registruokis kaip vaikas ar tėvas. Jautriems
+            veiksmams programėlė rodys mažą patvirtinimo langą su atskira PIN
+            validacija.
+          </p>
+          <div class="feature-list">
+            <div class="feature-item">
+              <span class="feature-icon">01</span>
+              <div>
+                <strong>Atskiras login page</strong>
+                <p>Vaikui ir tėvams rodoma normali pilno ekrano prisijungimo zona.</p>
               </div>
             </div>
-
-            <div class="panel-card">
-              <p class="panel-label">Tėvų veiksmas</p>
-              <h3>„Sutaupei 50% dviračiui“</h3>
-              <p class="notification-copy">
-                Programėlė išsiunčia tėvams pranešimą ir leidžia vienu paspaudimu
-                padengti likusią sumos dalį.
-              </p>
-              <div class="notification-row">
-                <span>Automatinis pranešimas</span>
-                <span class="status-pill success">Įjungtas</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="overview-grid" id="funkcijos">
-          <article class="info-card">
-            <div class="icon-bubble">1</div>
-            <h3>Automatinės taisyklės</h3>
-            <p>
-              Kiekvieną kartą pervedus kišenpinigius, nustatyta procentinė dalis
-              nukeliauja į taupymą ir investavimą, todėl vaikas negali visko
-              išleisti iš karto.
-            </p>
-          </article>
-          <article class="info-card">
-            <div class="icon-bubble">2</div>
-            <h3>Tėvų kontrolės skydelis</h3>
-            <p>
-              Tėvai mato tikslus, gali uždėti išleidimo limitus, gauti
-              pranešimus apie pažangą ir paskatinti vaiką papildomu prisidėjimu.
-            </p>
-          </article>
-          <article class="info-card">
-            <div class="icon-bubble">3</div>
-            <h3>Mokymosi zona</h3>
-            <p>
-              Vaikai ir tėvai kartu pereina trumpas pamokas apie taupymą,
-              sudėtinį augimą, riziką ir atsakingą investavimą.
-            </p>
-          </article>
-        </section>
-
-        <section class="simulator-section" id="simuliatorius">
-          <div class="section-heading">
-            <p class="eyebrow">Interaktyvus MVP</p>
-            <h2>Pasimatuok, kaip galėtų veikti programėlė</h2>
-            <p>
-              Keisk kišenpinigių sumą, paskirstymo procentus ir taupymo tikslą.
-              Dešinėje matysi, kokią naudą gauna vaikas ir kokį veiksmą atlieka tėvai.
-            </p>
-          </div>
-
-          <div class="simulator-grid">
-            <form class="simulator-card controls-card">
-              <div class="control-group">
-                <label for="allowance">Mėnesio kišenpinigiai</label>
-                <div class="range-header">
-                  <input id="allowance" type="range" min="10" max="300" step="5" value="45" />
-                  <strong id="allowanceValue">45 EUR</strong>
-                </div>
-              </div>
-
-              <div class="control-group">
-                <label for="savePercent">Užrakinta taupymui</label>
-                <div class="range-header">
-                  <input id="savePercent" type="range" min="10" max="80" step="5" value="35" />
-                  <strong id="savePercentValue">35%</strong>
-                </div>
-              </div>
-
-              <div class="control-group">
-                <label for="investPercent">Skirta investavimo kišenei</label>
-                <div class="range-header">
-                  <input id="investPercent" type="range" min="0" max="40" step="5" value="15" />
-                  <strong id="investPercentValue">15%</strong>
-                </div>
-              </div>
-
-              <div class="control-group">
-                <label for="goalAmount">Taupymo tikslas</label>
-                <div class="range-header">
-                  <input id="goalAmount" type="range" min="20" max="400" step="10" value="120" />
-                  <strong id="goalAmountValue">120 EUR</strong>
-                </div>
-              </div>
-
-              <div class="control-group">
-                <label for="goalProgress">Vaiko jau pasiekta tikslo dalis</label>
-                <div class="range-header">
-                  <input id="goalProgress" type="range" min="0" max="100" step="5" value="50" />
-                  <strong id="goalProgressValue">50%</strong>
-                </div>
-              </div>
-
-              <div class="control-group">
-                <label for="matchPercent">Tėvų prisidėjimas po pasiekto slenksčio</label>
-                <div class="range-header">
-                  <input id="matchPercent" type="range" min="0" max="100" step="10" value="50" />
-                  <strong id="matchPercentValue">50%</strong>
-                </div>
-              </div>
-            </form>
-
-            <div class="simulator-card results-card">
-              <div class="summary-panel">
-                <p class="panel-label">Paskirstymas</p>
-                <div class="summary-row">
-                  <span>Išleidimui dabar</span>
-                  <strong id="spendAmount">22.50 EUR</strong>
-                </div>
-                <div class="summary-row">
-                  <span>Automatiškai taupoma</span>
-                  <strong id="saveAmount">15.75 EUR</strong>
-                </div>
-                <div class="summary-row">
-                  <span>Investavimo kišenė</span>
-                  <strong id="investAmount">6.75 EUR</strong>
-                </div>
-                <div class="summary-row emphasis">
-                  <span>Išleidimo procentas</span>
-                  <strong id="spendPercentValue">50%</strong>
-                </div>
-              </div>
-
-              <div class="goal-panel">
-                <div class="goal-header">
-                  <div>
-                    <p class="panel-label">Tikslas</p>
-                    <h3>Dviratis vasarai</h3>
-                  </div>
-                  <strong id="savedAmount">60 EUR</strong>
-                </div>
-                <div class="progress-track">
-                  <div class="progress-fill" id="progressFill"></div>
-                </div>
-                <div class="goal-stats">
-                  <div>
-                    <span>Vaikas sutaupė</span>
-                    <strong id="savedPercent">50%</strong>
-                  </div>
-                  <div>
-                    <span>Tėvų įnašas</span>
-                    <strong id="parentContribution">60 EUR</strong>
-                  </div>
-                  <div>
-                    <span>Likęs kelias</span>
-                    <strong id="remainingAmount">0 EUR</strong>
-                  </div>
-                </div>
-                <p class="notification-banner" id="notificationBanner">
-                  Pranešimas tėvams: vaikas pasiekė 50% tikslo, galima aktyvuoti papildymą.
+            <div class="feature-item">
+              <span class="feature-icon">02</span>
+              <div>
+                <strong>Child-safe vaizdas</strong>
+                <p>
+                  Vaikas nemato „Duoti“ skirtuko, leidimų politikos ir tėvų investavimo
+                  valdymo.
                 </p>
               </div>
-
-              <div class="rules-panel">
-                <p class="panel-label">Ką ši programėlė automatiškai padaro?</p>
-                <ul id="rulesList">
-                  <li>Užrakina 35% taupymui, kad pinigai nebūtų išleisti impulsyviai.</li>
-                  <li>Skiria 15% investavimo pradžiai su edukaciniais paaiškinimais.</li>
-                  <li>Siunčia tėvams pranešimą, kai pasiekiama 50% tikslo riba.</li>
-                </ul>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">03</span>
+              <div>
+                <strong>Investavimas su leidimu</strong>
+                <p>
+                  Vaikas gali siųsti prašymus investuoti į akcijas ar kriptovaliutas, o
+                  tėvai juos patvirtina atskiru PIN.
+                </p>
               </div>
             </div>
           </div>
         </section>
 
-        <section class="learning-section" id="mokymasis">
-          <div class="section-heading">
-            <p class="eyebrow">Mokymosi modulis</p>
-            <h2>Trumpa finansų pamoka vaikui ir tėvams</h2>
-            <p>
-              Programėlė gali turėti mikro pamokas, kurios paaiškina ne tik kaip
-              taupyti, bet ir kodėl verta suprasti investavimo pagrindus.
-            </p>
-          </div>
-
-          <div class="lesson-grid">
-            <article class="lesson-card">
-              <span class="lesson-tag">Pamoka 1</span>
-              <h3>Kuo skiriasi taupymas ir investavimas?</h3>
-              <p>
-                Taupymas labiau tinka artimam tikslui ir saugumui, o investavimas
-                padeda pinigams augti ilgesnį laiką, tačiau su didesniu svyravimu.
-              </p>
-            </article>
-            <article class="lesson-card">
-              <span class="lesson-tag">Pamoka 2</span>
-              <h3>Kas yra sudėtinis augimas?</h3>
-              <p>
-                Kai uždirbta grąža pradeda uždirbti papildomą grąžą, nedidelės sumos
-                per laiką gali išaugti žymiai labiau nei atrodo pradžioje.
-              </p>
-            </article>
-            <article class="lesson-card">
-              <span class="lesson-tag">Pamoka 3</span>
-              <h3>Kodėl svarbi rizika?</h3>
-              <p>
-                Vaikams reikia suprasti, kad investavimas nėra garantuotas pelnas,
-                todėl sprendimai turi būti daromi atsakingai ir su tėvų priežiūra.
-              </p>
-            </article>
-          </div>
-
-          <div class="quiz-card">
+        <section class="auth-card card">
+          <div class="auth-top">
             <div>
-              <p class="panel-label">Mini viktorina</p>
-              <h3 id="quizQuestion">Kam dažniausiai labiausiai tinka taupymas?</h3>
-              <p class="quiz-helper" id="quizHelper">
-                Atsakyk į klausimą ir pažiūrėk, kaip programėlė galėtų mokyti vaikus per žaidybinimą.
-              </p>
+              <p class="eyebrow">Prisijungimas</p>
+              <h2 id="authTitle">Prisijungti prie KidFund</h2>
             </div>
-            <div class="quiz-options" id="quizOptions"></div>
-            <div class="quiz-feedback" id="quizFeedback"></div>
-            <button class="button secondary" id="nextQuestion" type="button">
-              Kitas klausimas
-            </button>
+            <span class="status-pill" id="authRoleBadge">Vaiko paskyra</span>
+          </div>
+
+          <div class="segmented-group" id="authRoleSwitch">
+            <button class="segment active" type="button" data-auth-role="child">Vaikas</button>
+            <button class="segment" type="button" data-auth-role="parent">Tėvai</button>
+          </div>
+
+          <div class="segmented-group" id="authModeSwitch">
+            <button class="segment active" type="button" data-auth-mode="login">Prisijungti</button>
+            <button class="segment" type="button" data-auth-mode="register">Registruotis</button>
+          </div>
+
+          <p class="auth-copy" id="authCopy"></p>
+          <div class="pin-slots" id="authPinSlots" aria-label="PIN laukeliai"></div>
+          <p class="validation-text" id="authMessage"></p>
+
+          <div class="action-row">
+            <button class="button primary" id="authSubmitButton" type="button">Prisijungti</button>
+            <button class="button secondary" id="authClearButton" type="button">Išvalyti</button>
+          </div>
+
+          <div class="keypad" id="authKeypad" aria-label="PIN klaviatūra"></div>
+        </section>
+      </div>
+    </div>
+
+    <div class="app-shell hidden" id="appShell">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">KidFund</p>
+          <h1>Pocket money banking demo</h1>
+          <p class="muted-copy" id="headerSubtitle"></p>
+        </div>
+        <div class="header-actions">
+          <span class="role-chip" id="activeRoleChip"></span>
+          <button class="button secondary compact-button" id="logoutButton" type="button">
+            Atsijungti
+          </button>
+        </div>
+      </header>
+
+      <div class="section-banner card" id="sectionBanner">
+        <p class="eyebrow">Skilties aprašymas</p>
+        <h2 id="sectionBannerTitle"></h2>
+        <p id="sectionBannerCopy"></p>
+      </div>
+
+      <main class="app-main">
+        <section class="tab-panel active" data-panel="home">
+          <div class="stats-grid" id="homeStats"></div>
+
+          <div class="content-grid">
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Greiti veiksmai</p>
+                  <h3>Ką nori daryti dabar?</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="quickActions"></div>
+            </article>
+
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Svarbiausi atnaujinimai</p>
+                  <h3>Pranešimų peržiūra</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="homeFeedPreview"></div>
+            </article>
           </div>
         </section>
 
-        <section class="roadmap-section">
-          <div class="section-heading">
-            <p class="eyebrow">Kaip būtų galima plėsti toliau?</p>
-            <h2>Natūralūs produkto plėtros žingsniai</h2>
+        <section class="tab-panel" data-panel="savings">
+          <div class="content-grid">
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Taupymas</p>
+                  <h3>Vaiko tikslai ir progresas</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="goalsList"></div>
+            </article>
+
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Balansas</p>
+                  <h3>Taupymo santrauka</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="savingsSummary"></div>
+            </article>
           </div>
-          <div class="roadmap-grid">
-            <article class="roadmap-card">
-              <h3>1. Tėvų piniginė ir pervedimai</h3>
-              <p>
-                Susieti tėvų kortelę / sąskaitą, suplanuoti periodinius kišenpinigių
-                pervedimus ir nustatyti automatinio paskirstymo taisykles.
-              </p>
+
+          <article class="card" data-parent-only>
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Leidimų politika</p>
+                <h3>Tėvų nustatoma kontrolė</h3>
+              </div>
+            </div>
+            <div class="stack-list" id="permissionPolicyList"></div>
+          </article>
+        </section>
+
+        <section class="tab-panel" data-panel="invest">
+          <div class="content-grid">
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Investavimo rinka</p>
+                  <h3>Akcijos ir kriptovaliutos</h3>
+                </div>
+              </div>
+              <div class="asset-grid" id="investmentCatalog"></div>
             </article>
-            <article class="roadmap-card">
-              <h3>2. Tikslai ir apdovanojimai</h3>
-              <p>
-                Kurti taupymo tikslus, pranešimus apie tarpinius pasiekimus ir
-                tėvų prisidėjimą prie didesnių pirkinių ar svajonių.
-              </p>
+
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Veiksmas</p>
+                  <h3 id="investPanelTitle"></h3>
+                </div>
+              </div>
+              <div class="stack-list" id="investActionPanel"></div>
             </article>
-            <article class="roadmap-card">
-              <h3>3. Saugus investavimo mokymas</h3>
-              <p>
-                Įdiegti simuliacinius portfelius, paaiškinimus apie ETF / akcijas ir
-                tik vėliau svarstyti realius investavimo produktus su priežiūra.
-              </p>
+          </div>
+
+          <div class="content-grid">
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Portfelis</p>
+                  <h3>Patvirtintos investicijos</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="portfolioList"></div>
+            </article>
+
+            <article class="card" data-parent-only>
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Tėvų funkcijos</p>
+                  <h3>Investavimo valdymas</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="parentInvestControls"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" data-panel="learn">
+          <article class="card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Mokymasis</p>
+                <h3>Trumpi paaiškinimai apie pinigus</h3>
+              </div>
+            </div>
+            <div class="lesson-grid" id="lessonGrid"></div>
+          </article>
+
+          <article class="card quiz-card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Mini viktorina</p>
+                <h3 id="quizQuestion"></h3>
+              </div>
+            </div>
+            <p class="muted-copy" id="quizHelper"></p>
+            <div class="quiz-options" id="quizOptions"></div>
+            <p class="validation-text" id="quizFeedback"></p>
+            <button class="button secondary" id="nextQuestionButton" type="button">
+              Kitas klausimas
+            </button>
+          </article>
+        </section>
+
+        <section class="tab-panel" data-panel="feed">
+          <article class="card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Istorija</p>
+                <h3>Visi pranešimai ir veiksmai</h3>
+              </div>
+            </div>
+            <div class="stack-list" id="feedList"></div>
+          </article>
+        </section>
+
+        <section class="tab-panel" data-panel="transfers" data-parent-only>
+          <div class="content-grid">
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Duoti pinigų</p>
+                  <h3>Greitas papildymas vaikui</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="transferActions"></div>
+            </article>
+
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Prašymų eilė</p>
+                  <h3>Laukia tėvų sprendimo</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="transferQueue"></div>
             </article>
           </div>
         </section>
       </main>
+
+      <nav class="bottom-nav" id="bottomNav">
+        <button class="nav-item active" type="button" data-tab="home">
+          <span class="nav-icon">H</span>
+          <span>Pagr.</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="savings">
+          <span class="nav-icon">T</span>
+          <span>Taupyti</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="invest">
+          <span class="nav-icon">I</span>
+          <span>Invest.</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="learn">
+          <span class="nav-icon">M</span>
+          <span>Mokytis</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="feed">
+          <span class="nav-icon">N</span>
+          <span>Naujienos</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="transfers" data-parent-only>
+          <span class="nav-icon">D</span>
+          <span>Duoti</span>
+        </button>
+      </nav>
     </div>
+
+    <div class="modal-overlay hidden" id="confirmModal" aria-hidden="true">
+      <div class="modal-card card">
+        <div class="card-header">
+          <div>
+            <p class="eyebrow">Patvirtinti veiksmą</p>
+            <h3 id="confirmTitle"></h3>
+          </div>
+        </div>
+        <p class="muted-copy" id="confirmCopy"></p>
+        <div class="pin-slots compact" id="confirmPinSlots"></div>
+        <p class="validation-text" id="confirmMessage"></p>
+
+        <div class="action-row">
+          <button class="button primary" id="confirmSubmitButton" type="button">
+            Patvirtinti
+          </button>
+          <button class="button secondary" id="confirmCancelButton" type="button">
+            Atšaukti
+          </button>
+        </div>
+
+        <div class="keypad compact" id="confirmKeypad"></div>
+      </div>
+    </div>
+
+    <div class="toast-stack" id="toastStack"></div>
 
     <script src="script.js"></script>
   </body>
