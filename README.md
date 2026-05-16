@@ -52,6 +52,8 @@ ir investavimo mokymuisi su aiškia tėvų kontrole.
   review ekraną tiesiai programėlėje.
 - Nuskenavus QR ar atidarius deep link, pinigai neįkrenta automatiškai:
   pirmiausia parodoma mokėjimo peržiūra, tada reikia aiškaus patvirtinimo.
+- Atidarius modal langus, foninis ekranas nebesiscrollina, o ilgas turinys
+  scrollinasi pačiame modal lange.
 - Anti-spam riboja per dažnus prašymus ir papildymus, kad KidFund nebūtų
   apkrautas pasikartojančiomis užklausomis.
 
@@ -96,5 +98,5 @@ apk/KidFund-debug.apk
 SHA-256:
 
 ```text
-1de696c95b86b87e07c4befd5ba3f172d075e17a01a3ed6e3d1d9c181a9cdbf9
+1a274b442013db685af3e01a087f07f648eb8bad59f1547004f697dd9f93c1e3
 ```

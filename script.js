@@ -716,6 +716,12 @@ async function copyTextValue(value) {
   return false;
 }
 
+function updateModalBodyLock() {
+  const hasOpenModal = state.confirm.open || Boolean(state.shareRequestId) || state.paymentReview.open;
+  document.body.classList.toggle("modal-open", hasOpenModal);
+  document.documentElement.classList.toggle("modal-open", hasOpenModal);
+}
+
 function getPaymentRequestById(requestId) {
   return appData.requests.find((request) => request.id === requestId) || null;
 }
@@ -873,6 +879,7 @@ function renderPaymentReviewModal() {
   const isOpen = state.paymentReview.open && state.paymentReview.payload;
   elements.paymentReviewModal.classList.toggle("hidden", !isOpen);
   elements.paymentReviewModal.setAttribute("aria-hidden", String(!isOpen));
+  updateModalBodyLock();
 
   if (!isOpen) {
     elements.paymentReviewBankCard.innerHTML = "";
@@ -996,6 +1003,7 @@ function renderShareRequestModal() {
   const isOpen = Boolean(request);
   elements.shareRequestModal.classList.toggle("hidden", !isOpen);
   elements.shareRequestModal.setAttribute("aria-hidden", String(!isOpen));
+  updateModalBodyLock();
 
   if (!isOpen) {
     elements.shareQrCode.innerHTML = "";
@@ -1060,7 +1068,7 @@ function renderShareRequestModal() {
 
   if (typeof window.QRCode === "function") {
     // qrcodejs renders a real QR image/canvas directly into the target element.
-    new window.QRCode(elements.shareQrCode, {
+    const qrInstance = new window.QRCode(elements.shareQrCode, {
       text: deepLink,
       width: 180,
       height: 180,
@@ -1068,6 +1076,17 @@ function renderShareRequestModal() {
       colorLight: "#ffffff",
       correctLevel: window.QRCode.CorrectLevel?.M || 0,
     });
+
+    // Prefer the original canvas on Android WebView because the generated
+    // PNG fallback image can appear blank even when the canvas was drawn.
+    const qrDrawing = qrInstance?._oDrawing;
+    if (qrDrawing?._elCanvas) {
+      qrDrawing._elCanvas.style.display = "block";
+    }
+    if (qrDrawing?._elImage) {
+      qrDrawing._elImage.style.display = "none";
+      qrDrawing._elImage.removeAttribute("src");
+    }
   } else {
     elements.shareQrCode.innerHTML = '<div class="list-copy">QR nepavyko įkelti.</div>';
   }
@@ -2609,6 +2628,7 @@ function renderTransfers() {
 function renderConfirmModal() {
   elements.confirmModal.classList.toggle("hidden", !state.confirm.open);
   elements.confirmModal.setAttribute("aria-hidden", String(!state.confirm.open));
+  updateModalBodyLock();
   elements.confirmTitle.textContent = state.confirm.title;
   elements.confirmCopy.textContent = state.confirm.copy;
   elements.confirmSubmitButton.disabled = state.confirm.pinBuffer.length !== 4;
