@@ -29,7 +29,9 @@ ir investavimo mokymuisi su aiškia tėvų kontrole.
 - atsitiktine tvarka maišomi viktorinos atsakymai;
 - vaikiškesnis vaiko režimo tonas su emoji ir mini misijomis;
 - tikros apatinės navigacijos ikonėlės vietoj raidžių;
-- keli mini žaidimukai vaikams.
+- platesnis SVG ikonėlių paketas visam UI;
+- keli mini žaidimukai vaikams su taškais ir lygiais;
+- bankinio stiliaus QR share kortelė su suma, sąskaita ir request ID.
 
 ## Naudojimo logika
 
@@ -88,5 +90,5 @@ apk/KidFund-debug.apk
 SHA-256:
 
 ```text
-be0758dbd2b7b7f8d6cd0f49d6f6a74489caf0d223d83b7404d0312db7cd3610
+912a4ba866e57c8d75c4cacd82d1ba6876e98a2b548a57cf2a70be207097881d
 ```

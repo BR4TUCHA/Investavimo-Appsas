@@ -239,7 +239,27 @@ p {
   font-weight: 800;
 }
 
+.feature-icon.subtle-icon {
+  width: 34px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #d7deff;
+}
+
+.feature-icon.bank-icon {
+  width: 42px;
+  height: 42px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
 .nav-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.feature-icon svg {
   width: 20px;
   height: 20px;
   fill: currentColor;
@@ -475,6 +495,10 @@ p {
   font-size: 1.8rem;
 }
 
+.stat-card .inline-row {
+  justify-content: flex-start;
+}
+
 .stat-card p,
 .asset-card p {
   margin-bottom: 0;
@@ -656,6 +680,54 @@ p {
 
 .share-card {
   width: min(760px, 100%);
+}
+
+.bank-request-card {
+  padding: 20px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.14), transparent 24%),
+    linear-gradient(135deg, #172a4a 0%, #233f72 55%, #315ca8 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.bank-card-top,
+.share-meta-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.bank-card-top h4,
+.share-meta-header h4 {
+  margin: 0;
+}
+
+.bank-card-amount {
+  margin: 24px 0 20px;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.bank-card-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.bank-card-meta strong {
+  display: block;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+}
+
+.game-summary-card {
+  background:
+    linear-gradient(135deg, rgba(124, 140, 255, 0.14), rgba(57, 201, 146, 0.1)),
+    rgba(255, 255, 255, 0.03);
 }
 
 .qr-preview {
@@ -878,6 +950,10 @@ p {
   }
 
   .share-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .bank-card-meta {
     grid-template-columns: 1fr;
   }
 }

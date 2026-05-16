@@ -186,6 +186,67 @@ const ACTION_LIMITS = {
   },
 };
 
+const UI_ICONS = {
+  piggy:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4c-3.3 0-6 1.5-7.2 4H3v2h1.2c0 .8.2 1.5.5 2.2L3 14v2h3.2l1 2h2l.5-1.1c.8.2 1.6.3 2.3.3 4.4 0 8-2.7 8-6.1 0-2.6-2.1-4.9-5.2-5.7-.2-1-.9-1.4-1.8-1.4zm3 5.2a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2zM8 7a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"></path></svg>',
+  bell:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a6 6 0 0 0-6 6v2.1c0 .7-.2 1.4-.6 2L4 16v1h16v-1l-1.4-2.9a4.7 4.7 0 0 1-.6-2V9a6 6 0 0 0-6-6zm0 19a3 3 0 0 0 2.8-2H9.2A3 3 0 0 0 12 22z"></path></svg>',
+  wallet:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H19v3h-2.5a2.5 2.5 0 0 0 0 5H19v4.5a2.5 2.5 0 0 1-2.5 2.5h-10A2.5 2.5 0 0 1 4 17.5zm12.5 2a1 1 0 0 0 0 2H20v-2z"></path></svg>',
+  savings:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5zm0 4.2a2.6 2.6 0 1 1 0 5.2 2.6 2.6 0 0 1 0-5.2zm0 11.2c-2.2 0-4.1-1.1-5.2-2.8.1-1.7 3.5-2.6 5.2-2.6s5.1.9 5.2 2.6c-1.1 1.7-3 2.8-5.2 2.8z"></path></svg>',
+  target:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9h-2.2a6.8 6.8 0 1 1-2-4.8L15.5 8.5A4.5 4.5 0 1 0 16.5 12H19a7 7 0 0 0-1.1-3.8L21 5v6h-6l2.3-2.3A8.9 8.9 0 0 0 12 3z"></path></svg>',
+  send:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 20 18-8L3 4v6l12 2-12 2z"></path></svg>',
+  chart:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 17l4.5-4.5 3 3L19 9v4h2V5h-8v2h4.6l-5.1 5.1-3-3L3 15.5z"></path></svg>',
+  gift:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7h-2.2c.1-.3.2-.7.2-1 0-1.7-1.3-3-3-3-1.2 0-2.2.7-3 1.8C11.2 3.7 10.2 3 9 3 7.3 3 6 4.3 6 6c0 .3.1.7.2 1H4v4h1v9h14v-9h1zm-5-2a1 1 0 1 1 0 2h-2.3c.4-1.1 1.2-2 2.3-2zM8 6a1 1 0 0 1 1-1c1.1 0 1.9.9 2.3 2H9A1 1 0 0 1 8 6zm9 13h-4v-8h4zm-6 0H7v-8h4z"></path></svg>',
+  qr:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h8v8H3zm2 2v4h4V5zm8-2h8v8h-8zm2 2v4h4V5zM3 13h8v8H3zm2 2v4h4v-4zm11-2h2v2h-2zm-3 0h2v5h-2zm5 2h3v2h-3zm-3 3h2v3h-2zm3 1h3v2h-3z"></path></svg>',
+  bank:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 8v2h20V8zm-7 9h2v6H5zm4 0h2v6H9zm4 0h2v6h-2zm4 0h2v6h-2zM3 20h18v2H3z"></path></svg>',
+  copy:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 8V4h12v12h-4v4H4V8zm2 0h6v6h2V6h-8zm-4 2v8h8v-8z"></path></svg>',
+  shield:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 5 5v6c0 5 3.4 9.7 7 11 3.6-1.3 7-6 7-11V5zm-1 14-3-3 1.4-1.4L11 13.2l3.6-3.6L16 11z"></path></svg>',
+  rocket:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3c2.8 0 5 2.2 5 5 0 1.7-.8 3.2-2 4.1V17l-3 1-3 3-2-2 3-3 1-3h4.9A4.97 4.97 0 0 0 19 8c0-2.8-2.2-5-5-5zM7 14l3 3-4 4H3v-3zm10-8a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"></path></svg>',
+  sparkle:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8zM5 16l.9 2.1L8 19l-2.1.9L5 22l-.9-2.1L2 19l2.1-.9zm14-2 1.1 2.5L23 17.6l-2.9 1.2L19 21l-1.1-2.2L15 17.6l2.9-1.1z"></path></svg>',
+  learn:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6.5c-3.8 0-7 1.1-9 2.5v10c2-1.4 5.2-2.5 9-2.5s7 1.1 9 2.5V9c-2-1.4-5.2-2.5-9-2.5zm0 2c2.6 0 5 .5 7 1.4v6.1c-2-.9-4.4-1.4-7-1.4s-5 .5-7 1.4V9.9c2-.9 4.4-1.4 7-1.4z"></path></svg>',
+  clock:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 5h-2v6l5 3 1-1.7-4-2.3z"></path></svg>',
+  check:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"></path></svg>',
+  warning:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1 21h22L12 2zm12-3h-2v2h2zm0-6h-2v5h2z"></path></svg>',
+  lock:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 8h-1V6a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2zm-6 0V6a2 2 0 1 1 4 0v2z"></path></svg>',
+  star:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 17.3-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"></path></svg>',
+  level:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16v2H4zm2-2V7h3l3 4 3-6 5 12z"></path></svg>',
+  camera:
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 7.2 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3.2L15 4zm3 4.5A4.5 4.5 0 1 1 7.5 13 4.5 4.5 0 0 1 12 8.5z"></path></svg>',
+};
+
+function renderUiIcon(iconName, className = "feature-icon") {
+  return `<span class="${className}" aria-hidden="true">${UI_ICONS[iconName] || UI_ICONS.sparkle}</span>`;
+}
+
+function getToneIconName(tone) {
+  if (tone === "warning") {
+    return "warning";
+  }
+  if (tone === "success") {
+    return "check";
+  }
+  return "sparkle";
+}
+
 const elements = {
   authScreen: document.querySelector("#authScreen"),
   authRoleSwitch: document.querySelector("#authRoleSwitch"),
@@ -247,8 +308,9 @@ const elements = {
   shareRequestModal: document.querySelector("#shareRequestModal"),
   shareRequestTitle: document.querySelector("#shareRequestTitle"),
   shareRequestCopy: document.querySelector("#shareRequestCopy"),
+  shareRequestBankCard: document.querySelector("#shareRequestBankCard"),
+  shareRequestMeta: document.querySelector("#shareRequestMeta"),
   shareQrCode: document.querySelector("#shareQrCode"),
-  shareRequestText: document.querySelector("#shareRequestText"),
   shareRequestSystemButton: document.querySelector("#shareRequestSystemButton"),
   shareRequestCopyButton: document.querySelector("#shareRequestCopyButton"),
   shareRequestCloseButton: document.querySelector("#shareRequestCloseButton"),
@@ -411,10 +473,20 @@ const state = {
   quizFeedbackTone: "",
   selectedQuizAnswer: null,
   miniGames: {
+    points: 0,
+    level: 1,
     piggyTaps: 0,
+    piggyRewarded: false,
     choiceAnswered: false,
     choiceSelected: null,
+    choiceRewarded: false,
     cardPick: null,
+    cardRewarded: false,
+    budgetChoice: null,
+    budgetRewarded: false,
+    memoryStep: 0,
+    memorySolved: false,
+    memoryRewarded: false,
   },
 };
 
@@ -495,17 +567,17 @@ function getAuthBrandContent() {
       emojis: ["🎯 Taupau", "🪙 Kaupiu", "🚀 Augu"],
       features: [
         {
-          icon: "🐷",
+          icon: "piggy",
           title: "Trumpas tekstas",
           copy: "Vaikui rodoma mažiau sudėtingos informacijos ir daugiau aiškių žingsnių.",
         },
         {
-          icon: "✨",
+          icon: "sparkle",
           title: "Emoji ir misijos",
           copy: "Prisijungus lauks mažos misijos, tikslai ir paprastesni paaiškinimai.",
         },
         {
-          icon: "🔒",
+          icon: "lock",
           title: "Saugus PIN",
           copy: "Jautrūs veiksmai turi atskirą patvirtinimo langą, todėl viskas išlieka saugu.",
         },
@@ -526,17 +598,17 @@ function getAuthBrandContent() {
     emojis: ["👨‍👩‍👧 Šeima", "📊 Kontrolė", "🔔 Pranešimai"],
     features: [
       {
-        icon: "01",
+        icon: "shield",
         title: "Atskira autorizacija",
         copy: "Tėvų veiksmai atskirti nuo vaiko prisijungimo ir turi savo validaciją.",
       },
       {
-        icon: "02",
+        icon: "check",
         title: "Patvirtinimų centras",
         copy: "Investavimo, papildymų ir kitų jautrių veiksmų patvirtinimai atliekami per atskirą PIN modalą.",
       },
       {
-        icon: "03",
+        icon: "bank",
         title: "KidFund partneriai ir paskyros",
         copy: "Papildytas pagrindinis ekranas su partnerių vieta, sąskaitų numeriais ir pavedimo užklausa.",
       },
@@ -657,17 +729,61 @@ function renderShareRequestModal() {
 
   if (!isOpen) {
     elements.shareQrCode.innerHTML = "";
-    elements.shareRequestText.textContent = "";
+    elements.shareRequestBankCard.innerHTML = "";
+    elements.shareRequestMeta.innerHTML = "";
     return;
   }
 
   const account = getAccountConfig(request.accountType || "wallet");
   const shareText = getShareRequestText(request);
+  const requestDate = formatDate(request.createdAt);
 
-  elements.shareRequestTitle.textContent = `${account.title} · ${formatCurrency(request.amount)}`;
+  elements.shareRequestTitle.textContent = `KidFund mokėjimo kortelė`;
   elements.shareRequestCopy.textContent =
-    "Nusiųsk šį ekraną arba nukopijuok tekstą tam, kas turi pervesti pinigus į KidFund.";
-  elements.shareRequestText.textContent = shareText;
+    "Gavėjas gali nuskenuoti QR, nukopijuoti duomenis arba gauti šią užklausą per share.";
+  elements.shareRequestBankCard.innerHTML = `
+    <div class="bank-card-top">
+      <div>
+        <p class="eyebrow">KidFund transfer request</p>
+        <h4>${account.title}</h4>
+      </div>
+      ${renderUiIcon("bank", "feature-icon bank-icon")}
+    </div>
+    <div class="bank-card-amount">${formatCurrency(request.amount)}</div>
+    <div class="bank-card-meta">
+      <div>
+        <span class="stack-meta">Gavėjas</span>
+        <strong>KidFund</strong>
+      </div>
+      <div>
+        <span class="stack-meta">Sąskaita</span>
+        <strong>${account.accountNumber}</strong>
+      </div>
+      <div>
+        <span class="stack-meta">Request ID</span>
+        <strong>${request.id}</strong>
+      </div>
+      <div>
+        <span class="stack-meta">Data</span>
+        <strong>${requestDate}</strong>
+      </div>
+    </div>
+  `;
+  elements.shareRequestMeta.innerHTML = `
+    <div class="share-meta-header">
+      ${renderUiIcon("copy", "feature-icon subtle-icon")}
+      <div>
+        <h4>Tekstas pavedimui</h4>
+        <p class="list-copy">Šį tekstą gali kopijuoti arba siųsti tam, kas atliks pervedimą.</p>
+      </div>
+    </div>
+    <span class="account-number" id="shareRequestText">${shareText}</span>
+    <div class="mission-row">
+      <span class="mini-pill">👤 Gavėjas: KidFund</span>
+      <span class="mini-pill">💸 Suma: ${formatCurrency(request.amount)}</span>
+      <span class="mini-pill">🏦 ${account.badge}</span>
+    </div>
+  `;
   elements.shareQrCode.innerHTML = "";
 
   if (typeof window.QRCode === "function") {
@@ -685,8 +801,27 @@ function renderShareRequestModal() {
   }
 }
 
+function syncMiniGameProgress() {
+  state.miniGames.level = 1 + Math.floor(state.miniGames.points / 30);
+}
+
+function awardMiniGamePoints(flagKey, points) {
+  if (!state.miniGames[flagKey]) {
+    state.miniGames.points += points;
+    state.miniGames[flagKey] = true;
+    syncMiniGameProgress();
+  }
+}
+
 function renderMiniGames() {
   const piggyRewardReached = state.miniGames.piggyTaps >= 8;
+  const budgetOptions = [
+    { id: "split", label: "Paskirstyti: išleisti + taupyti", correct: true },
+    { id: "all-spend", label: "Išleisti viską iškart", correct: false },
+    { id: "hide", label: "Paslėpti ir nematyti", correct: false },
+  ];
+  const memorySequence = ["🐷", "🪙", "🚀"];
+  const levelProgress = Math.min(100, ((state.miniGames.points % 30) / 30) * 100);
   const choiceOptions = [
     { id: "snack", label: "Užkandis šiandien", correct: false },
     { id: "bike", label: "Dviratis vasarai", correct: true },
@@ -697,12 +832,27 @@ function renderMiniGames() {
     { id: "rocket", emoji: "🚀", label: "Laikas peržiūrėti investavimo pamoką!" },
     { id: "piggy", emoji: "🐷", label: "Patikrink savo taupyklės progresą!" },
   ];
+  const pointsIntoLevel = state.miniGames.points % 30;
+  const pointsToNextLevel = 30 - pointsIntoLevel || 30;
 
   elements.miniGamesBoard.innerHTML = `
+    <div class="game-card game-summary-card">
+      <div class="inline-row">
+        <h4>🎮 KidFund žaidimų progresas</h4>
+        <span class="game-score">Lygis ${state.miniGames.level}</span>
+      </div>
+      <p class="list-copy">Rink taškus, pereik užduotis ir paversk taupymą mažais laimėjimais.</p>
+      <div class="mission-row">
+        <span class="mini-pill">⭐ ${state.miniGames.points} taškų</span>
+        <span class="mini-pill">🏆 Lygis ${state.miniGames.level}</span>
+        <span class="mini-pill">🎯 Iki kito lygio ${pointsToNextLevel} tšk.</span>
+      </div>
+      <div class="mini-progress"><span style="width: ${levelProgress}%"></span></div>
+    </div>
     <div class="game-card">
       <div class="inline-row">
         <h4>🐷 Tap tap taupyklė</h4>
-        <span class="game-score">${state.miniGames.piggyTaps} tap</span>
+        <span class="game-score">${state.miniGames.piggyTaps} tap · ${state.miniGames.piggyRewarded ? "+10 tšk." : "0 tšk."}</span>
       </div>
       <p class="list-copy">Paspausk taupyklę kelis kartus ir surink mažą motyvacinę žinutę.</p>
       <div class="copy-row">
@@ -716,7 +866,7 @@ function renderMiniGames() {
     <div class="game-card">
       <div class="inline-row">
         <h4>🎯 Greitas pasirinkimas</h4>
-        <span class="game-score">${state.miniGames.choiceAnswered ? "Atsakyta" : "Laukia"}</span>
+        <span class="game-score">${state.miniGames.choiceAnswered ? (state.miniGames.choiceRewarded ? "+12 tšk." : "Atsakyta") : "Laukia"}</span>
       </div>
       <p class="list-copy">Kas labiau tinka taupymo tikslui, o ne momentiniam norui?</p>
       <div class="answer-grid">
@@ -749,7 +899,7 @@ function renderMiniGames() {
     <div class="game-card">
       <div class="inline-row">
         <h4>🎁 Laimės korta</h4>
-        <span class="game-score">${state.miniGames.cardPick ? "Atverta" : "Uždaryta"}</span>
+        <span class="game-score">${state.miniGames.cardPick ? (state.miniGames.cardRewarded ? "+8 tšk." : "Atverta") : "Uždaryta"}</span>
       </div>
       <p class="list-copy">Pasirink vieną kortą ir gauk mažą KidFund dienos misiją.</p>
       <div class="answer-grid">
@@ -767,6 +917,64 @@ function renderMiniGames() {
         state.miniGames.cardPick
           ? luckyCards.find((card) => card.id === state.miniGames.cardPick)?.label || ""
           : "Atverk vieną kortą."
+      }</p>
+    </div>
+    <div class="game-card">
+      <div class="inline-row">
+        <h4>🧠 Biudžeto sprintas</h4>
+        <span class="game-score">${state.miniGames.budgetChoice ? (state.miniGames.budgetRewarded ? "+15 tšk." : "Bandyk dar") : "Laukia"}</span>
+      </div>
+      <p class="list-copy">Kuris pasirinkimas yra protingiausias gavus kišenpinigių?</p>
+      <div class="answer-grid">
+        ${budgetOptions
+          .map((option) => {
+            const optionState =
+              state.miniGames.budgetChoice === option.id
+                ? option.correct
+                  ? "correct"
+                  : "wrong"
+                : state.miniGames.budgetChoice && option.correct
+                  ? "correct"
+                  : "";
+            return `
+              <button class="game-button ${optionState}" type="button" data-action="mini-budget" data-budget-id="${option.id}">
+                ${option.label}
+              </button>
+            `;
+          })
+          .join("")}
+      </div>
+      <p class="list-copy">${
+        state.miniGames.budgetChoice
+          ? state.miniGames.budgetChoice === "split"
+            ? "Teisingai! Paskirstymas tarp išleidimo ir taupymo yra protingas startas."
+            : "Dar ne. Geriausia pinigus paskirstyti, o ne išleisti visus iškart."
+          : "Pasirink vieną variantą."
+      }</p>
+    </div>
+    <div class="game-card">
+      <div class="inline-row">
+        <h4>🚀 Emoji seka</h4>
+        <span class="game-score">${state.miniGames.memorySolved ? "+20 tšk." : `Žingsnis ${Math.min(state.miniGames.memoryStep + 1, memorySequence.length)}/${memorySequence.length}`}</span>
+      </div>
+      <p class="list-copy">Paspausk emoji tokia tvarka: ${memorySequence.join(" → ")}</p>
+      <div class="answer-grid">
+        ${shuffleArray(memorySequence)
+          .map(
+            (emoji) => `
+              <button class="game-button" type="button" data-action="mini-memory" data-memory-emoji="${emoji}">
+                <span class="big-emoji">${emoji}</span>
+              </button>
+            `,
+          )
+          .join("")}
+      </div>
+      <p class="list-copy">${
+        state.miniGames.memorySolved
+          ? "Puiku! Seka užbaigta ir tavo lygis auga."
+          : state.miniGames.memoryStep > 0
+            ? `Teisingai, tęsk toliau.`
+            : "Pradėk nuo pirmo emoji."
       }</p>
     </div>
   `;
@@ -953,7 +1161,7 @@ function renderAuth() {
     .map(
       (item) => `
         <div class="feature-item">
-          <span class="feature-icon">${item.icon}</span>
+          ${renderUiIcon(item.icon)}
           <div>
             <strong>${item.title}</strong>
             <p>${item.copy}</p>
@@ -1395,16 +1603,19 @@ function renderHome() {
       title: "Vaiko piniginė",
       value: formatCurrency(appData.accounts.wallet),
       meta: `Išleidimui liko ${formatCurrency(remainingLimit)} šią savaitę`,
+      icon: "wallet",
     },
     {
       title: "Taupymas",
       value: formatCurrency(appData.accounts.savings),
       meta: `${appData.goals.length} aktyvūs tikslai`,
+      icon: "piggy",
     },
     {
       title: "Investavimo kišenė",
       value: formatCurrency(appData.accounts.investPocket),
       meta: "Naudojama tik su tėvų patvirtinimu",
+      icon: "chart",
     },
     {
       title: state.mode === "parent" ? "Tėvų rezervas" : "Savaitės limitas",
@@ -1416,6 +1627,7 @@ function renderHome() {
         state.mode === "parent"
           ? "Iš šios sumos galima papildyti vaiką"
           : "Išleista prieš savaitinį limitą",
+      icon: state.mode === "parent" ? "bank" : "target",
     },
   ];
 
@@ -1423,7 +1635,10 @@ function renderHome() {
     .map(
       (card) => `
         <article class="stat-card">
-          <span class="stack-meta">${card.title}</span>
+          <div class="inline-row">
+            ${renderUiIcon(card.icon, "feature-icon subtle-icon")}
+            <span class="stack-meta">${card.title}</span>
+          </div>
           <strong>${card.value}</strong>
           <p class="list-copy">${card.meta}</p>
         </article>
@@ -1435,11 +1650,17 @@ function renderHome() {
     elements.homeMoodTitle.textContent = "Tėvų valdymas be triukšmo";
     elements.homeMoodSpot.innerHTML = `
       <div class="kid-card">
-        <h4>📌 Šiandienos fokusas</h4>
+        <div class="inline-row">
+          <h4>Šiandienos fokusas</h4>
+          ${renderUiIcon("target", "feature-icon subtle-icon")}
+        </div>
         <p class="list-copy">Matote vaiko balansą, leidimus, investavimo prašymus ir atskiras sąskaitas vienoje vietoje.</p>
       </div>
       <div class="kid-card">
-        <h4>🔔 App pranešimai</h4>
+        <div class="inline-row">
+          <h4>App pranešimai</h4>
+          ${renderUiIcon("bell", "feature-icon subtle-icon")}
+        </div>
         <p class="list-copy">Kiekvienas KidFund feed pranešimas siunčiamas ir kaip telefono notification, kai tik leidimai suteikti.</p>
       </div>
     `;
@@ -1451,11 +1672,17 @@ function renderHome() {
     elements.homeMoodTitle.textContent = "Tavo vaikiškas startas";
     elements.homeMoodSpot.innerHTML = `
       <div class="kid-card">
-        <h4>🥳 Šaunu, prisijungei!</h4>
+        <div class="inline-row">
+          <h4>Šaunu, prisijungei!</h4>
+          ${renderUiIcon("sparkle", "feature-icon subtle-icon")}
+        </div>
         <p class="list-copy">Mažiau teksto, daugiau aiškių mygtukų, emoji ir tavo taupymo misijų.</p>
       </div>
       <div class="kid-card">
-        <h4>🎯 Šios savaitės limitas</h4>
+        <div class="inline-row">
+          <h4>Šios savaitės limitas</h4>
+          ${renderUiIcon("clock", "feature-icon subtle-icon")}
+        </div>
         <p class="list-copy">${formatCurrency(appData.accounts.spentThisWeek)} iš ${formatCurrency(appData.accounts.weeklyLimit)} jau panaudota.</p>
         <div class="mini-progress"><span style="width: ${spendingPercent}%"></span></div>
       </div>
@@ -1466,7 +1693,10 @@ function renderHome() {
     (partner) => `
       <div class="promo-card">
         <div class="inline-row">
-          <h4>${partner.title}</h4>
+          <div class="inline-row">
+            ${renderUiIcon("sparkle", "feature-icon subtle-icon")}
+            <h4>${partner.title}</h4>
+          </div>
           <span class="promo-badge">${partner.badge}</span>
         </div>
         <p class="list-copy">${partner.copy}</p>
@@ -1493,7 +1723,10 @@ function renderHome() {
         (account) => `
           <div class="account-card">
             <div class="inline-row">
-              <h4>${account.title}</h4>
+              <div class="inline-row">
+                ${renderUiIcon(account.type === "wallet" ? "wallet" : "piggy", "feature-icon subtle-icon")}
+                <h4>${account.title}</h4>
+              </div>
               <span class="account-tag">${account.badge}</span>
             </div>
             <p class="list-copy">${account.description}</p>
@@ -1512,7 +1745,10 @@ function renderHome() {
       .join("")}
     <div class="account-card">
       <div class="inline-row">
-        <h4>Gauti pavedimą</h4>
+        <div class="inline-row">
+          ${renderUiIcon("qr", "feature-icon subtle-icon")}
+          <h4>Gauti pavedimą</h4>
+        </div>
         <span class="account-tag">Užklausa</span>
       </div>
       <p class="list-copy">Pasirink sąskaitą, įrašyk sumą ir sugeneruok pavedimo užklausą be sistemos apkrovimo.</p>
@@ -1541,7 +1777,7 @@ function renderHome() {
   if (state.mode === "parent") {
     elements.quickActions.innerHTML = `
       <div class="stack-item">
-        <span class="feature-icon">D</span>
+        ${renderUiIcon("gift")}
         <div>
           <strong>Greitai duoti 10 EUR</strong>
           <p class="list-copy">Papildymas bus patvirtintas atskirame PIN modal lange.</p>
@@ -1556,7 +1792,7 @@ function renderHome() {
         </div>
       </div>
       <div class="stack-item">
-        <span class="feature-icon">I</span>
+        ${renderUiIcon("chart")}
         <div>
           <strong>Peržiūrėti investavimo prašymus</strong>
           <p class="list-copy">Patvirtinimai ir atmetimai atliekami tik tėvų režime.</p>
@@ -1568,18 +1804,24 @@ function renderHome() {
     `;
     elements.kidMissionSpot.innerHTML = `
       <div class="kid-card">
-        <h4>🧾 Tėvų santrauka</h4>
+        <div class="inline-row">
+          <h4>Tėvų santrauka</h4>
+          ${renderUiIcon("bank", "feature-icon subtle-icon")}
+        </div>
         <p class="list-copy">Galite sekti, kiek užklausų buvo išsiųsta ir ar anti-spam taisyklės neleidžia perkrauti KidFund sistemos.</p>
       </div>
       <div class="kid-card">
-        <h4>📲 Push į telefoną</h4>
+        <div class="inline-row">
+          <h4>Push į telefoną</h4>
+          ${renderUiIcon("bell", "feature-icon subtle-icon")}
+        </div>
         <p class="list-copy">Papildymai, investavimo sprendimai ir naujos užklausos rodomi ne tik viduje, bet ir telefono notification juostoje.</p>
       </div>
     `;
   } else {
     elements.quickActions.innerHTML = `
       <div class="stack-item">
-        <span class="feature-icon">I</span>
+        ${renderUiIcon("rocket")}
         <div>
           <strong>🚀 Nori investuoti?</strong>
           <p class="list-copy">Pasirink aktyvą, spausk mygtuką ir tėvai gaus tavo prašymą.</p>
@@ -1589,7 +1831,7 @@ function renderHome() {
         </div>
       </div>
       <div class="stack-item">
-        <span class="feature-icon">T</span>
+        ${renderUiIcon("piggy")}
         <div>
           <strong>🐷 Peržiūrėti taupymą</strong>
           <p class="list-copy">Čia matai tik savo progresą, o tėvų valdymo dalys lieka paslėptos.</p>
@@ -1601,7 +1843,10 @@ function renderHome() {
     `;
     elements.kidMissionSpot.innerHTML = `
       <div class="kid-card">
-        <h4>🏅 Mini misija</h4>
+        <div class="inline-row">
+          <h4>Mini misija</h4>
+          ${renderUiIcon("star", "feature-icon subtle-icon")}
+        </div>
         <p class="list-copy">Šiandien pabandyk atsakyti bent į 1 viktorinos klausimą ir pasižiūrėk, kiek jau sutaupei.</p>
         <div class="mission-row">
           <span class="mini-pill">🎯 1 klausimas</span>
@@ -1610,7 +1855,10 @@ function renderHome() {
         </div>
       </div>
       <div class="kid-card">
-        <h4>😎 Emoji patarimas</h4>
+        <div class="inline-row">
+          <h4>Emoji patarimas</h4>
+          ${renderUiIcon("rocket", "feature-icon subtle-icon")}
+        </div>
         <p class="list-copy">Jei nori gauti pinigų į taupyklę, nukopijuok taupyklės numerį arba sukurk pavedimo užklausą.</p>
       </div>
     `;
@@ -1621,7 +1869,7 @@ function renderHome() {
     .map(
       (item) => `
         <div class="stack-item">
-          <span class="feature-icon">${item.tone === "warning" ? "!" : "N"}</span>
+          ${renderUiIcon(getToneIconName(item.tone))}
           <div>
             <strong>${item.message}</strong>
             <p class="list-copy">${formatDate(item.createdAt)}</p>
@@ -1638,7 +1886,7 @@ function renderSavings() {
       const progress = Math.min(100, Math.round((goal.saved / goal.target) * 100));
       return `
         <div class="stack-item">
-          <span class="feature-icon">G</span>
+          ${renderUiIcon("target")}
           <div>
             <div class="inline-row">
               <strong>${goal.title}</strong>
@@ -1658,21 +1906,21 @@ function renderSavings() {
 
   elements.savingsSummary.innerHTML = `
     <div class="stack-item">
-      <span class="feature-icon">S</span>
+      ${renderUiIcon("savings")}
       <div>
         <strong>Viso santaupų</strong>
         <p class="list-copy">${formatCurrency(appData.accounts.savings)}</p>
       </div>
     </div>
     <div class="stack-item">
-      <span class="feature-icon">L</span>
+      ${renderUiIcon("clock")}
       <div>
         <strong>Savaitės išlaidų limitas</strong>
         <p class="list-copy">${formatCurrency(appData.accounts.spentThisWeek)} iš ${formatCurrency(appData.accounts.weeklyLimit)}</p>
       </div>
     </div>
     <div class="stack-item">
-      <span class="feature-icon">P</span>
+      ${renderUiIcon("sparkle")}
       <div>
         <strong>${state.mode === "parent" ? "Tėvų komentaras" : "Pastaba vaikui"}</strong>
         <p class="list-copy">
@@ -1686,14 +1934,14 @@ function renderSavings() {
 
   elements.permissionPolicyList.innerHTML = `
     <div class="stack-item">
-      <span class="feature-icon">1</span>
+      ${renderUiIcon("shield")}
       <div>
         <strong>Investavimo tvirtinimas</strong>
         <p class="list-copy">${appData.settings.approvalRule}</p>
       </div>
     </div>
     <div class="stack-item">
-      <span class="feature-icon">2</span>
+      ${renderUiIcon("learn")}
       <div>
         <strong>Vaiko rodoma informacija</strong>
         <p class="list-copy">${appData.settings.savingsPolicy}</p>
@@ -1742,7 +1990,7 @@ function renderInvestActionPanel() {
     elements.investPanelTitle.textContent = "Siųsti prašymą tėvams";
     elements.investActionPanel.innerHTML = `
       <div class="stack-item">
-        <span class="feature-icon">A</span>
+        ${renderUiIcon("chart")}
         <div>
           <strong>Pasirinktas aktyvas: ${selectedInvestment.name}</strong>
           <p class="list-copy">Tipas: ${selectedInvestment.type}. Mažiausia suma: ${formatCurrency(selectedInvestment.min)}.</p>
@@ -1779,7 +2027,7 @@ function renderInvestActionPanel() {
         Siųsti investavimo prašymą
       </button>
       <div class="stack-item">
-        <span class="feature-icon">N</span>
+        ${renderUiIcon("lock")}
         <div>
           <strong>Taisyklė</strong>
           <p class="list-copy">Vaikas gali tik pateikti prašymą. Patvirtinimo mygtukų čia nėra.</p>
@@ -1794,7 +2042,7 @@ function renderInvestActionPanel() {
   if (!pendingRequests.length) {
     elements.investActionPanel.innerHTML = `
       <div class="stack-item">
-        <span class="feature-icon">✓</span>
+        ${renderUiIcon("check")}
         <div>
           <strong>Nėra laukiančių prašymų</strong>
           <p class="list-copy">Kai vaikas pateiks investavimo prašymą, jis bus rodomas čia.</p>
@@ -1809,7 +2057,7 @@ function renderInvestActionPanel() {
       const asset = INVESTMENTS.find((investment) => investment.id === request.assetId);
       return `
         <div class="stack-item">
-          <span class="feature-icon">P</span>
+          ${renderUiIcon("bell")}
           <div>
             <div class="inline-row">
               <strong>${asset ? asset.name : "Aktyvas"}</strong>
@@ -1837,7 +2085,7 @@ function renderPortfolio() {
     const asset = INVESTMENTS.find((investment) => investment.id === holding.assetId);
     return `
       <div class="stack-item">
-        <span class="feature-icon">€</span>
+        ${renderUiIcon("chart")}
         <div>
           <div class="inline-row">
             <strong>${asset ? asset.name : "Investicija"}</strong>
@@ -1857,7 +2105,7 @@ function renderPortfolio() {
       const asset = INVESTMENTS.find((investment) => investment.id === request.assetId);
       return `
         <div class="stack-item">
-          <span class="feature-icon">R</span>
+          ${renderUiIcon("send")}
           <div>
             <div class="inline-row">
               <strong>${asset ? asset.name : "Investavimo prašymas"}</strong>
@@ -1881,7 +2129,7 @@ function renderPortfolio() {
 function renderParentInvestControls() {
   elements.parentInvestControls.innerHTML = `
     <div class="stack-item">
-      <span class="feature-icon">+</span>
+      ${renderUiIcon("gift")}
       <div>
         <strong>Papildyti investavimo kišenę</strong>
         <p class="list-copy">Dabartinis likutis: ${formatCurrency(appData.accounts.investPocket)}</p>
@@ -1896,7 +2144,7 @@ function renderParentInvestControls() {
       </div>
     </div>
     <div class="stack-item">
-      <span class="feature-icon">K</span>
+      ${renderUiIcon("lock")}
       <div>
         <strong>Kriptovaliutų leidimas</strong>
         <p class="list-copy">${
@@ -1910,7 +2158,7 @@ function renderParentInvestControls() {
       </div>
     </div>
     <div class="stack-item">
-      <span class="feature-icon">M</span>
+      ${renderUiIcon("target")}
       <div>
         <strong>Maksimalus vieno prašymo limitas</strong>
         <p class="list-copy">${formatCurrency(appData.settings.maxSingleInvest)}</p>
@@ -1972,7 +2220,7 @@ function renderFeed() {
     .map(
       (item) => `
         <div class="stack-item">
-          <span class="feature-icon">${item.tone === "warning" ? "!" : item.tone === "success" ? "✓" : "i"}</span>
+          ${renderUiIcon(getToneIconName(item.tone))}
           <div>
             <strong>${item.message}</strong>
             <p class="list-copy">${formatDate(item.createdAt)}</p>
@@ -1986,7 +2234,7 @@ function renderFeed() {
 function renderTransfers() {
   elements.transferActions.innerHTML = `
     <div class="stack-item">
-      <span class="feature-icon">10</span>
+      ${renderUiIcon("gift")}
       <div>
         <strong>Greitas papildymas į piniginę</strong>
         <p class="list-copy">Papildymai atliekami tik per atskirą patvirtinimo modal langą.</p>
@@ -2016,7 +2264,7 @@ function renderTransfers() {
             const account = getAccountConfig(request.accountType);
             return `
               <div class="stack-item">
-                <span class="feature-icon">€</span>
+                ${renderUiIcon("qr")}
                 <div>
                   <div class="inline-row">
                     <strong>${account.title}</strong>
@@ -2040,7 +2288,7 @@ function renderTransfers() {
           const asset = INVESTMENTS.find((investment) => investment.id === request.assetId);
           return `
             <div class="stack-item">
-              <span class="feature-icon">Q</span>
+              ${renderUiIcon("chart")}
               <div>
                 <strong>${asset ? asset.name : "Prašymas"}</strong>
                 <p class="list-copy">Investavimo prašymas: ${formatCurrency(request.amount)}</p>
@@ -2059,7 +2307,7 @@ function renderTransfers() {
         .join("")
     : `
       <div class="stack-item">
-        <span class="feature-icon">✓</span>
+        ${renderUiIcon("check")}
         <div>
           <strong>Nėra laukiančių prašymų</strong>
           <p class="list-copy">Kai vaikas pateiks naują investavimo prašymą, jis atsiras čia.</p>
@@ -2107,6 +2355,9 @@ function handleActionClick(actionButton) {
 
   if (action === "mini-piggy-tap") {
     state.miniGames.piggyTaps += 1;
+    if (state.miniGames.piggyTaps >= 8) {
+      awardMiniGamePoints("piggyRewarded", 10);
+    }
     renderMiniGames();
     return;
   }
@@ -2114,12 +2365,49 @@ function handleActionClick(actionButton) {
   if (action === "mini-choice") {
     state.miniGames.choiceAnswered = true;
     state.miniGames.choiceSelected = actionButton.dataset.choiceId;
+    if (state.miniGames.choiceSelected === "bike") {
+      awardMiniGamePoints("choiceRewarded", 12);
+    }
     renderMiniGames();
     return;
   }
 
   if (action === "mini-card-pick") {
     state.miniGames.cardPick = actionButton.dataset.cardId;
+    awardMiniGamePoints("cardRewarded", 8);
+    renderMiniGames();
+    return;
+  }
+
+  if (action === "mini-budget") {
+    state.miniGames.budgetChoice = actionButton.dataset.budgetId;
+    if (state.miniGames.budgetChoice === "split") {
+      awardMiniGamePoints("budgetRewarded", 15);
+    }
+    renderMiniGames();
+    return;
+  }
+
+  if (action === "mini-memory") {
+    if (state.miniGames.memorySolved) {
+      return;
+    }
+
+    const expectedEmoji = ["🐷", "🪙", "🚀"][state.miniGames.memoryStep];
+    const selectedEmoji = actionButton.dataset.memoryEmoji;
+
+    if (selectedEmoji === expectedEmoji) {
+      state.miniGames.memoryStep += 1;
+      if (state.miniGames.memoryStep >= 3) {
+        state.miniGames.memorySolved = true;
+        awardMiniGamePoints("memoryRewarded", 20);
+      }
+    } else {
+      state.miniGames.memoryStep = 0;
+      state.miniGames.memorySolved = false;
+      createToast("Ups, emoji seka nutrūko. Bandyk dar kartą!", "warning");
+    }
+
     renderMiniGames();
     return;
   }
