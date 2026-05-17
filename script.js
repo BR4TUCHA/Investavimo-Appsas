@@ -1,6 +1,9 @@
 const AUTH_STORAGE_KEY = "kidfund-auth-store-v3";
 const APP_STORAGE_KEY = "kidfund-app-state-v3";
 const PARENT_ONLY_TABS = new Set(["transfers"]);
+const APP_NAME = "Taupytukas";
+const APP_DEEP_LINK_SCHEME = "taupytukas";
+const LEGACY_DEEP_LINK_SCHEMES = ["kidfund"];
 
 const TAB_META = {
   home: {
@@ -587,7 +590,7 @@ function getAuthBrandContent() {
       eyebrow: state.authMode === "register" ? "🎮 Vaiko startas" : "🎉 Sveikas sugrįžęs",
       title:
         state.authMode === "register"
-          ? "Susikurk trumpą PIN ir pirmyn į KidFund"
+          ? `Susikurk trumpą PIN ir pirmyn į ${APP_NAME}`
           : "Įrašyk 4 skaičius ir pirmyn į savo misijas",
       copy:
         state.authMode === "register"
@@ -619,7 +622,7 @@ function getAuthBrandContent() {
     title:
       state.authMode === "register"
         ? "Sukurkite saugų tėvų PIN valdymui"
-        : "Prisijunkite prie KidFund valdymo centro",
+        : `Prisijunkite prie ${APP_NAME} valdymo centro`,
     copy:
       state.authMode === "register"
         ? "Tėvų paskyra skirta leidimams, papildymams, investavimo patvirtinimams ir pranešimų kontrolei."
@@ -638,7 +641,7 @@ function getAuthBrandContent() {
       },
       {
         icon: "bank",
-        title: "KidFund partneriai ir paskyros",
+        title: `${APP_NAME} partneriai ir paskyros`,
         copy: "Papildytas pagrindinis ekranas su partnerių vieta, sąskaitų numeriais ir pavedimo užklausa.",
       },
     ],
@@ -742,17 +745,21 @@ function getBarcodeScannerPlugin() {
   return window.Capacitor?.Plugins?.BarcodeScanner || null;
 }
 
-function extractKidFundDeepLink(value) {
+function extractPaymentDeepLink(value) {
   if (!value) {
     return "";
   }
 
   const text = String(value).trim();
-  if (text.startsWith("kidfund://pay/review")) {
+  if (
+    [APP_DEEP_LINK_SCHEME, ...LEGACY_DEEP_LINK_SCHEMES].some((scheme) =>
+      text.startsWith(`${scheme}://pay/review`),
+    )
+  ) {
     return text;
   }
 
-  const match = text.match(/kidfund:\/\/pay\/review[^\s<>"']*/i);
+  const match = text.match(/(?:taupytukas|kidfund):\/\/pay\/review[^\s<>"']*/i);
   return match ? match[0] : "";
 }
 
@@ -762,9 +769,9 @@ function getBarcodeDeepLink(barcode) {
   }
 
   return (
-    extractKidFundDeepLink(barcode.rawValue) ||
-    extractKidFundDeepLink(barcode.displayValue) ||
-    extractKidFundDeepLink(barcode.urlBookmark?.url)
+    extractPaymentDeepLink(barcode.rawValue) ||
+    extractPaymentDeepLink(barcode.displayValue) ||
+    extractPaymentDeepLink(barcode.urlBookmark?.url)
   );
 }
 
@@ -817,7 +824,7 @@ async function startInAppQrScan() {
   }
 
   setScannerBusy(true);
-  setScannerMessage("Atidaroma kamera KidFund QR skenavimui...", "");
+  setScannerMessage(`Atidaroma kamera ${APP_NAME} QR skenavimui...`, "");
   renderAll();
 
   try {
@@ -852,13 +859,13 @@ async function startInAppQrScan() {
     }
 
     if (!deepLink) {
-      setScannerMessage("QR nuskaitytas, bet tai ne KidFund mokėjimo QR kodas.", "warning");
+      setScannerMessage(`QR nuskaitytas, bet tai ne ${APP_NAME} mokėjimo QR kodas.`, "warning");
       renderAll();
-      createToast("Nuskaitytas QR nėra KidFund mokėjimo užklausa.", "warning");
+      createToast(`Nuskaitytas QR nėra ${APP_NAME} mokėjimo užklausa.`, "warning");
       return;
     }
 
-    setScannerMessage("QR nuskaitytas. Atidaromas KidFund review ekranas.", "success");
+    setScannerMessage(`QR nuskaitytas. Atidaromas ${APP_NAME} review ekranas.`, "success");
     renderAll();
     handleIncomingDeepLink(deepLink);
   } catch (error) {
@@ -936,7 +943,7 @@ function buildPaymentReviewPayloadFromRequest(request) {
     accountTitle: account.title,
     accountBadge: account.badge,
     accountNumber: request.accountNumber || account.accountNumber,
-    recipientName: request.recipientName || "KidFund",
+    recipientName: request.recipientName || APP_NAME,
     requestDate: request.createdAt || nowIso(),
     requestStatus: request.status || "open",
     source: "request",
@@ -953,11 +960,11 @@ function buildPaymentDeepLink(payload) {
     amount: String(sanitizeAmount(payload.amount)),
     accountType: payload.accountType || "wallet",
     accountNumber: payload.accountNumber || getAccountConfig(payload.accountType || "wallet").accountNumber,
-    recipientName: payload.recipientName || "KidFund",
+    recipientName: payload.recipientName || APP_NAME,
     accountTitle: payload.accountTitle || getAccountConfig(payload.accountType || "wallet").title,
     requestDate: payload.requestDate || nowIso(),
   });
-  return `kidfund://pay/review?${params.toString()}`;
+  return `${APP_DEEP_LINK_SCHEME}://pay/review?${params.toString()}`;
 }
 
 function buildPaymentShareTextFromPayload(payload) {
@@ -966,9 +973,9 @@ function buildPaymentShareTextFromPayload(payload) {
   }
 
   return [
-    "KidFund pavedimo užklausa",
+    `${APP_NAME} pavedimo užklausa`,
     `Suma: ${formatCurrency(payload.amount)}`,
-    `Gavėjas: ${payload.recipientName || "KidFund"}`,
+    `Gavėjas: ${payload.recipientName || APP_NAME}`,
     `Sąskaita: ${payload.accountNumber}`,
     `Skiltis: ${payload.accountTitle}`,
     `Review nuoroda: ${buildPaymentDeepLink(payload)}`,
@@ -1005,7 +1012,7 @@ function parsePaymentReviewUrl(url) {
       accountTitle: parsed.searchParams.get("accountTitle") || fallbackAccount.title,
       accountBadge: fallbackAccount.badge,
       accountNumber: parsed.searchParams.get("accountNumber") || fallbackAccount.accountNumber,
-      recipientName: parsed.searchParams.get("recipientName") || "KidFund",
+      recipientName: parsed.searchParams.get("recipientName") || APP_NAME,
       requestDate: parsed.searchParams.get("requestDate") || nowIso(),
       requestStatus: "open",
       source: "deep-link",
@@ -1024,7 +1031,7 @@ function getShareRequestText(request) {
       accountType: account.type,
       accountTitle: account.title,
       accountNumber: account.accountNumber,
-      recipientName: "KidFund",
+      recipientName: APP_NAME,
       requestDate: nowIso(),
     });
   }
@@ -1090,7 +1097,7 @@ function renderPaymentReviewModal() {
   const statusClass = safeStatus === "completed" ? "success" : "active";
   const requestDate = formatDate(payload.requestDate);
 
-  elements.paymentReviewTitle.textContent = "KidFund payment review";
+  elements.paymentReviewTitle.textContent = `${APP_NAME} payment review`;
   elements.paymentReviewCopy.textContent =
     safeStatus === "completed"
       ? "Ši užklausa jau buvo patvirtinta. Gali peržiūrėti detales arba uždaryti ekraną."
@@ -1098,7 +1105,7 @@ function renderPaymentReviewModal() {
   elements.paymentReviewBankCard.innerHTML = `
     <div class="bank-card-top">
       <div>
-        <p class="eyebrow">KidFund review</p>
+        <p class="eyebrow">${APP_NAME} review</p>
         <h4>${escapeHtml(payload.accountTitle)}</h4>
       </div>
       ${renderUiIcon("qr", "feature-icon bank-icon")}
@@ -1132,9 +1139,9 @@ function renderPaymentReviewModal() {
       </div>
     </div>
     <div class="mission-row">
-      <span class="mini-pill">🔗 ${escapeHtml(state.paymentReview.source === "deep-link" ? "Deep link / QR" : "KidFund vidus")}</span>
+      <span class="mini-pill">🔗 ${escapeHtml(state.paymentReview.source === "deep-link" ? "Deep link / QR" : `${APP_NAME} vidus`)}</span>
       <span class="mini-pill">📅 ${escapeHtml(requestDate)}</span>
-      <span class="mini-pill">🏦 ${escapeHtml(payload.accountBadge || "KidFund")}</span>
+      <span class="mini-pill">🏦 ${escapeHtml(payload.accountBadge || APP_NAME)}</span>
     </div>
     <div class="review-status-row">
       <span class="status-tag ${statusClass}">${statusLabel}</span>
@@ -1214,13 +1221,13 @@ function renderShareRequestModal() {
   const deepLink = getPaymentDeepLink(request);
   const requestDate = formatDate(request.createdAt);
 
-  elements.shareRequestTitle.textContent = `KidFund mokėjimo kortelė`;
+  elements.shareRequestTitle.textContent = `${APP_NAME} mokėjimo kortelė`;
   elements.shareRequestCopy.textContent =
     "Gavėjas gali nuskenuoti QR, atidaryti review ekraną, nukopijuoti duomenis arba gauti šią užklausą per share.";
   elements.shareRequestBankCard.innerHTML = `
     <div class="bank-card-top">
       <div>
-        <p class="eyebrow">KidFund transfer request</p>
+        <p class="eyebrow">${APP_NAME} transfer request</p>
         <h4>${escapeHtml(account.title)}</h4>
       </div>
       ${renderUiIcon("bank", "feature-icon bank-icon")}
@@ -1229,7 +1236,7 @@ function renderShareRequestModal() {
     <div class="bank-card-meta">
       <div>
         <span class="stack-meta">Gavėjas</span>
-        <strong>KidFund</strong>
+        <strong>${APP_NAME}</strong>
       </div>
       <div>
         <span class="stack-meta">Sąskaita</span>
@@ -1255,7 +1262,7 @@ function renderShareRequestModal() {
     </div>
     <span class="account-number" id="shareRequestText">${escapeHtml(shareText)}</span>
     <div class="mission-row">
-      <span class="mini-pill">👤 Gavėjas: KidFund</span>
+      <span class="mini-pill">👤 Gavėjas: ${APP_NAME}</span>
       <span class="mini-pill">💸 Suma: ${formatCurrency(request.amount)}</span>
       <span class="mini-pill">🏦 ${account.badge}</span>
     </div>
@@ -1326,7 +1333,7 @@ function renderMiniGames() {
   elements.miniGamesBoard.innerHTML = `
     <div class="game-card game-summary-card">
       <div class="inline-row">
-        <h4>🎮 KidFund žaidimų progresas</h4>
+        <h4>🎮 ${APP_NAME} žaidimų progresas</h4>
         <span class="game-score">Lygis ${state.miniGames.level}</span>
       </div>
       <p class="list-copy">Rink taškus, pereik užduotis ir paversk taupymą mažais laimėjimais.</p>
@@ -1389,7 +1396,7 @@ function renderMiniGames() {
         <h4>🎁 Laimės korta</h4>
         <span class="game-score">${state.miniGames.cardPick ? (state.miniGames.cardRewarded ? "+8 tšk." : "Atverta") : "Uždaryta"}</span>
       </div>
-      <p class="list-copy">Pasirink vieną kortą ir gauk mažą KidFund dienos misiją.</p>
+      <p class="list-copy">Pasirink vieną kortą ir gauk mažą ${APP_NAME} dienos misiją.</p>
       <div class="answer-grid">
         ${luckyCards
           .map(
@@ -1528,7 +1535,7 @@ async function ensureNotificationPermission() {
 }
 
 async function sendDeviceNotification(message, tone = "success") {
-  const title = tone === "warning" ? "KidFund perspėjimas" : "KidFund pranešimas";
+  const title = tone === "warning" ? `${APP_NAME} perspėjimas` : `${APP_NAME} pranešimas`;
   const localNotifications = window.Capacitor?.Plugins?.LocalNotifications;
 
   if (localNotifications?.schedule) {
@@ -1622,7 +1629,7 @@ function renderAuth() {
     state.authRole === "child"
       ? state.authMode === "login"
         ? "Įvesk PIN ir iškart pateksi į savo taupymo bei investavimo nuotykius."
-        : "Susikurk 4 skaičių PIN, kad galėtum prisijungti prie KidFund."
+        : `Susikurk 4 skaičių PIN, kad galėtum prisijungti prie ${APP_NAME}.`
       : state.authMode === "login"
         ? "Prisijunkite su PIN ir iškart pateksite į tėvų valdymo ekraną."
         : "Sukurkite 4 skaitmenų PIN tėvų paskyrai ir patvirtinimų valdymui.";
@@ -1887,7 +1894,7 @@ function executeConfirmAction() {
       accountType: account.type,
       accountTitle: account.title,
       accountNumber: account.accountNumber,
-      recipientName: "KidFund",
+      recipientName: APP_NAME,
       requestDate: createdAt,
     };
     const shareText = buildPaymentShareTextFromPayload(payload);
@@ -2162,7 +2169,7 @@ function renderHome() {
           <h4>App pranešimai</h4>
           ${renderUiIcon("bell", "feature-icon subtle-icon")}
         </div>
-        <p class="list-copy">Kiekvienas KidFund feed pranešimas siunčiamas ir kaip telefono notification, kai tik leidimai suteikti.</p>
+        <p class="list-copy">Kiekvienas ${APP_NAME} feed pranešimas siunčiamas ir kaip telefono notification, kai tik leidimai suteikti.</p>
       </div>
     `;
   } else {
@@ -2216,7 +2223,7 @@ function renderHome() {
   const walletAccount = getAccountConfig("wallet");
   const savingsAccount = getAccountConfig("savings");
   const selectedRequestAccount = getAccountConfig(state.paymentRequestAccount);
-  const selectedRequestCopy = `KidFund pavedimo užklausa: pervesk ${formatCurrency(state.paymentRequestAmount)} į ${selectedRequestAccount.title} (${selectedRequestAccount.accountNumber}).`;
+  const selectedRequestCopy = `${APP_NAME} pavedimo užklausa: pervesk ${formatCurrency(state.paymentRequestAmount)} į ${selectedRequestAccount.title} (${selectedRequestAccount.accountNumber}).`;
 
   elements.accountHub.innerHTML = `
     ${[walletAccount, savingsAccount]
@@ -2309,7 +2316,7 @@ function renderHome() {
           <h4>Tėvų santrauka</h4>
           ${renderUiIcon("bank", "feature-icon subtle-icon")}
         </div>
-        <p class="list-copy">Galite sekti, kiek užklausų buvo išsiųsta ir ar anti-spam taisyklės neleidžia perkrauti KidFund sistemos.</p>
+        <p class="list-copy">Galite sekti, kiek užklausų buvo išsiųsta ir ar anti-spam taisyklės neleidžia perkrauti ${APP_NAME} sistemos.</p>
       </div>
       <div class="kid-card">
         <div class="inline-row">
@@ -2738,7 +2745,7 @@ function renderTransfers() {
       ${renderUiIcon("camera")}
       <div>
         <strong>In-app QR skeneris</strong>
-        <p class="list-copy">Atidaro tikrą telefono kamerą programėlės viduje. Nuskenavus KidFund QR, iškart atsidaro payment review ekranas.</p>
+        <p class="list-copy">Atidaro tikrą telefono kamerą programėlės viduje. Nuskenavus ${APP_NAME} QR, iškart atsidaro payment review ekranas.</p>
         <div class="inline-actions">
           <button class="button primary compact-button" type="button" data-action="scan-payment-qr" ${state.scanner.busy ? "disabled" : ""}>
             ${state.scanner.busy ? "Atidaroma kamera..." : "Skenuoti QR su kamera"}
@@ -2965,7 +2972,7 @@ function handleActionClick(actionButton) {
       : null;
     const requestText =
       request?.shareText ||
-      `KidFund pavedimo užklausa: pervesk ${formatCurrency(state.paymentRequestAmount)} į ${getAccountConfig(state.paymentRequestAccount).title} (${getAccountConfig(state.paymentRequestAccount).accountNumber}).`;
+      `${APP_NAME} pavedimo užklausa: pervesk ${formatCurrency(state.paymentRequestAmount)} į ${getAccountConfig(state.paymentRequestAccount).title} (${getAccountConfig(state.paymentRequestAccount).accountNumber}).`;
     void copyTextValue(requestText).then((copied) => {
       createToast(copied ? "Pavedimo užklausos tekstas nukopijuotas." : "Nepavyko nukopijuoti teksto.", copied ? "success" : "warning");
     });
@@ -3161,7 +3168,7 @@ elements.shareRequestSystemButton.addEventListener("click", async () => {
   if (navigator.share) {
     try {
       await navigator.share({
-        title: "KidFund pavedimo užklausa",
+        title: `${APP_NAME} pavedimo užklausa`,
         text: shareText,
       });
       createToast("Pavedimo užklausa pasidalinta.", "success");
@@ -3303,7 +3310,7 @@ document.addEventListener("input", (event) => {
     const preview = document.querySelector("#paymentRequestPreview");
     const account = getAccountConfig(state.paymentRequestAccount);
     if (preview) {
-      preview.textContent = `KidFund pavedimo užklausa: pervesk ${formatCurrency(state.paymentRequestAmount)} į ${account.title} (${account.accountNumber}).`;
+      preview.textContent = `${APP_NAME} pavedimo užklausa: pervesk ${formatCurrency(state.paymentRequestAmount)} į ${account.title} (${account.accountNumber}).`;
     }
   }
 });
