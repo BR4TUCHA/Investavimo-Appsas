@@ -63,7 +63,7 @@ public class KidFundBiometricPlugin extends Plugin {
             }
         });
 
-        String title = call.getString("title", "KidFund prisijungimas");
+        String title = call.getString("title", "Taupytukas prisijungimas");
         String subtitle = call.getString("subtitle", "Patvirtinkite prisijungimą");
         String description = call.getString("description", "Patvirtinkite savo tapatybę biometriniu būdu");
         String cancelTitle = call.getString("cancelTitle", "Atšaukti");
