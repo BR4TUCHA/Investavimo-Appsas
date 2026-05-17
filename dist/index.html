@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="lt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Taupytukas | Vaikų taupymo ir investavimo programėlė</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="auth-screen" id="authScreen">
+      <div class="auth-shell">
+        <section class="auth-brand card">
+          <p class="eyebrow" id="authBrandEyebrow">Taupytukas</p>
+          <h1 id="authBrandTitle">Pilno ekrano prisijungimas, o ne pop-up</h1>
+          <p class="muted-copy" id="authBrandCopy"></p>
+          <div class="emoji-row" id="authEmojiRow"></div>
+          <div class="feature-list" id="authFeatureList"></div>
+        </section>
+
+        <section class="auth-card card">
+          <div class="auth-top">
+            <div>
+              <p class="eyebrow">Prisijungimas</p>
+              <h2 id="authTitle">Prisijungti prie Taupytukas</h2>
+            </div>
+            <span class="status-pill" id="authRoleBadge">Vaiko paskyra</span>
+          </div>
+
+          <div class="segmented-group" id="authRoleSwitch">
+            <button class="segment active" type="button" data-auth-role="child">Vaikas</button>
+            <button class="segment" type="button" data-auth-role="parent">Tėvai</button>
+          </div>
+
+          <div class="segmented-group" id="authModeSwitch">
+            <button class="segment active" type="button" data-auth-mode="login">Prisijungti</button>
+            <button class="segment" type="button" data-auth-mode="register">Registruotis</button>
+          </div>
+
+          <p class="auth-copy" id="authCopy"></p>
+          <div class="pin-slots" id="authPinSlots" aria-label="PIN laukeliai"></div>
+          <p class="validation-text" id="authMessage"></p>
+
+          <div class="action-row">
+            <button class="button primary" id="authSubmitButton" type="button">Prisijungti</button>
+            <button class="button secondary" id="authClearButton" type="button">Išvalyti</button>
+          </div>
+
+          <div class="keypad" id="authKeypad" aria-label="PIN klaviatūra"></div>
+        </section>
+      </div>
+    </div>
+
+    <div class="app-shell hidden" id="appShell">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">Taupytukas</p>
+          <h1>Pocket money banking demo</h1>
+          <p class="muted-copy" id="headerSubtitle"></p>
+        </div>
+        <div class="header-actions">
+          <span class="role-chip" id="activeRoleChip"></span>
+          <button class="button secondary compact-button" id="logoutButton" type="button">
+            Atsijungti
+          </button>
+        </div>
+      </header>
+
+      <div class="section-banner card" id="sectionBanner">
+        <p class="eyebrow">Skilties aprašymas</p>
+        <h2 id="sectionBannerTitle"></h2>
+        <p id="sectionBannerCopy"></p>
+      </div>
+
+      <main class="app-main">
+        <section class="tab-panel active" data-panel="home">
+          <div class="stats-grid" id="homeStats"></div>
+
+          <div class="content-grid">
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Nuotaika</p>
+                  <h3 id="homeMoodTitle"></h3>
+                </div>
+              </div>
+              <div class="stack-list" id="homeMoodSpot"></div>
+            </article>
+
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Partneriai</p>
+                  <h3>Taupytukas partnerių vieta</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="partnerSpot"></div>
+            </article>
+          </div>
+
+          <div class="content-grid">
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Sąskaitos numeriai</p>
+                  <h3>Gauti pavedimą arba kopijuoti numerį</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="accountHub"></div>
+            </article>
+
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Svarbiausi atnaujinimai</p>
+                  <h3>Pranešimų peržiūra</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="homeFeedPreview"></div>
+            </article>
+          </div>
+
+          <div class="content-grid">
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Greiti veiksmai</p>
+                  <h3>Ką nori daryti dabar?</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="quickActions"></div>
+            </article>
+
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Žaidybinimas</p>
+                  <h3>Mažos misijos ir emoji</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="kidMissionSpot"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" data-panel="savings">
+          <div class="content-grid">
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Taupymas</p>
+                  <h3>Vaiko tikslai ir progresas</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="goalsList"></div>
+            </article>
+
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Balansas</p>
+                  <h3>Taupymo santrauka</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="savingsSummary"></div>
+            </article>
+          </div>
+
+          <article class="card" data-parent-only>
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Leidimų politika</p>
+                <h3>Tėvų nustatoma kontrolė</h3>
+              </div>
+            </div>
+            <div class="stack-list" id="permissionPolicyList"></div>
+          </article>
+        </section>
+
+        <section class="tab-panel" data-panel="invest">
+          <div class="content-grid">
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Investavimo rinka</p>
+                  <h3>Akcijos ir kriptovaliutos</h3>
+                </div>
+              </div>
+              <div class="asset-grid" id="investmentCatalog"></div>
+            </article>
+
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Veiksmas</p>
+                  <h3 id="investPanelTitle"></h3>
+                </div>
+              </div>
+              <div class="stack-list" id="investActionPanel"></div>
+            </article>
+          </div>
+
+          <div class="content-grid">
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Portfelis</p>
+                  <h3>Patvirtintos investicijos</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="portfolioList"></div>
+            </article>
+
+            <article class="card" data-parent-only>
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Tėvų funkcijos</p>
+                  <h3>Investavimo valdymas</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="parentInvestControls"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" data-panel="learn">
+          <article class="card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Mokymasis</p>
+                <h3>Trumpi paaiškinimai apie pinigus</h3>
+              </div>
+            </div>
+            <div class="lesson-grid" id="lessonGrid"></div>
+          </article>
+
+          <article class="card quiz-card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Mini viktorina</p>
+                <h3 id="quizQuestion"></h3>
+              </div>
+            </div>
+            <p class="muted-copy" id="quizHelper"></p>
+            <div class="quiz-options" id="quizOptions"></div>
+            <p class="validation-text" id="quizFeedback"></p>
+            <button class="button secondary" id="nextQuestionButton" type="button">
+              Kitas klausimas
+            </button>
+          </article>
+
+          <article class="card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Mini žaidimukai</p>
+                <h3>Greitos misijos vaikams</h3>
+              </div>
+            </div>
+            <div class="stack-list" id="miniGamesBoard"></div>
+          </article>
+        </section>
+
+        <section class="tab-panel" data-panel="feed">
+          <article class="card">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Istorija</p>
+                <h3>Visi pranešimai ir veiksmai</h3>
+              </div>
+            </div>
+            <div class="stack-list" id="feedList"></div>
+          </article>
+        </section>
+
+        <section class="tab-panel" data-panel="transfers" data-parent-only>
+          <div class="content-grid">
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Duoti pinigų</p>
+                  <h3>Greitas papildymas vaikui</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="transferActions"></div>
+            </article>
+
+            <article class="card">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Prašymų eilė</p>
+                  <h3>Laukia tėvų sprendimo</h3>
+                </div>
+              </div>
+              <div class="stack-list" id="transferQueue"></div>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <nav class="bottom-nav" id="bottomNav">
+        <button class="nav-item active" type="button" data-tab="home">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"></path>
+            </svg>
+          </span>
+          <span>Pagr.</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="savings">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M12 3a8 8 0 0 0-8 8v1.5A3.5 3.5 0 0 0 7.5 16H9l1 5h4l1-5h1.5A3.5 3.5 0 0 0 20 12.5V11a8 8 0 0 0-8-8zm0 3a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"></path>
+            </svg>
+          </span>
+          <span>Taupyti</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="invest">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M5 17l4.5-4.5 3 3L19 9v4h2V5h-8v2h4.59l-5.09 5.09-3-3L3 15.5z"></path>
+            </svg>
+          </span>
+          <span>Invest.</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="learn">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M12 6.5c-3.8 0-7 1.1-9 2.5v10c2-1.4 5.2-2.5 9-2.5s7 1.1 9 2.5V9c-2-1.4-5.2-2.5-9-2.5zm0 2c2.6 0 5 .5 7 1.4v6.1c-2-.9-4.4-1.4-7-1.4s-5 .5-7 1.4V9.9c2-.9 4.4-1.4 7-1.4z"></path>
+            </svg>
+          </span>
+          <span>Mokytis</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="feed">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M12 3a6 6 0 0 0-6 6v2.2c0 .7-.2 1.4-.6 2L4 16v1h16v-1l-1.4-2.8a4.6 4.6 0 0 1-.6-2V9a6 6 0 0 0-6-6zm0 19a3 3 0 0 0 2.8-2H9.2A3 3 0 0 0 12 22z"></path>
+            </svg>
+          </span>
+          <span>Naujienos</span>
+        </button>
+        <button class="nav-item" type="button" data-tab="transfers" data-parent-only>
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M7 7h10v2H7zm0 4h10v2H7zm-2 8h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2zm6-11h8v8h-8z"></path>
+            </svg>
+          </span>
+          <span>Duoti</span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="modal-overlay hidden" id="confirmModal" aria-hidden="true">
+      <div class="modal-card card">
+        <div class="card-header">
+          <div>
+            <p class="eyebrow">Patvirtinti veiksmą</p>
+            <h3 id="confirmTitle"></h3>
+          </div>
+        </div>
+        <p class="muted-copy" id="confirmCopy"></p>
+        <div class="pin-slots compact" id="confirmPinSlots"></div>
+        <p class="validation-text" id="confirmMessage"></p>
+
+        <div class="action-row">
+          <button class="button primary" id="confirmSubmitButton" type="button">
+            Patvirtinti
+          </button>
+          <button class="button secondary" id="confirmCancelButton" type="button">
+            Atšaukti
+          </button>
+        </div>
+
+        <div class="keypad compact" id="confirmKeypad"></div>
+      </div>
+    </div>
+
+    <div class="modal-overlay hidden" id="shareRequestModal" aria-hidden="true">
+      <div class="modal-card card share-card">
+        <div class="card-header">
+          <div>
+            <p class="eyebrow">Pavedimo užklausa</p>
+            <h3 id="shareRequestTitle"></h3>
+          </div>
+        </div>
+        <p class="muted-copy" id="shareRequestCopy"></p>
+        <div class="share-layout">
+          <div class="qr-preview" id="shareQrCode"></div>
+          <div class="stack-list">
+            <div class="bank-request-card" id="shareRequestBankCard"></div>
+            <div class="account-card" id="shareRequestMeta"></div>
+            <div class="copy-row">
+              <button class="button primary compact-button" id="shareRequestReviewButton" type="button">
+                Review
+              </button>
+              <button class="button secondary compact-button" id="shareRequestScanButton" type="button">
+                Skenuoti
+              </button>
+              <button class="button primary compact-button" id="shareRequestSystemButton" type="button">
+                Dalintis
+              </button>
+              <button class="button secondary compact-button" id="shareRequestCopyButton" type="button">
+                Kopijuoti
+              </button>
+              <button class="button secondary compact-button" id="shareRequestCloseButton" type="button">
+                Uždaryti
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay hidden" id="paymentReviewModal" aria-hidden="true">
+      <div class="modal-card card payment-review-card">
+        <div class="card-header">
+          <div>
+            <p class="eyebrow">Payment review</p>
+            <h3 id="paymentReviewTitle"></h3>
+          </div>
+        </div>
+        <p class="muted-copy" id="paymentReviewCopy"></p>
+        <div class="review-layout">
+          <div class="bank-request-card" id="paymentReviewBankCard"></div>
+          <div class="stack-list">
+            <div class="account-card" id="paymentReviewMeta"></div>
+            <div class="review-callout">
+              <strong>Automatinio pavedimo nėra.</strong>
+              <p class="list-copy">
+                Nuskenavus QR arba atidarius deep link, Taupytukas tik parodo review
+                ekraną. Pavedimas vyksta tik po aiškaus patvirtinimo.
+              </p>
+            </div>
+            <div class="copy-row">
+              <button class="button primary compact-button" id="paymentReviewConfirmButton" type="button">
+                Patvirtinti review
+              </button>
+              <button class="button secondary compact-button" id="paymentReviewCancelButton" type="button">
+                Atšaukti
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast-stack" id="toastStack"></div>
+
+    <script src="qrcode.min.js"></script>
+    <script>
+      if (!window.QRCode) {
+        document.write('<script src="node_modules/qrcodejs/qrcode.min.js"><\\/script>');
+      }
+    </script>
+    <script src="script.js"></script>
+  </body>
+</html>
