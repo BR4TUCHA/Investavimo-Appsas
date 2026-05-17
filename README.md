@@ -120,5 +120,5 @@ Mac kompiuteryje ir buildinti į iPhone arba simulatorių.
 SHA-256:
 
 ```text
-9cd4933d8261e6ae2cad77c490d4fc24b6f636f65a1357ce2a57c1f9141c0b37
+3444f0b6947b5e99a24ef4cc34a6d9d3491bb6a8b8034e252ccf24eed1082ad6
 ```
