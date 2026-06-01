@@ -421,7 +421,12 @@ p {
 }
 
 .app-shell {
-  padding: calc(24px + env(safe-area-inset-top)) 0 calc(88px + env(safe-area-inset-bottom));
+  padding: calc(24px + env(safe-area-inset-top)) 0 calc(92px + env(safe-area-inset-bottom));
+}
+
+.game-card.done {
+  opacity: 0.88;
+  border-color: rgba(57, 201, 146, 0.35);
 }
 
 .app-header {
@@ -921,7 +926,7 @@ p {
   width: 100%;
   max-width: none;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 0;
   padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
   border-radius: 0;
@@ -1146,7 +1151,7 @@ html.modal-open {
   }
 
   .bottom-nav {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 
   .nav-item {

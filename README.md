@@ -10,7 +10,7 @@
 - išskirtas tikslo progresas (%, kiek liko EUR);
 - taupymas, limitai, pavedimų užklausos, QR skeneris, deep link review;
 - pranešimų istorija (skiltis „Pranešimai“);
-- misijos / žaidimai (trumpi mini žaidimai su XP);
+- **Mokymasis** (pamokos + viktorina) ir atskira **Misijos** skiltis (tėvų užduotys + žaidimai);
 - plona apatinė navigacija (nelipa ant turinio);
 - Android APK ir iOS projektas (Capacitor).
 
@@ -40,7 +40,7 @@ APK kopija: `apk/Taupytukas-debug.apk`
 
 https://raw.githubusercontent.com/BR4TUCHA/Investavimo-Appsas/cursor/simplify-goals-xp-ad52/apk/Taupytukas-debug.apk
 
-SHA-256: `4040032a4bae9507ef1a3320f83c87b6e4ae4c575717ed7947b6e73484832c17`
+SHA-256: `8d3e8261fc784c9afe41dab6e0bbdceecf761c793cfc266bad0196e49d808fee`
 
 > Jei telefone vis dar sena versija: ištrink seną Taupytukas įdiegimą ir įdiek iš naujo. GitHub `raw` kartais kešuoja — naudok nuorodą su teisinga šaka (`cursor/simplify-goals-xp-ad52`), ne `main` ar seną `taupytukas-ios` šaką.
 

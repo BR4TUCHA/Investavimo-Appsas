@@ -12,11 +12,15 @@ const TAB_META = {
   },
   savings: {
     title: "Taupymas",
-    copy: "Tikslai su aiškia pažanga. Tėvai kuria misijas ir mato vaiko XP.",
+    copy: "Pinigų balansas, savaitės limitas ir pagrindinio tikslo progresas.",
   },
   learn: {
-    title: "Misijos ir žaidimai",
-    copy: "Trumpi žaidimai ir pamokos. Surinkta XP matoma tėvams pagrindiniame ekrane.",
+    title: "Mokymasis",
+    copy: "Pamokos ir viktorina apie taupymą, limitus ir XP — be žaidimų ir tėvų užduočių.",
+  },
+  missions: {
+    title: "Misijos",
+    copy: "Tėvų užduotys, progresas ir trumpi žaidimai. Atlikti žaidimai lieka pažymėti.",
   },
   feed: {
     title: "Pranešimai",
@@ -188,7 +192,9 @@ const elements = {
   kidMissionSpot: document.querySelector("#kidMissionSpot"),
   homeFeedPreview: document.querySelector("#homeFeedPreview"),
   savingsHeroGoal: document.querySelector("#savingsHeroGoal"),
-  goalsList: document.querySelector("#goalsList"),
+  missionsPanelTitle: document.querySelector("#missionsPanelTitle"),
+  missionsPanelCopy: document.querySelector("#missionsPanelCopy"),
+  missionsGoalsList: document.querySelector("#missionsGoalsList"),
   parentGoalsForm: document.querySelector("#parentGoalsForm"),
   savingsSummary: document.querySelector("#savingsSummary"),
   permissionPolicyList: document.querySelector("#permissionPolicyList"),
@@ -262,6 +268,17 @@ function buildDefaultAppData() {
     childProgress: {
       xp: 24,
       level: 1,
+      miniGames: {
+        points: 0,
+        level: 1,
+        piggyTaps: 0,
+        piggyRewarded: false,
+        choiceAnswered: false,
+        choiceSelected: null,
+        choiceRewarded: false,
+        budgetChoice: null,
+        budgetRewarded: false,
+      },
     },
     goals: [
       {
@@ -347,6 +364,10 @@ function normalizeAppData(raw) {
     childProgress: {
       ...fallback.childProgress,
       ...(raw.childProgress || {}),
+      miniGames: {
+        ...fallback.childProgress.miniGames,
+        ...(raw.childProgress?.miniGames || {}),
+      },
     },
     goals,
     settings: {
@@ -366,6 +387,31 @@ const authStore = {
 };
 
 const appData = normalizeAppData(loadJson(APP_STORAGE_KEY, buildDefaultAppData()));
+
+const defaultMiniGamesState = () => ({
+  points: 0,
+  level: 1,
+  piggyTaps: 0,
+  piggyRewarded: false,
+  choiceAnswered: false,
+  choiceSelected: null,
+  choiceRewarded: false,
+  budgetChoice: null,
+  budgetRewarded: false,
+});
+
+function loadMiniGamesState() {
+  return {
+    ...defaultMiniGamesState(),
+    ...(appData.childProgress?.miniGames || {}),
+  };
+}
+
+function persistMiniGamesState() {
+  appData.childProgress = appData.childProgress || { xp: 0, level: 1 };
+  appData.childProgress.miniGames = { ...state.miniGames };
+  saveAppData();
+}
 
 const state = {
   mode: null,
@@ -411,22 +457,7 @@ const state = {
   quizFeedback: "",
   quizFeedbackTone: "",
   selectedQuizAnswer: null,
-  miniGames: {
-    points: 0,
-    level: 1,
-    piggyTaps: 0,
-    piggyRewarded: false,
-    choiceAnswered: false,
-    choiceSelected: null,
-    choiceRewarded: false,
-    cardPick: null,
-    cardRewarded: false,
-    budgetChoice: null,
-    budgetRewarded: false,
-    memoryStep: 0,
-    memorySolved: false,
-    memoryRewarded: false,
-  },
+  miniGames: loadMiniGamesState(),
 };
 
 function saveAuthStore() {
@@ -1362,14 +1393,21 @@ function awardMiniGamePoints(flagKey, points) {
     state.miniGames.points += points;
     state.miniGames[flagKey] = true;
     syncMiniGameProgress();
-    awardChildXp(points, `Vaikas surinko +${points} XP mini misijoje.`);
+    awardChildXp(points, `Vaikas surinko +${points} XP mini žaidime.`);
+    persistMiniGamesState();
   }
 }
 
 function renderMiniGames() {
+  if (!elements.miniGamesBoard) {
+    return;
+  }
+
   const primaryGoal = getPrimaryGoal();
   const goalTitle = primaryGoal?.title || "tavo tikslą";
-  const piggyRewardReached = state.miniGames.piggyTaps >= 8;
+  const piggyDone = state.miniGames.piggyRewarded;
+  const choiceDone = state.miniGames.choiceRewarded;
+  const budgetDone = state.miniGames.budgetRewarded;
   const budgetOptions = [
     { id: "split", label: "Paskirstyti: išleisti + taupyti", correct: true },
     { id: "all-spend", label: "Išleisti viską iškart", correct: false },
@@ -1382,67 +1420,177 @@ function renderMiniGames() {
   const xpIntoLevel = getChildXp() % 100;
   const xpToNext = 100 - xpIntoLevel || 100;
 
+  const renderGameCard = (title, score, bodyHtml, done) => `
+    <div class="game-card ${done ? "done" : ""}">
+      <div class="inline-row">
+        <h4>${title}</h4>
+        <span class="game-score">${done ? "✅ Atlikta" : score}</span>
+      </div>
+      ${bodyHtml}
+    </div>
+  `;
+
   elements.miniGamesBoard.innerHTML = `
     <div class="game-card game-summary-card">
       <div class="inline-row">
         <h4>⭐ Tavo XP</h4>
         <span class="game-score">Lygis ${syncChildLevel()}</span>
       </div>
-      <p class="list-copy">XP mato ir tėvai. Didžiausi taškai — už tėvų nustatytas misijas.</p>
+      <p class="list-copy">Didžiausi XP — už tėvų misijas. Žaidimai duoda mažesnę dovaną.</p>
       <div class="mission-row">
         <span class="mini-pill">${getChildXp()} XP</span>
         <span class="mini-pill">Iki kito lygio ${xpToNext} XP</span>
       </div>
       <div class="mini-progress"><span style="width: ${xpIntoLevel}%"></span></div>
     </div>
-    <div class="game-card">
-      <div class="inline-row">
-        <h4>🐷 Tap tap taupyklė</h4>
-        <span class="game-score">${state.miniGames.piggyRewarded ? "+5 XP" : `${state.miniGames.piggyTaps}/8`}</span>
-      </div>
-      <p class="list-copy">8 paspaudimai = maža XP dovanėlė (kartą per sesiją).</p>
-      <button class="button primary compact-button" type="button" data-action="mini-piggy-tap">Spausti taupyklę</button>
-      <p class="list-copy">${piggyRewardReached ? "Šaunu!" : "Dar keli paspaudimai."}</p>
-    </div>
-    <div class="game-card">
-      <div class="inline-row">
-        <h4>🎯 Kas artina tikslą?</h4>
-        <span class="game-score">${state.miniGames.choiceRewarded ? "+8 XP" : "Misija"}</span>
-      </div>
-      <div class="answer-grid">
-        ${choiceOptions
-          .map((option) => {
-            const optionState =
-              state.miniGames.choiceAnswered && state.miniGames.choiceSelected === option.id
-                ? option.correct
-                  ? "correct"
-                  : "wrong"
-                : "";
-            return `<button class="game-button ${optionState}" type="button" data-action="mini-choice" data-choice-id="${option.id}">${option.label}</button>`;
-          })
-          .join("")}
-      </div>
-    </div>
-    <div class="game-card">
-      <div class="inline-row">
-        <h4>🧠 Kišenpinigių pasirinkimas</h4>
-        <span class="game-score">${state.miniGames.budgetRewarded ? "+10 XP" : "Misija"}</span>
-      </div>
-      <div class="answer-grid">
-        ${budgetOptions
-          .map((option) => {
-            const optionState =
-              state.miniGames.budgetChoice === option.id
-                ? option.correct
-                  ? "correct"
-                  : "wrong"
-                : "";
-            return `<button class="game-button ${optionState}" type="button" data-action="mini-budget" data-budget-id="${option.id}">${option.label}</button>`;
-          })
-          .join("")}
+    ${renderGameCard(
+      "🐷 Tap tap taupyklė",
+      piggyDone ? "+5 XP" : `${state.miniGames.piggyTaps}/8`,
+      piggyDone
+        ? `<p class="list-copy">Šis žaidimas jau atliktas. XP įskaitytas.</p>`
+        : `<p class="list-copy">8 paspaudimai = +5 XP (kartą).</p>
+           <button class="button primary compact-button" type="button" data-action="mini-piggy-tap">Spausti taupyklę</button>`,
+      piggyDone,
+    )}
+    ${renderGameCard(
+      "🎯 Kas artina tikslą?",
+      choiceDone ? "+8 XP" : "Laukia",
+      choiceDone
+        ? `<p class="list-copy">Atsakei teisingai — žaidimas užbaigtas.</p>`
+        : `<div class="answer-grid">${choiceOptions
+            .map((option) => {
+              const optionState =
+                state.miniGames.choiceAnswered && state.miniGames.choiceSelected === option.id
+                  ? option.correct
+                    ? "correct"
+                    : "wrong"
+                  : "";
+              return `<button class="game-button ${optionState}" type="button" data-action="mini-choice" data-choice-id="${option.id}">${option.label}</button>`;
+            })
+            .join("")}</div>`,
+      choiceDone,
+    )}
+    ${renderGameCard(
+      "🧠 Kišenpinigių pasirinkimas",
+      budgetDone ? "+10 XP" : "Laukia",
+      budgetDone
+        ? `<p class="list-copy">Teisingas pasirinkimas — žaidimas užbaigtas.</p>`
+        : `<div class="answer-grid">${budgetOptions
+            .map((option) => {
+              const optionState =
+                state.miniGames.budgetChoice === option.id
+                  ? option.correct
+                    ? "correct"
+                    : "wrong"
+                  : "";
+              return `<button class="game-button ${optionState}" type="button" data-action="mini-budget" data-budget-id="${option.id}">${option.label}</button>`;
+            })
+            .join("")}</div>`,
+      budgetDone,
+    )}
+  `;
+}
+
+function renderMissionGoalItem(goal) {
+  const progress = getGoalProgress(goal);
+  const isMission = goal.missionOnly || progress.target <= 0;
+  const parentActions =
+    state.mode === "parent" && goal.status === "active"
+      ? `<div class="inline-actions">
+          <button class="button primary compact-button" type="button" data-action="open-complete-goal-confirm" data-goal-id="${goal.id}" ${!isMission && !progress.readyToComplete ? "disabled" : ""}>
+            Patvirtinti atlikimą (+${goal.xpReward} XP)
+          </button>
+        </div>`
+      : "";
+
+  return `
+    <div class="stack-item">
+      ${renderUiIcon(goal.status === "completed" ? "check" : "target")}
+      <div>
+        <div class="inline-row">
+          <strong>${escapeHtml(goal.title)}</strong>
+          <span class="status-tag ${goal.status === "completed" ? "approved" : progress.readyToComplete || isMission ? "active" : "pending"}">
+            ${
+              goal.status === "completed"
+                ? "Atlikta"
+                : isMission
+                  ? "Užduotis"
+                  : progress.readyToComplete
+                    ? "Galima užbaigti"
+                    : "Vykdoma"
+            }
+          </span>
+        </div>
+        <p class="list-copy">${
+          goal.status === "completed"
+            ? `Užbaigta · gauta +${goal.xpReward} XP`
+            : isMission
+              ? `Tėvų užduotis · atlygis +${goal.xpReward} XP`
+              : `Sukaupta ${formatCurrency(progress.saved)} iš ${formatCurrency(progress.target)} · liko ${formatCurrency(progress.remaining)}`
+        }</p>
+        ${
+          !isMission && goal.status !== "completed"
+            ? `<div class="progress-track"><div class="progress-fill" style="width: ${progress.percent}%"></div></div>
+               <p class="list-copy">${progress.percent}%</p>`
+            : ""
+        }
+        ${parentActions}
       </div>
     </div>
   `;
+}
+
+function renderMissions() {
+  if (elements.missionsPanelTitle) {
+    elements.missionsPanelTitle.textContent =
+      state.mode === "parent" ? "Vaiko užduotys ir žaidimai" : "Tėvų užduotys";
+  }
+  if (elements.missionsPanelCopy) {
+    elements.missionsPanelCopy.textContent =
+      state.mode === "parent"
+        ? "Čia kuriate užduotis vaikui ir matote, kurie žaidimai jau atlikti."
+        : "Atlik tėvų užduotis — gausi XP. Žemiau trumpi žaidimai (atlikti lieka pažymėti).";
+  }
+
+  const activeGoals = appData.goals.filter((goal) => goal.status !== "completed");
+  const completedGoals = appData.goals.filter((goal) => goal.status === "completed");
+
+  if (elements.missionsGoalsList) {
+    const activeBlock = activeGoals.length
+      ? `<p class="eyebrow">Aktyvios</p>${activeGoals.map(renderMissionGoalItem).join("")}`
+      : `<div class="stack-item">${renderUiIcon("sparkle")}<div><strong>Kol kas nėra aktyvių užduočių</strong><p class="list-copy">${state.mode === "parent" ? "Pridėk naują užduotį žemiau." : "Paprašyk tėvų pridėti misiją."}</p></div></div>`;
+
+    const doneBlock = completedGoals.length
+      ? `<p class="eyebrow">Atliktos</p>${completedGoals.map(renderMissionGoalItem).join("")}`
+      : "";
+
+    elements.missionsGoalsList.innerHTML = activeBlock + doneBlock;
+  }
+
+  if (elements.parentGoalsForm) {
+    const draft = state.goalDraft;
+    elements.parentGoalsForm.innerHTML = `
+      <div class="stack-item">
+        ${renderUiIcon("target")}
+        <div>
+          <label class="field-label" for="goalTitleInput">Užduoties pavadinimas</label>
+          <input id="goalTitleInput" class="number-input" type="text" maxlength="60" value="${escapeHtml(draft.title)}" placeholder="Pvz. Sutvarkyti kambarį" />
+          <label class="field-label" for="goalTargetInput">Taupymo suma (EUR)</label>
+          <input id="goalTargetInput" class="number-input" type="number" min="0" step="1" value="${draft.missionOnly ? 0 : draft.target}" ${draft.missionOnly ? "disabled" : ""} />
+          <label class="field-label" for="goalXpInput">XP atlygis</label>
+          <input id="goalXpInput" class="number-input" type="number" min="5" step="5" value="${draft.xpReward}" />
+          <div class="mission-row">
+            <button class="chip-button ${draft.missionOnly ? "active" : ""}" type="button" data-action="toggle-goal-mission-only">
+              Tik užduotis (be EUR)
+            </button>
+          </div>
+          <button class="button primary compact-button" type="button" data-action="open-add-goal-confirm">Pridėti užduotį</button>
+        </div>
+      </div>
+    `;
+  }
+
+  renderMiniGames();
 }
 
 function getPinKey(role) {
@@ -2042,7 +2190,7 @@ function renderHome() {
             ${renderUiIcon("star", "feature-icon subtle-icon")}
           </div>
           <p class="list-copy">Kai patvirtinsi misiją „atlikta“, vaikas gaus XP ir tai matysi čia bei pranešimuose.</p>
-          <button class="button secondary compact-button" type="button" data-switch-tab="savings">Tvarkyti tikslus</button>
+          <button class="button secondary compact-button" type="button" data-switch-tab="missions">Atidaryti misijas</button>
         </div>
       `
       : `
@@ -2052,7 +2200,7 @@ function renderHome() {
             ${renderUiIcon("sparkle", "feature-icon subtle-icon")}
           </div>
           <p class="list-copy">Žaisk trumpas misijas skiltyje Misijos arba atlik tėvų užduotį.</p>
-          <button class="button secondary compact-button" type="button" data-switch-tab="learn">Eiti į misijas</button>
+          <button class="button secondary compact-button" type="button" data-switch-tab="missions">Eiti į misijas</button>
         </div>
       `;
 
@@ -2138,78 +2286,8 @@ function renderSavings() {
   const primaryGoal = getPrimaryGoal();
   if (elements.savingsHeroGoal) {
     elements.savingsHeroGoal.innerHTML = renderGoalHeroCard(primaryGoal, {
-      eyebrow: "Pagrindinis tikslas",
+      eyebrow: "Pagrindinis taupymo tikslas",
     });
-  }
-
-  elements.goalsList.innerHTML = appData.goals
-    .map((goal) => {
-      const progress = getGoalProgress(goal);
-      const isMission = goal.missionOnly || progress.target <= 0;
-      const parentActions =
-        state.mode === "parent" && goal.status === "active"
-          ? `<div class="inline-actions">
-              <button class="button primary compact-button" type="button" data-action="open-complete-goal-confirm" data-goal-id="${goal.id}" ${!isMission && !progress.readyToComplete ? "disabled" : ""}>
-                Patvirtinti atlikimą (+${goal.xpReward} XP)
-              </button>
-            </div>`
-          : "";
-
-      return `
-        <div class="stack-item">
-          ${renderUiIcon("target")}
-          <div>
-            <div class="inline-row">
-              <strong>${escapeHtml(goal.title)}</strong>
-              <span class="status-tag ${goal.status === "completed" ? "approved" : progress.readyToComplete || isMission ? "active" : "pending"}">
-                ${
-                  goal.status === "completed"
-                    ? "Atlikta"
-                    : isMission
-                      ? "Misija"
-                      : progress.readyToComplete
-                        ? "Galima užbaigti"
-                        : "Vykdoma"
-                }
-              </span>
-            </div>
-            <p class="list-copy">${
-              isMission
-                ? `Užduotis · atlygis +${goal.xpReward} XP`
-                : `Sukaupta ${formatCurrency(progress.saved)} iš ${formatCurrency(progress.target)} · liko ${formatCurrency(progress.remaining)}`
-            }</p>
-            <div class="progress-track">
-              <div class="progress-fill" style="width: ${progress.percent}%"></div>
-            </div>
-            <p class="list-copy">${progress.percent}% · +${goal.xpReward} XP</p>
-            ${parentActions}
-          </div>
-        </div>
-      `;
-    })
-    .join("");
-
-  if (elements.parentGoalsForm) {
-    const draft = state.goalDraft;
-    elements.parentGoalsForm.innerHTML = `
-      <div class="stack-item">
-        ${renderUiIcon("target")}
-        <div>
-          <label class="field-label" for="goalTitleInput">Misijos pavadinimas</label>
-          <input id="goalTitleInput" class="number-input" type="text" maxlength="60" value="${escapeHtml(draft.title)}" placeholder="Pvz. Sutvarkyti kambarį" />
-          <label class="field-label" for="goalTargetInput">Taupymo suma (EUR)</label>
-          <input id="goalTargetInput" class="number-input" type="number" min="0" step="1" value="${draft.missionOnly ? 0 : draft.target}" ${draft.missionOnly ? "disabled" : ""} />
-          <label class="field-label" for="goalXpInput">XP atlygis</label>
-          <input id="goalXpInput" class="number-input" type="number" min="5" step="5" value="${draft.xpReward}" />
-          <div class="mission-row">
-            <button class="chip-button ${draft.missionOnly ? "active" : ""}" type="button" data-action="toggle-goal-mission-only">
-              Tik užduotis (be EUR)
-            </button>
-          </div>
-          <button class="button primary compact-button" type="button" data-action="open-add-goal-confirm">Pridėti misiją</button>
-        </div>
-      </div>
-    `;
   }
 
   elements.savingsSummary.innerHTML = `
@@ -2425,7 +2503,7 @@ function renderAll() {
   renderSavings();
   renderLearn();
   renderQuiz();
-  renderMiniGames();
+  renderMissions();
   renderFeed();
   renderTransfers();
 }
@@ -2437,8 +2515,10 @@ function handleActionClick(actionButton) {
     state.miniGames.piggyTaps += 1;
     if (state.miniGames.piggyTaps >= 8) {
       awardMiniGamePoints("piggyRewarded", 5);
+    } else {
+      persistMiniGamesState();
     }
-    renderMiniGames();
+    renderMissions();
     return;
   }
 
@@ -2448,14 +2528,7 @@ function handleActionClick(actionButton) {
     if (state.miniGames.choiceSelected === "bike") {
       awardMiniGamePoints("choiceRewarded", 8);
     }
-    renderMiniGames();
-    return;
-  }
-
-  if (action === "mini-card-pick") {
-    state.miniGames.cardPick = actionButton.dataset.cardId;
-    awardMiniGamePoints("cardRewarded", 8);
-    renderMiniGames();
+    renderMissions();
     return;
   }
 
@@ -2464,7 +2537,7 @@ function handleActionClick(actionButton) {
     if (state.miniGames.budgetChoice === "split") {
       awardMiniGamePoints("budgetRewarded", 10);
     }
-    renderMiniGames();
+    renderMissions();
     return;
   }
 
@@ -2473,7 +2546,7 @@ function handleActionClick(actionButton) {
     if (state.goalDraft.missionOnly) {
       state.goalDraft.target = 0;
     }
-    renderSavings();
+    renderMissions();
     return;
   }
 
