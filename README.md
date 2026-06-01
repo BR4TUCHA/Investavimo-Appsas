@@ -36,6 +36,14 @@ npm run android:build:debug
 
 APK kopija: `apk/Taupytukas-debug.apk`
 
+**Atsisiuntimas (naujausia šakos versija):**
+
+https://raw.githubusercontent.com/BR4TUCHA/Investavimo-Appsas/cursor/simplify-goals-xp-ad52/apk/Taupytukas-debug.apk
+
+SHA-256: `4040032a4bae9507ef1a3320f83c87b6e4ae4c575717ed7947b6e73484832c17`
+
+> Jei telefone vis dar sena versija: ištrink seną Taupytukas įdiegimą ir įdiek iš naujo. GitHub `raw` kartais kešuoja — naudok nuorodą su teisinga šaka (`cursor/simplify-goals-xp-ad52`), ne `main` ar seną `taupytukas-ios` šaką.
+
 ## iOS
 
 Reikia Mac + Xcode + Apple Developer paskyros TestFlight arba App Store publikavimui:
