@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Taupytukas | Vaikų taupymo ir investavimo programėlė</title>
+    <title>Taupytukas | Vaikų taupymo programėlė</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -60,7 +60,7 @@
       <header class="app-header">
         <div>
           <p class="eyebrow">Taupytukas</p>
-          <h1>Pocket money banking demo</h1>
+          <h1>Šeimos taupymas</h1>
           <p class="muted-copy" id="headerSubtitle"></p>
         </div>
         <div class="header-actions">
@@ -79,29 +79,9 @@
 
       <main class="app-main">
         <section class="tab-panel active" data-panel="home">
+          <article class="card goal-hero-card" id="homeHeroGoal"></article>
+
           <div class="stats-grid" id="homeStats"></div>
-
-          <div class="content-grid">
-            <article class="card">
-              <div class="card-header">
-                <div>
-                  <p class="eyebrow">Nuotaika</p>
-                  <h3 id="homeMoodTitle"></h3>
-                </div>
-              </div>
-              <div class="stack-list" id="homeMoodSpot"></div>
-            </article>
-
-            <article class="card">
-              <div class="card-header">
-                <div>
-                  <p class="eyebrow">Partneriai</p>
-                  <h3>Taupytukas partnerių vieta</h3>
-                </div>
-              </div>
-              <div class="stack-list" id="partnerSpot"></div>
-            </article>
-          </div>
 
           <div class="content-grid">
             <article class="card">
@@ -125,36 +105,26 @@
             </article>
           </div>
 
-          <div class="content-grid">
-            <article class="card">
-              <div class="card-header">
-                <div>
-                  <p class="eyebrow">Greiti veiksmai</p>
-                  <h3>Ką nori daryti dabar?</h3>
-                </div>
+          <article class="card" id="homeXpCard">
+            <div class="card-header">
+              <div>
+                <p class="eyebrow">Progresas</p>
+                <h3 id="homeXpTitle">XP ir misijos</h3>
               </div>
-              <div class="stack-list" id="quickActions"></div>
-            </article>
-
-            <article class="card">
-              <div class="card-header">
-                <div>
-                  <p class="eyebrow">Žaidybinimas</p>
-                  <h3>Mažos misijos ir emoji</h3>
-                </div>
-              </div>
-              <div class="stack-list" id="kidMissionSpot"></div>
-            </article>
-          </div>
+            </div>
+            <div class="stack-list" id="kidMissionSpot"></div>
+          </article>
         </section>
 
         <section class="tab-panel" data-panel="savings">
+          <article class="card goal-hero-card" id="savingsHeroGoal"></article>
+
           <div class="content-grid">
             <article class="card">
               <div class="card-header">
                 <div>
                   <p class="eyebrow">Taupymas</p>
-                  <h3>Vaiko tikslai ir progresas</h3>
+                  <h3>Tikslai ir kiek dar liko</h3>
                 </div>
               </div>
               <div class="stack-list" id="goalsList"></div>
@@ -174,58 +144,22 @@
           <article class="card" data-parent-only>
             <div class="card-header">
               <div>
+                <p class="eyebrow">Tėvų tikslai</p>
+                <h3>Nauja misija vaikui</h3>
+              </div>
+            </div>
+            <div class="stack-list" id="parentGoalsForm"></div>
+          </article>
+
+          <article class="card" data-parent-only>
+            <div class="card-header">
+              <div>
                 <p class="eyebrow">Leidimų politika</p>
                 <h3>Tėvų nustatoma kontrolė</h3>
               </div>
             </div>
             <div class="stack-list" id="permissionPolicyList"></div>
           </article>
-        </section>
-
-        <section class="tab-panel" data-panel="invest">
-          <div class="content-grid">
-            <article class="card">
-              <div class="card-header">
-                <div>
-                  <p class="eyebrow">Investavimo rinka</p>
-                  <h3>Akcijos ir kriptovaliutos</h3>
-                </div>
-              </div>
-              <div class="asset-grid" id="investmentCatalog"></div>
-            </article>
-
-            <article class="card">
-              <div class="card-header">
-                <div>
-                  <p class="eyebrow">Veiksmas</p>
-                  <h3 id="investPanelTitle"></h3>
-                </div>
-              </div>
-              <div class="stack-list" id="investActionPanel"></div>
-            </article>
-          </div>
-
-          <div class="content-grid">
-            <article class="card">
-              <div class="card-header">
-                <div>
-                  <p class="eyebrow">Portfelis</p>
-                  <h3>Patvirtintos investicijos</h3>
-                </div>
-              </div>
-              <div class="stack-list" id="portfolioList"></div>
-            </article>
-
-            <article class="card" data-parent-only>
-              <div class="card-header">
-                <div>
-                  <p class="eyebrow">Tėvų funkcijos</p>
-                  <h3>Investavimo valdymas</h3>
-                </div>
-              </div>
-              <div class="stack-list" id="parentInvestControls"></div>
-            </article>
-          </div>
         </section>
 
         <section class="tab-panel" data-panel="learn">
@@ -257,8 +191,8 @@
           <article class="card">
             <div class="card-header">
               <div>
-                <p class="eyebrow">Mini žaidimukai</p>
-                <h3>Greitos misijos vaikams</h3>
+                <p class="eyebrow">Žaidimai</p>
+                <h3>Trumpos misijos ir XP</h3>
               </div>
             </div>
             <div class="stack-list" id="miniGamesBoard"></div>
@@ -319,21 +253,13 @@
           </span>
           <span>Taupyti</span>
         </button>
-        <button class="nav-item" type="button" data-tab="invest">
-          <span class="nav-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false">
-              <path d="M5 17l4.5-4.5 3 3L19 9v4h2V5h-8v2h4.59l-5.09 5.09-3-3L3 15.5z"></path>
-            </svg>
-          </span>
-          <span>Invest.</span>
-        </button>
         <button class="nav-item" type="button" data-tab="learn">
           <span class="nav-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" focusable="false">
               <path d="M12 6.5c-3.8 0-7 1.1-9 2.5v10c2-1.4 5.2-2.5 9-2.5s7 1.1 9 2.5V9c-2-1.4-5.2-2.5-9-2.5zm0 2c2.6 0 5 .5 7 1.4v6.1c-2-.9-4.4-1.4-7-1.4s-5 .5-7 1.4V9.9c2-.9 4.4-1.4 7-1.4z"></path>
             </svg>
           </span>
-          <span>Mokytis</span>
+          <span>Misijos</span>
         </button>
         <button class="nav-item" type="button" data-tab="feed">
           <span class="nav-icon" aria-hidden="true">
@@ -341,7 +267,7 @@
               <path d="M12 3a6 6 0 0 0-6 6v2.2c0 .7-.2 1.4-.6 2L4 16v1h16v-1l-1.4-2.8a4.6 4.6 0 0 1-.6-2V9a6 6 0 0 0-6-6zm0 19a3 3 0 0 0 2.8-2H9.2A3 3 0 0 0 12 22z"></path>
             </svg>
           </span>
-          <span>Naujienos</span>
+          <span>Pranešimai</span>
         </button>
         <button class="nav-item" type="button" data-tab="transfers" data-parent-only>
           <span class="nav-icon" aria-hidden="true">

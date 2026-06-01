@@ -7,185 +7,92 @@ const LEGACY_DEEP_LINK_SCHEMES = ["kidfund"];
 
 const TAB_META = {
   home: {
-    title: "Pagrindinis vaizdas",
-    copy:
-      "Čia rodoma visa pagrindinė vaiko pinigų, taupymo ir investavimo informacija su greitais veiksmais.",
+    title: "Pagrindinis",
+    copy: "Balansas, aktyvus tikslas ir svarbiausi pranešimai — be perteklinių skilčių.",
   },
   savings: {
-    title: "Taupymo skiltis",
-    copy:
-      "Tikslai, pažanga ir taupymo likutis. Vaikas mato savo progresą, o tėvų leidimų politika rodoma tik tėvams.",
-  },
-  invest: {
-    title: "Investavimo skiltis",
-    copy:
-      "Vaikas gali siųsti investavimo prašymą į akcijas ar kriptovaliutas, bet pats negali jo patvirtinti.",
+    title: "Taupymas",
+    copy: "Tikslai su aiškia pažanga. Tėvai kuria misijas ir mato vaiko XP.",
   },
   learn: {
-    title: "Mokymosi skiltis",
-    copy:
-      "Trumpi finansinio raštingumo paaiškinimai ir viktorina, kad būtų aišku kodėl svarbu taupyti ir investuoti atsakingai.",
+    title: "Misijos ir žaidimai",
+    copy: "Trumpi žaidimai ir pamokos. Surinkta XP matoma tėvams pagrindiniame ekrane.",
   },
   feed: {
-    title: "Pranešimų istorija",
-    copy:
-      "Visi programėlės veiksmai ir atsakymai: prašymai, patvirtinimai, papildymai bei sistemos žinutės.",
+    title: "Pranešimai",
+    copy: "Papildymai, tikslai, XP ir pavedimų istorija vienoje vietoje.",
   },
   transfers: {
     title: "Duoti pinigų",
-    copy:
-      "Ši skiltis skirta tik tėvams. Čia galima papildyti vaiko piniginę ar investavimo kišenę ir tvarkyti laukiančius prašymus.",
+    copy: "Tik tėvams: papildyk vaiko piniginę ir tvarkyk pavedimo užklausas.",
   },
 };
 
-const INVESTMENTS = [
-  {
-    id: "baltic-tech",
-    name: "Baltic Tech ETF",
-    type: "Akcijos",
-    risk: "Vidutinė",
-    min: 5,
-    description:
-      "Platesnis technologijų krepšelis, skirtas pradėti nuo mažesnės rizikos nei viena pavienė akcija.",
-  },
-  {
-    id: "green-energy",
-    name: "Green Energy Fund",
-    type: "Akcijos",
-    risk: "Vidutinė",
-    min: 5,
-    description:
-      "Fondų tipo pasirinkimas, kuris leidžia kalbėti apie ilgalaikį augimą ir atsakingą diversifikaciją.",
-  },
-  {
-    id: "bitcoin",
-    name: "Bitcoin",
-    type: "Kriptovaliuta",
-    risk: "Aukšta",
-    min: 10,
-    description:
-      "Didelio svyravimo pavyzdys, parodantis kodėl kripto sprendimams reikalingas aiškus tėvų leidimas.",
-  },
-  {
-    id: "ethereum",
-    name: "Ethereum",
-    type: "Kriptovaliuta",
-    risk: "Aukšta",
-    min: 10,
-    description:
-      "Naudojamas kaip edukacinis pavyzdys, kai kalbama apie skirtingus investavimo aktyvus ir jų riziką.",
-  },
-];
-
 const LESSONS = [
   {
-    title: "Kodėl dalis kišenpinigių lieka užrakinta?",
-    copy:
-      "Taip vaikas iškart mato, kad ne visi pinigai skirti išleisti šiandien, dalis turi dirbti ateities tikslams.",
+    title: "Kodėl dalis pinigų lieka taupyklei?",
+    copy: "Ne viską reikia išleisti šiandien — dalis pinigų gali dirbti tavo tikslui.",
   },
   {
-    title: "Kuo skiriasi taupymas ir investavimas?",
-    copy:
-      "Taupymas tinka artimiems tikslams, o investavimas padeda kalbėti apie ilgesnį laiką ir galimus vertės svyravimus.",
+    title: "Kas yra savaitės limitas?",
+    copy: "Limitas padeda planuoti išlaidas ir neperšokti biudžeto per vieną pirkimą.",
   },
   {
-    title: "Kas yra rizika?",
-    copy:
-      "Rizika reiškia, kad investicijos vertė gali ne tik kilti, bet ir kristi, todėl sprendimai turi būti apgalvoti.",
-  },
-  {
-    title: "Kodėl reikalingas leidimas?",
-    copy:
-      "Vaikas gali mokytis priimti sprendimus, tačiau tėvai patvirtina didesnės atsakomybės reikalaujančius veiksmus.",
-  },
-  {
-    title: "Kas yra diversifikacija?",
-    copy:
-      "Vietoj vienos idėjos galima rinktis skirtingus aktyvus, kad vieno pasirinkimo kritimas neveiktų visų pinigų vienodai.",
-  },
-  {
-    title: "Kodėl limitas irgi svarbus?",
-    copy:
-      "Išlaidų limitas padeda vaikui suprasti planavimą ir padeda neperdeginti visos savaitės biudžeto vienu pirkiniu.",
+    title: "Kodėl tėvai patvirtina veiksmus?",
+    copy: "Svarbūs sprendimai (papildymai, misijos) vyksta tik su tėvų PIN — taip saugiau.",
   },
 ];
 
 const QUIZ_QUESTIONS = [
   {
-    question: "Kam dažniausiai labiausiai tinka taupymas?",
-    helper: "Pagalvok apie artimą, aiškų tikslą ir mažesnę riziką.",
+    question: "Kam labiausiai tinka taupymas?",
+    helper: "Pagalvok apie artimą tikslą.",
+    options: ["Trumpam tikslui, pvz. dviračiui", "Tik saldumynams šiandien", "Niekam"],
+    correctIndex: 0,
+    feedback: "Teisingai — taupymas padeda pasiekti konkretų tikslą.",
+  },
+  {
+    question: "Ką daryti gavus kišenpinigius?",
+    helper: "Protingiausias pirmas žingsnis.",
     options: [
-      "Trumpesnio laikotarpio tikslams ir saugumui",
-      "Tik greitam pelnui",
-      "Tik kriptovaliutoms",
+      "Paskirstyti: dalį taupyti, dalį leisti",
+      "Išleisti viską iškart",
+      "Paslėpti ir niekur nerašyti",
     ],
     correctIndex: 0,
-    feedback:
-      "Teisingai - taupymas dažniausiai labiausiai tinka artimiems tikslams ir nenumatytiems atvejams.",
+    feedback: "Teisingai — paskirstymas yra geras įprotis.",
   },
   {
-    question: "Kodėl vaiko investavimui reikalingas tėvų leidimas?",
-    helper: "Svarbu ne tik uždirbti, bet ir suprasti riziką.",
+    question: "Kas yra XP misijoje?",
+    helper: "Tėvai mato tavo pastangą.",
     options: [
-      "Nes investicijos gali svyruoti ir reikia priežiūros",
-      "Nes investicijos visada garantuotos",
-      "Nes pinigų niekada negalima investuoti",
+      "Taškai už atliktą tėvų tikslą",
+      "Tik dekoracija be reikšmės",
+      "Baudos taškai",
     ],
     correctIndex: 0,
-    feedback:
-      "Teisingai - vertė gali keistis, todėl tėvų patvirtinimas padeda mokytis atsakingai.",
-  },
-  {
-    question: "Ką reiškia diversifikacija?",
-    helper: "Pagalvok, kodėl geriau nepasikliauti tik viena idėja.",
-    options: [
-      "Visus pinigus laikyti viename aktyve",
-      "Paskirstyti pinigus tarp kelių aktyvų",
-      "Vengti bet kokio taupymo",
-    ],
-    correctIndex: 1,
-    feedback:
-      "Teisingai - diversifikacija reiškia paskirstymą, kad vienas pasirinkimas nelemia viso rezultato.",
-  },
-];
-
-const PARTNER_SPOTLIGHTS = [
-  {
-    title: "Partnerio vieta: Junior Bank",
-    copy: "Vaikiška bankininkystė, tėvų kontrolė ir saugios pirmos finansų pamokos vienoje vietoje.",
-    badge: "Partneriai",
-  },
-  {
-    title: "Rėmėjo vieta: EduCrypto Lab",
-    copy: "Trumpi paaiškinimai apie kripto riziką ir saugų investavimo pradžios supratimą.",
-    badge: "Edukacija",
+    feedback: "Teisingai — XP rodo, kad įvyklei sutartą misiją.",
   },
 ];
 
 const ACTION_LIMITS = {
-  childInvestRequest: {
-    cooldownMs: 45 * 1000,
-    windowMs: 10 * 60 * 1000,
-    maxInWindow: 4,
-    label: "investavimo prašymai",
-  },
   parentTransferWallet: {
     cooldownMs: 20 * 1000,
     windowMs: 10 * 60 * 1000,
     maxInWindow: 8,
     label: "pinigų papildymai",
   },
-  parentTopupInvestPocket: {
-    cooldownMs: 20 * 1000,
-    windowMs: 10 * 60 * 1000,
-    maxInWindow: 8,
-    label: "investavimo kišenės papildymai",
-  },
   paymentRequest: {
     cooldownMs: 40 * 1000,
     windowMs: 10 * 60 * 1000,
     maxInWindow: 4,
     label: "pavedimo užklausos",
+  },
+  parentAddGoal: {
+    cooldownMs: 15 * 1000,
+    windowMs: 10 * 60 * 1000,
+    maxInWindow: 6,
+    label: "nauji tikslai",
   },
 };
 
@@ -274,22 +181,17 @@ const elements = {
   sectionBannerTitle: document.querySelector("#sectionBannerTitle"),
   sectionBannerCopy: document.querySelector("#sectionBannerCopy"),
   bottomNav: document.querySelector("#bottomNav"),
+  homeHeroGoal: document.querySelector("#homeHeroGoal"),
   homeStats: document.querySelector("#homeStats"),
-  homeMoodTitle: document.querySelector("#homeMoodTitle"),
-  homeMoodSpot: document.querySelector("#homeMoodSpot"),
-  partnerSpot: document.querySelector("#partnerSpot"),
+  homeXpTitle: document.querySelector("#homeXpTitle"),
   accountHub: document.querySelector("#accountHub"),
-  quickActions: document.querySelector("#quickActions"),
   kidMissionSpot: document.querySelector("#kidMissionSpot"),
   homeFeedPreview: document.querySelector("#homeFeedPreview"),
+  savingsHeroGoal: document.querySelector("#savingsHeroGoal"),
   goalsList: document.querySelector("#goalsList"),
+  parentGoalsForm: document.querySelector("#parentGoalsForm"),
   savingsSummary: document.querySelector("#savingsSummary"),
   permissionPolicyList: document.querySelector("#permissionPolicyList"),
-  investmentCatalog: document.querySelector("#investmentCatalog"),
-  investPanelTitle: document.querySelector("#investPanelTitle"),
-  investActionPanel: document.querySelector("#investActionPanel"),
-  portfolioList: document.querySelector("#portfolioList"),
-  parentInvestControls: document.querySelector("#parentInvestControls"),
   lessonGrid: document.querySelector("#lessonGrid"),
   quizQuestion: document.querySelector("#quizQuestion"),
   quizHelper: document.querySelector("#quizHelper"),
@@ -351,12 +253,15 @@ function buildDefaultAppData() {
     accounts: {
       wallet: 48,
       savings: 126,
-      investPocket: 32,
       parentReserve: 260,
       weeklyLimit: 25,
       spentThisWeek: 12,
       walletAccountNumber: "KF-2710-0001-4455",
       savingsAccountNumber: "KF-2710-9999-1200",
+    },
+    childProgress: {
+      xp: 24,
+      level: 1,
     },
     goals: [
       {
@@ -364,42 +269,24 @@ function buildDefaultAppData() {
         title: "Dviratis vasarai",
         target: 180,
         saved: 96,
-        parentMatchAvailable: true,
+        xpReward: 50,
+        status: "active",
       },
       {
-        id: "goal-console",
-        title: "Žaidimų konsolė",
-        target: 90,
-        saved: 28,
-        parentMatchAvailable: false,
+        id: "goal-room",
+        title: "Sutvarkyti kambarį",
+        target: 0,
+        saved: 0,
+        xpReward: 30,
+        status: "active",
+        missionOnly: true,
       },
     ],
     settings: {
-      cryptoEnabled: true,
-      maxSingleInvest: 20,
-      approvalRule: "Visi investavimo veiksmai privalo būti patvirtinti tėvų PIN.",
-      savingsPolicy: "Vaikas mato balansą ir progresą, bet leidimų politikos nekeičia.",
+      approvalRule: "Papildymai ir naujos misijos patvirtinami tėvų PIN.",
+      savingsPolicy: "Vaikas mato balansą, tikslus ir XP. Tėvų politika paslėpta.",
     },
-    portfolio: [
-      {
-        id: "holding-1",
-        assetId: "baltic-tech",
-        amount: 12,
-        status: "active",
-        updatedAt: nowIso(),
-      },
-    ],
-    requests: [
-      {
-        id: "request-1",
-        type: "investment",
-        assetId: "green-energy",
-        amount: 8,
-        status: "pending",
-        createdBy: "child",
-        createdAt: nowIso(),
-      },
-    ],
+    requests: [],
     actionAudit: [],
     feed: [
       {
@@ -410,14 +297,14 @@ function buildDefaultAppData() {
       },
       {
         id: "feed-2",
-        tone: "warning",
-        message: "Vaikas išsiuntė investavimo prašymą į Green Energy Fund.",
+        tone: "success",
+        message: "Dviračio tikslas: sukaupta 96 EUR iš 180 EUR (53%).",
         createdAt: nowIso(),
       },
       {
         id: "feed-3",
         tone: "success",
-        message: "Pasiektas 53% dviračio taupymo tikslas.",
+        message: "Vaikas turi 24 XP už atliktas misijas.",
         createdAt: nowIso(),
       },
     ],
@@ -439,18 +326,34 @@ function normalizeAppData(raw) {
     return fallback;
   }
 
+  const goals = (Array.isArray(raw.goals) && raw.goals.length ? raw.goals : fallback.goals).map(
+    (goal) => ({
+      ...goal,
+      xpReward: Number(goal.xpReward) || 25,
+      status: goal.status === "completed" ? "completed" : "active",
+      missionOnly: Boolean(goal.missionOnly) || Number(goal.target) === 0,
+    }),
+  );
+
+  const requests = (Array.isArray(raw.requests) ? raw.requests : []).filter(
+    (request) => request.type !== "investment",
+  );
+
   return {
     accounts: {
       ...fallback.accounts,
       ...(raw.accounts || {}),
     },
-    goals: Array.isArray(raw.goals) && raw.goals.length ? raw.goals : fallback.goals,
+    childProgress: {
+      ...fallback.childProgress,
+      ...(raw.childProgress || {}),
+    },
+    goals,
     settings: {
       ...fallback.settings,
       ...(raw.settings || {}),
     },
-    portfolio: Array.isArray(raw.portfolio) ? raw.portfolio : fallback.portfolio,
-    requests: Array.isArray(raw.requests) ? raw.requests : fallback.requests,
+    requests,
     actionAudit: Array.isArray(raw.actionAudit) ? raw.actionAudit : fallback.actionAudit,
     feed: Array.isArray(raw.feed) && raw.feed.length ? raw.feed : fallback.feed,
   };
@@ -483,8 +386,12 @@ const state = {
     messageTone: "",
     action: null,
   },
-  selectedInvestmentId: INVESTMENTS[0].id,
-  selectedInvestmentAmount: 10,
+  goalDraft: {
+    title: "",
+    target: 50,
+    xpReward: 25,
+    missionOnly: false,
+  },
   paymentRequestAccount: "wallet",
   paymentRequestAmount: 15,
   shareRequestId: null,
@@ -561,6 +468,156 @@ function sanitizeAmount(value) {
   return Math.max(1, Math.round(number));
 }
 
+function sanitizeNonNegativeAmount(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) {
+    return 0;
+  }
+  return Math.max(0, Math.round(number));
+}
+
+function getChildXp() {
+  return Math.max(0, Number(appData.childProgress?.xp) || 0);
+}
+
+function syncChildLevel() {
+  const xp = getChildXp();
+  const level = 1 + Math.floor(xp / 100);
+  appData.childProgress = appData.childProgress || { xp: 0, level: 1 };
+  appData.childProgress.xp = xp;
+  appData.childProgress.level = level;
+  return level;
+}
+
+function awardChildXp(amount, feedMessage) {
+  const xpGain = Math.max(0, Math.round(Number(amount) || 0));
+  if (!xpGain) {
+    return;
+  }
+
+  appData.childProgress = appData.childProgress || { xp: 0, level: 1 };
+  appData.childProgress.xp = getChildXp() + xpGain;
+  syncChildLevel();
+  if (feedMessage) {
+    appendFeed(feedMessage, "success");
+  }
+  saveAppData();
+}
+
+function getActiveGoals() {
+  return appData.goals.filter((goal) => goal.status !== "completed");
+}
+
+function getPrimaryGoal() {
+  const active = getActiveGoals();
+  if (!active.length) {
+    return appData.goals[0] || null;
+  }
+
+  return active.reduce((best, goal) => {
+    const bestProgress = getGoalProgress(best).percent;
+    const goalProgress = getGoalProgress(goal).percent;
+    if (goal.missionOnly && !best.missionOnly) {
+      return best;
+    }
+    if (!goal.missionOnly && best.missionOnly) {
+      return goal;
+    }
+    return goalProgress > bestProgress ? goal : best;
+  }, active[0]);
+}
+
+function getGoalProgress(goal) {
+  if (!goal) {
+    return { percent: 0, remaining: 0, saved: 0, target: 0, readyToComplete: false };
+  }
+
+  if (goal.missionOnly || Number(goal.target) <= 0) {
+    return {
+      percent: goal.status === "completed" ? 100 : 0,
+      remaining: 0,
+      saved: 0,
+      target: 0,
+      readyToComplete: goal.status === "active",
+    };
+  }
+
+  const target = Math.max(1, Number(goal.target) || 1);
+  const saved = Math.max(0, Number(goal.saved) || 0);
+  const percent = Math.min(100, Math.round((saved / target) * 100));
+  const remaining = Math.max(0, target - saved);
+
+  return {
+    percent,
+    remaining,
+    saved,
+    target,
+    readyToComplete: goal.status === "active" && saved >= target,
+  };
+}
+
+function renderGoalHeroCard(goal, options = {}) {
+  if (!goal) {
+    return `
+      <div class="card-header goal-hero-head">
+        <div>
+          <p class="eyebrow">Tikslas</p>
+          <h3 class="goal-hero-title">Dar nėra aktyvaus tikslo</h3>
+          <p class="list-copy">${options.emptyCopy || "Tėvai gali pridėti misiją skiltyje Taupyti."}</p>
+        </div>
+      </div>
+    `;
+  }
+
+  const progress = getGoalProgress(goal);
+  const isMission = goal.missionOnly || progress.target <= 0;
+
+  return `
+    <div class="card-header goal-hero-head">
+      <div>
+        <p class="eyebrow">${options.eyebrow || "Aktyvus tikslas"}</p>
+        <h3 class="goal-hero-title">${escapeHtml(goal.title)}</h3>
+        <div class="goal-hero-meta">
+          <span class="mini-pill">${goal.status === "completed" ? "✅ Atlikta" : "🎯 Vykdoma"}</span>
+          <span class="mini-pill">⭐ +${goal.xpReward || 25} XP</span>
+          ${isMission ? '<span class="mini-pill">Misija</span>' : ""}
+        </div>
+      </div>
+      ${renderUiIcon("target", "feature-icon")}
+    </div>
+    ${
+      isMission
+        ? `<p class="list-copy">Kai atliksi užduotį, tėvai patvirtins ir gausi XP. Jie mato tavo progresą čia.</p>`
+        : `<p class="list-copy">Sukaupta <strong>${formatCurrency(progress.saved)}</strong> iš <strong>${formatCurrency(progress.target)}</strong></p>`
+    }
+    <div class="goal-hero-progress">
+      <div class="inline-row">
+        <span class="stack-meta">${progress.percent}%</span>
+        <span class="stack-meta">${
+          isMission
+            ? "Laukia tėvų patvirtinimo"
+            : `Liko ${formatCurrency(progress.remaining)}`
+        }</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" style="width: ${progress.percent}%"></div></div>
+    </div>
+    <div class="goal-hero-stats">
+      <div class="goal-hero-stat">
+        <strong>${progress.percent}%</strong>
+        <span>Pažanga</span>
+      </div>
+      <div class="goal-hero-stat">
+        <strong>${isMission ? "—" : formatCurrency(progress.remaining)}</strong>
+        <span>${isMission ? "Pinigų tikslas ne" : "Dar trūksta"}</span>
+      </div>
+      <div class="goal-hero-stat">
+        <strong>${getChildXp()} XP</strong>
+        <span>Lygis ${syncChildLevel()}</span>
+      </div>
+    </div>
+  `;
+}
+
 function shuffleArray(items) {
   const copy = [...items];
   for (let index = copy.length - 1; index > 0; index -= 1) {
@@ -625,8 +682,8 @@ function getAuthBrandContent() {
         : `Prisijunkite prie ${APP_NAME} valdymo centro`,
     copy:
       state.authMode === "register"
-        ? "Tėvų paskyra skirta leidimams, papildymams, investavimo patvirtinimams ir pranešimų kontrolei."
-        : "Profesionalesnis valdymas, aiški kontrolė ir atskiras PIN kiekvienam jautriam veiksmui.",
+        ? "Tėvų paskyra skirta misijoms, papildymams ir pranešimų kontrolei."
+        : "Aiškus valdymas ir atskiras PIN kiekvienam jautriam veiksmui.",
     emojis: ["👨‍👩‍👧 Šeima", "📊 Kontrolė", "🔔 Pranešimai"],
     features: [
       {
@@ -637,7 +694,7 @@ function getAuthBrandContent() {
       {
         icon: "check",
         title: "Patvirtinimų centras",
-        copy: "Investavimo, papildymų ir kitų jautrių veiksmų patvirtinimai atliekami per atskirą PIN modalą.",
+        copy: "Papildymų, misijų ir kitų jautrių veiksmų patvirtinimai atliekami per atskirą PIN modalą.",
       },
       {
         icon: "bank",
@@ -1305,65 +1362,53 @@ function awardMiniGamePoints(flagKey, points) {
     state.miniGames.points += points;
     state.miniGames[flagKey] = true;
     syncMiniGameProgress();
+    awardChildXp(points, `Vaikas surinko +${points} XP mini misijoje.`);
   }
 }
 
 function renderMiniGames() {
+  const primaryGoal = getPrimaryGoal();
+  const goalTitle = primaryGoal?.title || "tavo tikslą";
   const piggyRewardReached = state.miniGames.piggyTaps >= 8;
   const budgetOptions = [
     { id: "split", label: "Paskirstyti: išleisti + taupyti", correct: true },
     { id: "all-spend", label: "Išleisti viską iškart", correct: false },
-    { id: "hide", label: "Paslėpti ir nematyti", correct: false },
   ];
-  const memorySequence = ["🐷", "🪙", "🚀"];
-  const levelProgress = Math.min(100, ((state.miniGames.points % 30) / 30) * 100);
   const choiceOptions = [
     { id: "snack", label: "Užkandis šiandien", correct: false },
-    { id: "bike", label: "Dviratis vasarai", correct: true },
+    { id: "bike", label: goalTitle, correct: true },
     { id: "skin", label: "Žaidimo skin dabar", correct: false },
   ];
-  const luckyCards = [
-    { id: "coin", emoji: "🪙", label: "Gavai +1 taupymo žvaigždę!" },
-    { id: "rocket", emoji: "🚀", label: "Laikas peržiūrėti investavimo pamoką!" },
-    { id: "piggy", emoji: "🐷", label: "Patikrink savo taupyklės progresą!" },
-  ];
-  const pointsIntoLevel = state.miniGames.points % 30;
-  const pointsToNextLevel = 30 - pointsIntoLevel || 30;
+  const xpIntoLevel = getChildXp() % 100;
+  const xpToNext = 100 - xpIntoLevel || 100;
 
   elements.miniGamesBoard.innerHTML = `
     <div class="game-card game-summary-card">
       <div class="inline-row">
-        <h4>🎮 ${APP_NAME} žaidimų progresas</h4>
-        <span class="game-score">Lygis ${state.miniGames.level}</span>
+        <h4>⭐ Tavo XP</h4>
+        <span class="game-score">Lygis ${syncChildLevel()}</span>
       </div>
-      <p class="list-copy">Rink taškus, pereik užduotis ir paversk taupymą mažais laimėjimais.</p>
+      <p class="list-copy">XP mato ir tėvai. Didžiausi taškai — už tėvų nustatytas misijas.</p>
       <div class="mission-row">
-        <span class="mini-pill">⭐ ${state.miniGames.points} taškų</span>
-        <span class="mini-pill">🏆 Lygis ${state.miniGames.level}</span>
-        <span class="mini-pill">🎯 Iki kito lygio ${pointsToNextLevel} tšk.</span>
+        <span class="mini-pill">${getChildXp()} XP</span>
+        <span class="mini-pill">Iki kito lygio ${xpToNext} XP</span>
       </div>
-      <div class="mini-progress"><span style="width: ${levelProgress}%"></span></div>
+      <div class="mini-progress"><span style="width: ${xpIntoLevel}%"></span></div>
     </div>
     <div class="game-card">
       <div class="inline-row">
         <h4>🐷 Tap tap taupyklė</h4>
-        <span class="game-score">${state.miniGames.piggyTaps} tap · ${state.miniGames.piggyRewarded ? "+10 tšk." : "0 tšk."}</span>
+        <span class="game-score">${state.miniGames.piggyRewarded ? "+5 XP" : `${state.miniGames.piggyTaps}/8`}</span>
       </div>
-      <p class="list-copy">Paspausk taupyklę kelis kartus ir surink mažą motyvacinę žinutę.</p>
-      <div class="copy-row">
-        <button class="button primary compact-button" type="button" data-action="mini-piggy-tap">
-          Spausti taupyklę
-        </button>
-        <span class="mini-pill">${piggyRewardReached ? "🎉 Super!" : "💫 Dar keli paspaudimai"}</span>
-      </div>
-      <p class="list-copy">${piggyRewardReached ? "Šaunu! Tu jau įrodei, kad mažais žingsniais galima nueiti toli." : "Kiekvienas mažas įdėjimas į taupyklę artina prie didelio tikslo."}</p>
+      <p class="list-copy">8 paspaudimai = maža XP dovanėlė (kartą per sesiją).</p>
+      <button class="button primary compact-button" type="button" data-action="mini-piggy-tap">Spausti taupyklę</button>
+      <p class="list-copy">${piggyRewardReached ? "Šaunu!" : "Dar keli paspaudimai."}</p>
     </div>
     <div class="game-card">
       <div class="inline-row">
-        <h4>🎯 Greitas pasirinkimas</h4>
-        <span class="game-score">${state.miniGames.choiceAnswered ? (state.miniGames.choiceRewarded ? "+12 tšk." : "Atsakyta") : "Laukia"}</span>
+        <h4>🎯 Kas artina tikslą?</h4>
+        <span class="game-score">${state.miniGames.choiceRewarded ? "+8 XP" : "Misija"}</span>
       </div>
-      <p class="list-copy">Kas labiau tinka taupymo tikslui, o ne momentiniam norui?</p>
       <div class="answer-grid">
         ${choiceOptions
           .map((option) => {
@@ -1372,54 +1417,17 @@ function renderMiniGames() {
                 ? option.correct
                   ? "correct"
                   : "wrong"
-                : state.miniGames.choiceAnswered && option.correct
-                  ? "correct"
-                  : "";
-            return `
-              <button class="game-button ${optionState}" type="button" data-action="mini-choice" data-choice-id="${option.id}">
-                ${option.label}
-              </button>
-            `;
+                : "";
+            return `<button class="game-button ${optionState}" type="button" data-action="mini-choice" data-choice-id="${option.id}">${option.label}</button>`;
           })
           .join("")}
       </div>
-      <p class="list-copy">${
-        state.miniGames.choiceAnswered
-          ? state.miniGames.choiceSelected === "bike"
-            ? "Teisingai! Didesnis tikslas paprastai geriau tinka taupymui."
-            : "Ne visai - ilgalaikiam taupymui geriau rinktis didesnį tikslą."
-          : "Pasirink vieną variantą."
-      }</p>
     </div>
     <div class="game-card">
       <div class="inline-row">
-        <h4>🎁 Laimės korta</h4>
-        <span class="game-score">${state.miniGames.cardPick ? (state.miniGames.cardRewarded ? "+8 tšk." : "Atverta") : "Uždaryta"}</span>
+        <h4>🧠 Kišenpinigių pasirinkimas</h4>
+        <span class="game-score">${state.miniGames.budgetRewarded ? "+10 XP" : "Misija"}</span>
       </div>
-      <p class="list-copy">Pasirink vieną kortą ir gauk mažą ${APP_NAME} dienos misiją.</p>
-      <div class="answer-grid">
-        ${luckyCards
-          .map(
-            (card) => `
-              <button class="game-button ${state.miniGames.cardPick === card.id ? "active" : ""}" type="button" data-action="mini-card-pick" data-card-id="${card.id}">
-                <span class="big-emoji">${state.miniGames.cardPick === card.id ? card.emoji : "❓"}</span>
-              </button>
-            `,
-          )
-          .join("")}
-      </div>
-      <p class="list-copy">${
-        state.miniGames.cardPick
-          ? luckyCards.find((card) => card.id === state.miniGames.cardPick)?.label || ""
-          : "Atverk vieną kortą."
-      }</p>
-    </div>
-    <div class="game-card">
-      <div class="inline-row">
-        <h4>🧠 Biudžeto sprintas</h4>
-        <span class="game-score">${state.miniGames.budgetChoice ? (state.miniGames.budgetRewarded ? "+15 tšk." : "Bandyk dar") : "Laukia"}</span>
-      </div>
-      <p class="list-copy">Kuris pasirinkimas yra protingiausias gavus kišenpinigių?</p>
       <div class="answer-grid">
         ${budgetOptions
           .map((option) => {
@@ -1428,49 +1436,11 @@ function renderMiniGames() {
                 ? option.correct
                   ? "correct"
                   : "wrong"
-                : state.miniGames.budgetChoice && option.correct
-                  ? "correct"
-                  : "";
-            return `
-              <button class="game-button ${optionState}" type="button" data-action="mini-budget" data-budget-id="${option.id}">
-                ${option.label}
-              </button>
-            `;
+                : "";
+            return `<button class="game-button ${optionState}" type="button" data-action="mini-budget" data-budget-id="${option.id}">${option.label}</button>`;
           })
           .join("")}
       </div>
-      <p class="list-copy">${
-        state.miniGames.budgetChoice
-          ? state.miniGames.budgetChoice === "split"
-            ? "Teisingai! Paskirstymas tarp išleidimo ir taupymo yra protingas startas."
-            : "Dar ne. Geriausia pinigus paskirstyti, o ne išleisti visus iškart."
-          : "Pasirink vieną variantą."
-      }</p>
-    </div>
-    <div class="game-card">
-      <div class="inline-row">
-        <h4>🚀 Emoji seka</h4>
-        <span class="game-score">${state.miniGames.memorySolved ? "+20 tšk." : `Žingsnis ${Math.min(state.miniGames.memoryStep + 1, memorySequence.length)}/${memorySequence.length}`}</span>
-      </div>
-      <p class="list-copy">Paspausk emoji tokia tvarka: ${memorySequence.join(" → ")}</p>
-      <div class="answer-grid">
-        ${shuffleArray(memorySequence)
-          .map(
-            (emoji) => `
-              <button class="game-button" type="button" data-action="mini-memory" data-memory-emoji="${emoji}">
-                <span class="big-emoji">${emoji}</span>
-              </button>
-            `,
-          )
-          .join("")}
-      </div>
-      <p class="list-copy">${
-        state.miniGames.memorySolved
-          ? "Puiku! Seka užbaigta ir tavo lygis auga."
-          : state.miniGames.memoryStep > 0
-            ? `Teisingai, tęsk toliau.`
-            : "Pradėk nuo pirmo emoji."
-      }</p>
     </div>
   `;
 }
@@ -1483,15 +1453,14 @@ function getPinForRole(role) {
   return authStore[getPinKey(role)] || "";
 }
 
-function getSelectedInvestment() {
-  return INVESTMENTS.find((investment) => investment.id === state.selectedInvestmentId) || INVESTMENTS[0];
-}
-
 function isParentOnlyTab(tab) {
   return PARENT_ONLY_TABS.has(tab);
 }
 
 function ensureChildSafeTab() {
+  if (state.activeTab === "invest") {
+    state.activeTab = "home";
+  }
   if (state.mode === "child" && isParentOnlyTab(state.activeTab)) {
     state.activeTab = "home";
   }
@@ -1628,7 +1597,7 @@ function renderAuth() {
   const authText =
     state.authRole === "child"
       ? state.authMode === "login"
-        ? "Įvesk PIN ir iškart pateksi į savo taupymo bei investavimo nuotykius."
+        ? "Įvesk PIN ir iškart pateksi į savo taupymo misijas."
         : `Susikurk 4 skaičių PIN, kad galėtum prisijungti prie ${APP_NAME}.`
       : state.authMode === "login"
         ? "Prisijunkite su PIN ir iškart pateksite į tėvų valdymo ekraną."
@@ -1800,79 +1769,72 @@ function closeConfirm() {
   renderConfirmModal();
 }
 
-function addPortfolioHolding(assetId, amount) {
-  const existingHolding = appData.portfolio.find(
-    (holding) => holding.assetId === assetId && holding.status === "active",
-  );
-
-  if (existingHolding) {
-    existingHolding.amount += amount;
-    existingHolding.updatedAt = nowIso();
-    return;
-  }
-
-  appData.portfolio.unshift({
-    id: uid("holding"),
-    assetId,
-    amount,
-    status: "active",
-    updatedAt: nowIso(),
-  });
-}
-
 function executeConfirmAction() {
   const action = state.confirm.action;
   if (!action) {
     return;
   }
 
-  if (action.type === "child-invest-request") {
-    const rateLimitMessage = getRateLimitMessage("childInvestRequest");
+  if (action.type === "parent-add-goal") {
+    const rateLimitMessage = getRateLimitMessage("parentAddGoal");
     if (rateLimitMessage) {
       setConfirmMessage(rateLimitMessage, "error");
       renderConfirmModal();
       return;
     }
 
-    const asset = getSelectedInvestment();
-    const amount = sanitizeAmount(action.amount);
-
-    if (amount < asset.min) {
-      setConfirmMessage(`Mažiausia suma šiam aktyvui yra ${asset.min} EUR.`, "error");
+    const title = String(action.title || "").trim();
+    if (title.length < 2) {
+      setConfirmMessage("Įrašyk trumpą misijos pavadinimą.", "error");
       renderConfirmModal();
       return;
     }
 
-    if (amount > appData.settings.maxSingleInvest) {
-      setConfirmMessage(
-        `Vieno investavimo prašymo limitas yra ${appData.settings.maxSingleInvest} EUR.`,
-        "error",
-      );
-      renderConfirmModal();
-      return;
-    }
+    const missionOnly = Boolean(action.missionOnly);
+    const target = missionOnly ? 0 : sanitizeAmount(action.target);
+    const xpReward = Math.max(5, sanitizeAmount(action.xpReward));
 
-    if (asset.type === "Kriptovaliuta" && !appData.settings.cryptoEnabled) {
-      setConfirmMessage("Kriptovaliutų investavimas šiuo metu tėvų išjungtas.", "error");
-      renderConfirmModal();
-      return;
-    }
-
-    appData.requests.unshift({
-      id: uid("request"),
-      type: "investment",
-      assetId: asset.id,
-      amount,
-      status: "pending",
-      createdBy: "child",
+    appData.goals.unshift({
+      id: uid("goal"),
+      title,
+      target,
+      saved: 0,
+      xpReward,
+      status: "active",
+      missionOnly,
       createdAt: nowIso(),
     });
-    recordAction("childInvestRequest");
-    appendFeed(`Vaikas pateikė investavimo prašymą į ${asset.name} už ${formatCurrency(amount)}.`, "warning");
+    recordAction("parentAddGoal");
+    appendFeed(`Tėvai sukūrė misiją „${title}“ (+${xpReward} XP).`, "success");
     saveAppData();
     closeConfirm();
     renderAll();
-    createToast("Investavimo prašymas išsiųstas tėvams.", "success");
+    createToast("Nauja misija sukurta.", "success");
+    return;
+  }
+
+  if (action.type === "parent-complete-goal") {
+    const goal = appData.goals.find((item) => item.id === action.goalId);
+    if (!goal || goal.status === "completed") {
+      closeConfirm();
+      createToast("Ši misija jau užbaigta.", "warning");
+      renderAll();
+      return;
+    }
+
+    const progress = getGoalProgress(goal);
+    if (!goal.missionOnly && progress.saved < progress.target) {
+      setConfirmMessage("Dar nepasiektas taupymo tikslas — patvirtink tik kai sukaupta pakanka.", "error");
+      renderConfirmModal();
+      return;
+    }
+
+    goal.status = "completed";
+    goal.completedAt = nowIso();
+    awardChildXp(goal.xpReward, `Misija „${goal.title}“ atlikta: +${goal.xpReward} XP.`);
+    closeConfirm();
+    renderAll();
+    createToast(`Misija patvirtinta. Vaikas gavo +${goal.xpReward} XP.`, "success");
     return;
   }
 
@@ -1923,61 +1885,6 @@ function executeConfirmAction() {
     return;
   }
 
-  if (action.type === "parent-approve-request") {
-    const request = appData.requests.find((item) => item.id === action.requestId);
-    if (!request || request.status !== "pending") {
-      closeConfirm();
-      createToast("Šis prašymas jau nebeaktyvus.", "warning");
-      renderAll();
-      return;
-    }
-
-    if (appData.accounts.investPocket < request.amount) {
-      setConfirmMessage("Investavimo kišenėje nepakanka lėšų šiam patvirtinimui.", "error");
-      renderConfirmModal();
-      return;
-    }
-
-    request.status = "approved";
-    request.decisionAt = nowIso();
-    appData.accounts.investPocket -= request.amount;
-    addPortfolioHolding(request.assetId, request.amount);
-
-    const asset = INVESTMENTS.find((item) => item.id === request.assetId);
-    appendFeed(
-      `Tėvai patvirtino investavimą į ${asset ? asset.name : "pasirinktą aktyvą"} už ${formatCurrency(request.amount)}.`,
-      "success",
-    );
-    saveAppData();
-    closeConfirm();
-    renderAll();
-    createToast("Prašymas patvirtintas.", "success");
-    return;
-  }
-
-  if (action.type === "parent-reject-request") {
-    const request = appData.requests.find((item) => item.id === action.requestId);
-    if (!request || request.status !== "pending") {
-      closeConfirm();
-      createToast("Šis prašymas jau nebeaktyvus.", "warning");
-      renderAll();
-      return;
-    }
-
-    request.status = "rejected";
-    request.decisionAt = nowIso();
-    const asset = INVESTMENTS.find((item) => item.id === request.assetId);
-    appendFeed(
-      `Tėvai atmetė investavimo prašymą į ${asset ? asset.name : "pasirinktą aktyvą"}.`,
-      "warning",
-    );
-    saveAppData();
-    closeConfirm();
-    renderAll();
-    createToast("Prašymas atmestas.", "success");
-    return;
-  }
-
   if (action.type === "parent-transfer-wallet") {
     const rateLimitMessage = getRateLimitMessage("parentTransferWallet");
     if (rateLimitMessage) {
@@ -2004,45 +1911,6 @@ function executeConfirmAction() {
     return;
   }
 
-  if (action.type === "parent-topup-invest-pocket") {
-    const rateLimitMessage = getRateLimitMessage("parentTopupInvestPocket");
-    if (rateLimitMessage) {
-      setConfirmMessage(rateLimitMessage, "error");
-      renderConfirmModal();
-      return;
-    }
-
-    const amount = sanitizeAmount(action.amount);
-    if (appData.accounts.parentReserve < amount) {
-      setConfirmMessage("Tėvų rezervas per mažas investavimo kišenei papildyti.", "error");
-      renderConfirmModal();
-      return;
-    }
-
-    appData.accounts.parentReserve -= amount;
-    appData.accounts.investPocket += amount;
-    recordAction("parentTopupInvestPocket");
-    appendFeed(`Tėvai papildė investavimo kišenę ${formatCurrency(amount)}.`, "success");
-    saveAppData();
-    closeConfirm();
-    renderAll();
-    createToast("Investavimo kišenė papildyta.", "success");
-    return;
-  }
-
-  if (action.type === "parent-toggle-crypto") {
-    appData.settings.cryptoEnabled = !appData.settings.cryptoEnabled;
-    appendFeed(
-      appData.settings.cryptoEnabled
-        ? "Tėvai įjungė kriptovaliutų investavimo prašymus."
-        : "Tėvai išjungė kriptovaliutų investavimo prašymus.",
-      "warning",
-    );
-    saveAppData();
-    closeConfirm();
-    renderAll();
-    createToast("Investavimo nustatymas atnaujintas.", "success");
-  }
 }
 
 function submitConfirm() {
@@ -2080,8 +1948,8 @@ function renderRoleState() {
   elements.activeRoleChip.textContent = `Aktyvu: ${getRoleLabel(state.mode)}`;
   elements.headerSubtitle.textContent =
     state.mode === "parent"
-      ? "Tėvų režimas leidžia papildyti pinigus, valdyti leidimus ir patvirtinti investavimo prašymus."
-      : "Vaiko režimas rodo tik saugias skiltis: progresą, mokymąsi ir investavimo prašymo pateikimą.";
+      ? "Kurk misijas, matyk vaiko XP ir papildyk piniginę."
+      : "Matyk tikslą, kiek dar liko, ir rink XP už atliktas misijas.";
 }
 
 function renderTabs() {
@@ -2106,36 +1974,42 @@ function renderSectionBanner() {
 
 function renderHome() {
   const remainingLimit = Math.max(0, appData.accounts.weeklyLimit - appData.accounts.spentThisWeek);
+  const primaryGoal = getPrimaryGoal();
+
+  if (elements.homeHeroGoal) {
+    elements.homeHeroGoal.innerHTML = renderGoalHeroCard(primaryGoal, {
+      eyebrow: state.mode === "parent" ? "Vaiko aktyvus tikslas" : "Tavo tikslas",
+      emptyCopy:
+        state.mode === "parent"
+          ? "Pridėk misiją skiltyje Taupyti."
+          : "Paprašyk tėvų pridėti naują misiją.",
+    });
+  }
+
   const cards = [
     {
-      title: "Vaiko piniginė",
+      title: "Piniginė",
       value: formatCurrency(appData.accounts.wallet),
-      meta: `Išleidimui liko ${formatCurrency(remainingLimit)} šią savaitę`,
+      meta: `Likutis išleisti: ${formatCurrency(remainingLimit)}`,
       icon: "wallet",
     },
     {
-      title: "Taupymas",
+      title: "Taupyklė",
       value: formatCurrency(appData.accounts.savings),
-      meta: `${appData.goals.length} aktyvūs tikslai`,
+      meta: `${getActiveGoals().length} aktyvios misijos`,
       icon: "piggy",
     },
     {
-      title: "Investavimo kišenė",
-      value: formatCurrency(appData.accounts.investPocket),
-      meta: "Naudojama tik su tėvų patvirtinimu",
-      icon: "chart",
-    },
-    {
-      title: state.mode === "parent" ? "Tėvų rezervas" : "Savaitės limitas",
+      title: state.mode === "parent" ? "Vaiko XP" : "Savaitės limitas",
       value:
         state.mode === "parent"
-          ? formatCurrency(appData.accounts.parentReserve)
+          ? `${getChildXp()} XP`
           : `${formatCurrency(appData.accounts.spentThisWeek)} / ${formatCurrency(appData.accounts.weeklyLimit)}`,
       meta:
         state.mode === "parent"
-          ? "Iš šios sumos galima papildyti vaiką"
-          : "Išleista prieš savaitinį limitą",
-      icon: state.mode === "parent" ? "bank" : "target",
+          ? `Lygis ${syncChildLevel()} · rezervas ${formatCurrency(appData.accounts.parentReserve)}`
+          : "Išleista šią savaitę",
+      icon: state.mode === "parent" ? "star" : "target",
     },
   ];
 
@@ -2154,71 +2028,33 @@ function renderHome() {
     )
     .join("");
 
-  if (state.mode === "parent") {
-    elements.homeMoodTitle.textContent = "Tėvų valdymas be triukšmo";
-    elements.homeMoodSpot.innerHTML = `
-      <div class="kid-card">
-        <div class="inline-row">
-          <h4>Šiandienos fokusas</h4>
-          ${renderUiIcon("target", "feature-icon subtle-icon")}
-        </div>
-        <p class="list-copy">Matote vaiko balansą, leidimus, investavimo prašymus ir atskiras sąskaitas vienoje vietoje.</p>
-      </div>
-      <div class="kid-card">
-        <div class="inline-row">
-          <h4>App pranešimai</h4>
-          ${renderUiIcon("bell", "feature-icon subtle-icon")}
-        </div>
-        <p class="list-copy">Kiekvienas ${APP_NAME} feed pranešimas siunčiamas ir kaip telefono notification, kai tik leidimai suteikti.</p>
-      </div>
-    `;
-  } else {
-    const spendingPercent = Math.min(
-      100,
-      Math.round((appData.accounts.spentThisWeek / appData.accounts.weeklyLimit) * 100),
-    );
-    elements.homeMoodTitle.textContent = "Tavo vaikiškas startas";
-    elements.homeMoodSpot.innerHTML = `
-      <div class="kid-card">
-        <div class="inline-row">
-          <h4>Šaunu, prisijungei!</h4>
-          ${renderUiIcon("sparkle", "feature-icon subtle-icon")}
-        </div>
-        <p class="list-copy">Mažiau teksto, daugiau aiškių mygtukų, emoji ir tavo taupymo misijų.</p>
-      </div>
-      <div class="kid-card">
-        <div class="inline-row">
-          <h4>Šios savaitės limitas</h4>
-          ${renderUiIcon("clock", "feature-icon subtle-icon")}
-        </div>
-        <p class="list-copy">${formatCurrency(appData.accounts.spentThisWeek)} iš ${formatCurrency(appData.accounts.weeklyLimit)} jau panaudota.</p>
-        <div class="mini-progress"><span style="width: ${spendingPercent}%"></span></div>
-      </div>
-    `;
+  if (elements.homeXpTitle) {
+    elements.homeXpTitle.textContent =
+      state.mode === "parent" ? "Vaiko XP ir misijos" : "Tavo XP";
   }
 
-  elements.partnerSpot.innerHTML = PARTNER_SPOTLIGHTS.map(
-    (partner) => `
-      <div class="promo-card">
-        <div class="inline-row">
+  elements.kidMissionSpot.innerHTML =
+    state.mode === "parent"
+      ? `
+        <div class="kid-card">
           <div class="inline-row">
-            ${renderUiIcon("sparkle", "feature-icon subtle-icon")}
-            <h4>${partner.title}</h4>
+            <h4>Vaikas: ${getChildXp()} XP</h4>
+            ${renderUiIcon("star", "feature-icon subtle-icon")}
           </div>
-          <span class="promo-badge">${partner.badge}</span>
+          <p class="list-copy">Kai patvirtinsi misiją „atlikta“, vaikas gaus XP ir tai matysi čia bei pranešimuose.</p>
+          <button class="button secondary compact-button" type="button" data-switch-tab="savings">Tvarkyti tikslus</button>
         </div>
-        <p class="list-copy">${partner.copy}</p>
-        <div class="copy-row">
-          <button class="button secondary compact-button" type="button" data-switch-tab="learn">
-            Peržiūrėti
-          </button>
-          <button class="button secondary compact-button" type="button" data-switch-tab="feed">
-            Rodyti naujienose
-          </button>
+      `
+      : `
+        <div class="kid-card">
+          <div class="inline-row">
+            <h4>${getChildXp()} XP · lygis ${syncChildLevel()}</h4>
+            ${renderUiIcon("sparkle", "feature-icon subtle-icon")}
+          </div>
+          <p class="list-copy">Žaisk trumpas misijas skiltyje Misijos arba atlik tėvų užduotį.</p>
+          <button class="button secondary compact-button" type="button" data-switch-tab="learn">Eiti į misijas</button>
         </div>
-      </div>
-    `,
-  ).join("");
+      `;
 
   const walletAccount = getAccountConfig("wallet");
   const savingsAccount = getAccountConfig("savings");
@@ -2282,96 +2118,6 @@ function renderHome() {
     </div>
   `;
 
-  if (state.mode === "parent") {
-    elements.quickActions.innerHTML = `
-      <div class="stack-item">
-        ${renderUiIcon("gift")}
-        <div>
-          <strong>Greitai duoti 10 EUR</strong>
-          <p class="list-copy">Papildymas bus patvirtintas atskirame PIN modal lange.</p>
-          <div class="inline-actions">
-            <button class="button primary compact-button" type="button" data-action="open-transfer-confirm" data-amount="10">
-              Duoti 10 EUR
-            </button>
-            <button class="button secondary compact-button" type="button" data-switch-tab="transfers">
-              Atverti „Duoti“
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="stack-item">
-        ${renderUiIcon("chart")}
-        <div>
-          <strong>Peržiūrėti investavimo prašymus</strong>
-          <p class="list-copy">Patvirtinimai ir atmetimai atliekami tik tėvų režime.</p>
-          <button class="button secondary compact-button" type="button" data-switch-tab="invest">
-            Atverti investavimą
-          </button>
-        </div>
-      </div>
-    `;
-    elements.kidMissionSpot.innerHTML = `
-      <div class="kid-card">
-        <div class="inline-row">
-          <h4>Tėvų santrauka</h4>
-          ${renderUiIcon("bank", "feature-icon subtle-icon")}
-        </div>
-        <p class="list-copy">Galite sekti, kiek užklausų buvo išsiųsta ir ar anti-spam taisyklės neleidžia perkrauti ${APP_NAME} sistemos.</p>
-      </div>
-      <div class="kid-card">
-        <div class="inline-row">
-          <h4>Push į telefoną</h4>
-          ${renderUiIcon("bell", "feature-icon subtle-icon")}
-        </div>
-        <p class="list-copy">Papildymai, investavimo sprendimai ir naujos užklausos rodomi ne tik viduje, bet ir telefono notification juostoje.</p>
-      </div>
-    `;
-  } else {
-    elements.quickActions.innerHTML = `
-      <div class="stack-item">
-        ${renderUiIcon("rocket")}
-        <div>
-          <strong>🚀 Nori investuoti?</strong>
-          <p class="list-copy">Pasirink aktyvą, spausk mygtuką ir tėvai gaus tavo prašymą.</p>
-          <button class="button primary compact-button" type="button" data-switch-tab="invest">
-            Eiti į investavimą
-          </button>
-        </div>
-      </div>
-      <div class="stack-item">
-        ${renderUiIcon("piggy")}
-        <div>
-          <strong>🐷 Peržiūrėti taupymą</strong>
-          <p class="list-copy">Čia matai tik savo progresą, o tėvų valdymo dalys lieka paslėptos.</p>
-          <button class="button secondary compact-button" type="button" data-switch-tab="savings">
-            Eiti į taupymą
-          </button>
-        </div>
-      </div>
-    `;
-    elements.kidMissionSpot.innerHTML = `
-      <div class="kid-card">
-        <div class="inline-row">
-          <h4>Mini misija</h4>
-          ${renderUiIcon("star", "feature-icon subtle-icon")}
-        </div>
-        <p class="list-copy">Šiandien pabandyk atsakyti bent į 1 viktorinos klausimą ir pasižiūrėk, kiek jau sutaupei.</p>
-        <div class="mission-row">
-          <span class="mini-pill">🎯 1 klausimas</span>
-          <span class="mini-pill">💰 1 tikslas</span>
-          <span class="mini-pill">🧠 1 pamoka</span>
-        </div>
-      </div>
-      <div class="kid-card">
-        <div class="inline-row">
-          <h4>Emoji patarimas</h4>
-          ${renderUiIcon("rocket", "feature-icon subtle-icon")}
-        </div>
-        <p class="list-copy">Jei nori gauti pinigų į taupyklę, nukopijuok taupyklės numerį arba sukurk pavedimo užklausą.</p>
-      </div>
-    `;
-  }
-
   const preview = appData.feed.slice(0, 3);
   elements.homeFeedPreview.innerHTML = preview
     .map(
@@ -2389,28 +2135,82 @@ function renderHome() {
 }
 
 function renderSavings() {
+  const primaryGoal = getPrimaryGoal();
+  if (elements.savingsHeroGoal) {
+    elements.savingsHeroGoal.innerHTML = renderGoalHeroCard(primaryGoal, {
+      eyebrow: "Pagrindinis tikslas",
+    });
+  }
+
   elements.goalsList.innerHTML = appData.goals
     .map((goal) => {
-      const progress = Math.min(100, Math.round((goal.saved / goal.target) * 100));
+      const progress = getGoalProgress(goal);
+      const isMission = goal.missionOnly || progress.target <= 0;
+      const parentActions =
+        state.mode === "parent" && goal.status === "active"
+          ? `<div class="inline-actions">
+              <button class="button primary compact-button" type="button" data-action="open-complete-goal-confirm" data-goal-id="${goal.id}" ${!isMission && !progress.readyToComplete ? "disabled" : ""}>
+                Patvirtinti atlikimą (+${goal.xpReward} XP)
+              </button>
+            </div>`
+          : "";
+
       return `
         <div class="stack-item">
           ${renderUiIcon("target")}
           <div>
             <div class="inline-row">
-              <strong>${goal.title}</strong>
-              <span class="status-tag ${goal.parentMatchAvailable ? "approved" : "pending"}">
-                ${goal.parentMatchAvailable ? "Galimas match" : "Dar kaupiama"}
+              <strong>${escapeHtml(goal.title)}</strong>
+              <span class="status-tag ${goal.status === "completed" ? "approved" : progress.readyToComplete || isMission ? "active" : "pending"}">
+                ${
+                  goal.status === "completed"
+                    ? "Atlikta"
+                    : isMission
+                      ? "Misija"
+                      : progress.readyToComplete
+                        ? "Galima užbaigti"
+                        : "Vykdoma"
+                }
               </span>
             </div>
-            <p class="list-copy">Sukaupta ${formatCurrency(goal.saved)} iš ${formatCurrency(goal.target)}</p>
+            <p class="list-copy">${
+              isMission
+                ? `Užduotis · atlygis +${goal.xpReward} XP`
+                : `Sukaupta ${formatCurrency(progress.saved)} iš ${formatCurrency(progress.target)} · liko ${formatCurrency(progress.remaining)}`
+            }</p>
             <div class="progress-track">
-              <div class="progress-fill" style="width: ${progress}%"></div>
+              <div class="progress-fill" style="width: ${progress.percent}%"></div>
             </div>
+            <p class="list-copy">${progress.percent}% · +${goal.xpReward} XP</p>
+            ${parentActions}
           </div>
         </div>
       `;
     })
     .join("");
+
+  if (elements.parentGoalsForm) {
+    const draft = state.goalDraft;
+    elements.parentGoalsForm.innerHTML = `
+      <div class="stack-item">
+        ${renderUiIcon("target")}
+        <div>
+          <label class="field-label" for="goalTitleInput">Misijos pavadinimas</label>
+          <input id="goalTitleInput" class="number-input" type="text" maxlength="60" value="${escapeHtml(draft.title)}" placeholder="Pvz. Sutvarkyti kambarį" />
+          <label class="field-label" for="goalTargetInput">Taupymo suma (EUR)</label>
+          <input id="goalTargetInput" class="number-input" type="number" min="0" step="1" value="${draft.missionOnly ? 0 : draft.target}" ${draft.missionOnly ? "disabled" : ""} />
+          <label class="field-label" for="goalXpInput">XP atlygis</label>
+          <input id="goalXpInput" class="number-input" type="number" min="5" step="5" value="${draft.xpReward}" />
+          <div class="mission-row">
+            <button class="chip-button ${draft.missionOnly ? "active" : ""}" type="button" data-action="toggle-goal-mission-only">
+              Tik užduotis (be EUR)
+            </button>
+          </div>
+          <button class="button primary compact-button" type="button" data-action="open-add-goal-confirm">Pridėti misiją</button>
+        </div>
+      </div>
+    `;
+  }
 
   elements.savingsSummary.innerHTML = `
     <div class="stack-item">
@@ -2444,7 +2244,7 @@ function renderSavings() {
     <div class="stack-item">
       ${renderUiIcon("shield")}
       <div>
-        <strong>Investavimo tvirtinimas</strong>
+        <strong>Tėvų patvirtinimai</strong>
         <p class="list-copy">${appData.settings.approvalRule}</p>
       </div>
     </div>
@@ -2456,230 +2256,6 @@ function renderSavings() {
       </div>
     </div>
   `;
-}
-
-function renderInvestmentCatalog() {
-  elements.investmentCatalog.innerHTML = INVESTMENTS.map((investment) => {
-    const isSelected = investment.id === state.selectedInvestmentId;
-    const cryptoBlocked = investment.type === "Kriptovaliuta" && !appData.settings.cryptoEnabled;
-    return `
-      <article class="asset-card ${isSelected ? "selected" : ""}">
-        <div class="inline-row">
-          <strong>${investment.name}</strong>
-          <span class="type-pill">${investment.type}</span>
-        </div>
-        <div class="asset-meta">
-          <span class="risk-pill">Rizika: ${investment.risk}</span>
-          <span class="stack-meta">Min. ${formatCurrency(investment.min)}</span>
-          ${
-            cryptoBlocked
-              ? '<span class="status-tag rejected">Kripto išjungta</span>'
-              : '<span class="status-tag approved">Galima prašyti</span>'
-          }
-        </div>
-        <p class="list-copy">${investment.description}</p>
-        <div class="action-row">
-          <button class="button secondary compact-button" type="button" data-action="select-asset" data-asset-id="${investment.id}">
-            ${isSelected ? "Pasirinkta" : "Rinktis"}
-          </button>
-        </div>
-      </article>
-    `;
-  }).join("");
-}
-
-function renderInvestActionPanel() {
-  const selectedInvestment = getSelectedInvestment();
-  const pendingRequests = appData.requests.filter(
-    (request) => request.type === "investment" && request.status === "pending",
-  );
-
-  if (state.mode === "child") {
-    elements.investPanelTitle.textContent = "Siųsti prašymą tėvams";
-    elements.investActionPanel.innerHTML = `
-      <div class="stack-item">
-        ${renderUiIcon("chart")}
-        <div>
-          <strong>Pasirinktas aktyvas: ${selectedInvestment.name}</strong>
-          <p class="list-copy">Tipas: ${selectedInvestment.type}. Mažiausia suma: ${formatCurrency(selectedInvestment.min)}.</p>
-        </div>
-      </div>
-      <div>
-        <label class="field-label" for="investmentAmountInput">Prašoma suma</label>
-        <input
-          id="investmentAmountInput"
-          class="number-input"
-          type="number"
-          min="${selectedInvestment.min}"
-          step="1"
-          value="${state.selectedInvestmentAmount}"
-        />
-      </div>
-      <div class="choice-row">
-        ${[selectedInvestment.min, 10, 15, 20]
-          .filter((amount, index, values) => values.indexOf(amount) === index)
-          .map(
-            (amount) => `
-              <button
-                class="chip-button ${state.selectedInvestmentAmount === amount ? "active" : ""}"
-                type="button"
-                data-amount-choice="${amount}"
-              >
-                ${amount} EUR
-              </button>
-            `,
-          )
-          .join("")}
-      </div>
-      <button class="button primary" type="button" data-action="open-invest-request">
-        Siųsti investavimo prašymą
-      </button>
-      <div class="stack-item">
-        ${renderUiIcon("lock")}
-        <div>
-          <strong>Taisyklė</strong>
-          <p class="list-copy">Vaikas gali tik pateikti prašymą. Patvirtinimo mygtukų čia nėra.</p>
-        </div>
-      </div>
-    `;
-    return;
-  }
-
-  elements.investPanelTitle.textContent = "Laukiantys tėvų sprendimo";
-
-  if (!pendingRequests.length) {
-    elements.investActionPanel.innerHTML = `
-      <div class="stack-item">
-        ${renderUiIcon("check")}
-        <div>
-          <strong>Nėra laukiančių prašymų</strong>
-          <p class="list-copy">Kai vaikas pateiks investavimo prašymą, jis bus rodomas čia.</p>
-        </div>
-      </div>
-    `;
-    return;
-  }
-
-  elements.investActionPanel.innerHTML = pendingRequests
-    .map((request) => {
-      const asset = INVESTMENTS.find((investment) => investment.id === request.assetId);
-      return `
-        <div class="stack-item">
-          ${renderUiIcon("bell")}
-          <div>
-            <div class="inline-row">
-              <strong>${asset ? asset.name : "Aktyvas"}</strong>
-              <span class="status-tag pending">Laukia</span>
-            </div>
-            <p class="list-copy">Prašoma investuoti ${formatCurrency(request.amount)}.</p>
-            <p class="list-copy">${formatDate(request.createdAt)}</p>
-            <div class="inline-actions">
-              <button class="button primary compact-button" type="button" data-action="approve-request" data-request-id="${request.id}">
-                Patvirtinti
-              </button>
-              <button class="button secondary compact-button" type="button" data-action="reject-request" data-request-id="${request.id}">
-                Atmesti
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-    })
-    .join("");
-}
-
-function renderPortfolio() {
-  const rows = appData.portfolio.map((holding) => {
-    const asset = INVESTMENTS.find((investment) => investment.id === holding.assetId);
-    return `
-      <div class="stack-item">
-        ${renderUiIcon("chart")}
-        <div>
-          <div class="inline-row">
-            <strong>${asset ? asset.name : "Investicija"}</strong>
-            <span class="status-tag active">Aktyvi</span>
-          </div>
-          <p class="list-copy">Suma: ${formatCurrency(holding.amount)}</p>
-          <p class="list-copy">Atnaujinta: ${formatDate(holding.updatedAt)}</p>
-        </div>
-      </div>
-    `;
-  });
-
-  const requestHistory = appData.requests
-    .filter((request) => request.type === "investment")
-    .slice(0, 4)
-    .map((request) => {
-      const asset = INVESTMENTS.find((investment) => investment.id === request.assetId);
-      return `
-        <div class="stack-item">
-          ${renderUiIcon("send")}
-          <div>
-            <div class="inline-row">
-              <strong>${asset ? asset.name : "Investavimo prašymas"}</strong>
-              <span class="status-tag ${request.status}">${
-                request.status === "approved"
-                  ? "Patvirtinta"
-                  : request.status === "rejected"
-                    ? "Atmesta"
-                    : "Laukia"
-              }</span>
-            </div>
-            <p class="list-copy">${formatCurrency(request.amount)} · ${formatDate(request.createdAt)}</p>
-          </div>
-        </div>
-      `;
-    });
-
-  elements.portfolioList.innerHTML = [...rows, ...requestHistory].join("");
-}
-
-function renderParentInvestControls() {
-  elements.parentInvestControls.innerHTML = `
-    <div class="stack-item">
-      ${renderUiIcon("gift")}
-      <div>
-        <strong>Papildyti investavimo kišenę</strong>
-        <p class="list-copy">Dabartinis likutis: ${formatCurrency(appData.accounts.investPocket)}</p>
-        <div class="inline-actions">
-          <button class="button primary compact-button" type="button" data-action="open-topup-confirm" data-amount="10">
-            +10 EUR
-          </button>
-          <button class="button secondary compact-button" type="button" data-action="open-topup-confirm" data-amount="20">
-            +20 EUR
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="stack-item">
-      ${renderUiIcon("lock")}
-      <div>
-        <strong>Kriptovaliutų leidimas</strong>
-        <p class="list-copy">${
-          appData.settings.cryptoEnabled
-            ? "Šiuo metu vaikas gali siųsti kripto prašymus."
-            : "Kripto prašymai šiuo metu užblokuoti."
-        }</p>
-        <button class="button secondary compact-button" type="button" data-action="toggle-crypto-setting">
-          ${appData.settings.cryptoEnabled ? "Išjungti kripto" : "Įjungti kripto"}
-        </button>
-      </div>
-    </div>
-    <div class="stack-item">
-      ${renderUiIcon("target")}
-      <div>
-        <strong>Maksimalus vieno prašymo limitas</strong>
-        <p class="list-copy">${formatCurrency(appData.settings.maxSingleInvest)}</p>
-      </div>
-    </div>
-  `;
-}
-
-function renderInvest() {
-  renderInvestmentCatalog();
-  renderInvestActionPanel();
-  renderPortfolio();
-  renderParentInvestControls();
 }
 
 function renderLearn() {
@@ -2774,56 +2350,33 @@ function renderTransfers() {
     </div>
   `;
 
-  const queueItems = appData.requests.filter(
-    (request) => request.status === "pending" || request.type === "payment-request",
-  );
+  const queueItems = appData.requests.filter((request) => request.type === "payment-request");
 
   elements.transferQueue.innerHTML = queueItems.length
     ? queueItems
         .map((request) => {
-          if (request.type === "payment-request") {
-            const account = getAccountConfig(request.accountType);
-            const requestStatusLabel = request.status === "completed" ? "Patvirtinta" : "Užklausa";
-            const requestStatusClass = request.status === "completed" ? "success" : "active";
-            return `
-              <div class="stack-item">
-                ${renderUiIcon("qr")}
-                <div>
-                  <div class="inline-row">
-                    <strong>${account.title}</strong>
-                    <span class="status-tag ${requestStatusClass}">${requestStatusLabel}</span>
-                  </div>
-                  <p class="list-copy">Suma: ${formatCurrency(request.amount)}</p>
-                  <p class="list-copy">${request.accountNumber}</p>
-                  <div class="inline-actions">
-                    <button class="button primary compact-button" type="button" data-action="open-share-request" data-request-id="${request.id}">
-                      Rodyti QR
-                    </button>
-                    <button class="button secondary compact-button" type="button" data-action="open-payment-review" data-request-id="${request.id}">
-                      Review
-                    </button>
-                    <button class="button secondary compact-button" type="button" data-action="copy-request-text" data-request-id="${request.id}">
-                      Kopijuoti tekstą
-                    </button>
-                  </div>
-                </div>
-              </div>
-            `;
-          }
-
-          const asset = INVESTMENTS.find((investment) => investment.id === request.assetId);
+          const account = getAccountConfig(request.accountType);
+          const requestStatusLabel = request.status === "completed" ? "Patvirtinta" : "Užklausa";
+          const requestStatusClass = request.status === "completed" ? "success" : "active";
           return `
             <div class="stack-item">
-              ${renderUiIcon("chart")}
+              ${renderUiIcon("qr")}
               <div>
-                <strong>${asset ? asset.name : "Prašymas"}</strong>
-                <p class="list-copy">Investavimo prašymas: ${formatCurrency(request.amount)}</p>
+                <div class="inline-row">
+                  <strong>${account.title}</strong>
+                  <span class="status-tag ${requestStatusClass}">${requestStatusLabel}</span>
+                </div>
+                <p class="list-copy">Suma: ${formatCurrency(request.amount)}</p>
+                <p class="list-copy">${request.accountNumber}</p>
                 <div class="inline-actions">
-                  <button class="button primary compact-button" type="button" data-action="approve-request" data-request-id="${request.id}">
-                    Patvirtinti
+                  <button class="button primary compact-button" type="button" data-action="open-share-request" data-request-id="${request.id}">
+                    Rodyti QR
                   </button>
-                  <button class="button secondary compact-button" type="button" data-action="reject-request" data-request-id="${request.id}">
-                    Atmesti
+                  <button class="button secondary compact-button" type="button" data-action="open-payment-review" data-request-id="${request.id}">
+                    Review
+                  </button>
+                  <button class="button secondary compact-button" type="button" data-action="copy-request-text" data-request-id="${request.id}">
+                    Kopijuoti tekstą
                   </button>
                 </div>
               </div>
@@ -2835,8 +2388,8 @@ function renderTransfers() {
       <div class="stack-item">
         ${renderUiIcon("check")}
         <div>
-          <strong>Nėra laukiančių prašymų</strong>
-          <p class="list-copy">Kai vaikas pateiks naują investavimo prašymą, jis atsiras čia.</p>
+          <strong>Nėra pavedimo užklausų</strong>
+          <p class="list-copy">Kai sukursite pavedimo užklausą, ji bus rodoma čia.</p>
         </div>
       </div>
     `;
@@ -2870,7 +2423,6 @@ function renderAll() {
   renderSectionBanner();
   renderHome();
   renderSavings();
-  renderInvest();
   renderLearn();
   renderQuiz();
   renderMiniGames();
@@ -2884,7 +2436,7 @@ function handleActionClick(actionButton) {
   if (action === "mini-piggy-tap") {
     state.miniGames.piggyTaps += 1;
     if (state.miniGames.piggyTaps >= 8) {
-      awardMiniGamePoints("piggyRewarded", 10);
+      awardMiniGamePoints("piggyRewarded", 5);
     }
     renderMiniGames();
     return;
@@ -2894,7 +2446,7 @@ function handleActionClick(actionButton) {
     state.miniGames.choiceAnswered = true;
     state.miniGames.choiceSelected = actionButton.dataset.choiceId;
     if (state.miniGames.choiceSelected === "bike") {
-      awardMiniGamePoints("choiceRewarded", 12);
+      awardMiniGamePoints("choiceRewarded", 8);
     }
     renderMiniGames();
     return;
@@ -2910,39 +2462,72 @@ function handleActionClick(actionButton) {
   if (action === "mini-budget") {
     state.miniGames.budgetChoice = actionButton.dataset.budgetId;
     if (state.miniGames.budgetChoice === "split") {
-      awardMiniGamePoints("budgetRewarded", 15);
+      awardMiniGamePoints("budgetRewarded", 10);
     }
     renderMiniGames();
     return;
   }
 
-  if (action === "mini-memory") {
-    if (state.miniGames.memorySolved) {
+  if (action === "toggle-goal-mission-only") {
+    state.goalDraft.missionOnly = !state.goalDraft.missionOnly;
+    if (state.goalDraft.missionOnly) {
+      state.goalDraft.target = 0;
+    }
+    renderSavings();
+    return;
+  }
+
+  if (action === "open-add-goal-confirm") {
+    if (state.mode !== "parent") {
+      createToast("Misijas gali kurti tik tėvai.", "warning");
       return;
     }
 
-    const expectedEmoji = ["🐷", "🪙", "🚀"][state.miniGames.memoryStep];
-    const selectedEmoji = actionButton.dataset.memoryEmoji;
+    const titleInput = document.querySelector("#goalTitleInput");
+    const targetInput = document.querySelector("#goalTargetInput");
+    const xpInput = document.querySelector("#goalXpInput");
+    const title = titleInput?.value?.trim() || state.goalDraft.title;
+    const missionOnly = state.goalDraft.missionOnly;
+    const target = missionOnly ? 0 : sanitizeAmount(targetInput?.value || state.goalDraft.target);
+    const xpReward = Math.max(5, sanitizeAmount(xpInput?.value || state.goalDraft.xpReward));
 
-    if (selectedEmoji === expectedEmoji) {
-      state.miniGames.memoryStep += 1;
-      if (state.miniGames.memoryStep >= 3) {
-        state.miniGames.memorySolved = true;
-        awardMiniGamePoints("memoryRewarded", 20);
-      }
-    } else {
-      state.miniGames.memoryStep = 0;
-      state.miniGames.memorySolved = false;
-      createToast("Ups, emoji seka nutrūko. Bandyk dar kartą!", "warning");
-    }
-
-    renderMiniGames();
+    openConfirm({
+      role: "parent",
+      title: "Pridėti naują misiją",
+      copy: `Įvesk tėvų PIN, kad sukurtum misiją „${title}“ (+${xpReward} XP).`,
+      action: {
+        type: "parent-add-goal",
+        title,
+        target,
+        xpReward,
+        missionOnly,
+      },
+      buttonLabel: "Sukurti misiją",
+    });
     return;
   }
 
-  if (action === "select-asset") {
-    state.selectedInvestmentId = actionButton.dataset.assetId || INVESTMENTS[0].id;
-    renderAll();
+  if (action === "open-complete-goal-confirm") {
+    if (state.mode !== "parent") {
+      createToast("Misiją gali patvirtinti tik tėvai.", "warning");
+      return;
+    }
+
+    const goal = appData.goals.find((item) => item.id === actionButton.dataset.goalId);
+    if (!goal) {
+      return;
+    }
+
+    openConfirm({
+      role: "parent",
+      title: "Patvirtinti misiją atlikta",
+      copy: `Įvesk tėvų PIN. Vaikas gaus +${goal.xpReward} XP už „${goal.title}“.`,
+      action: {
+        type: "parent-complete-goal",
+        goalId: goal.id,
+      },
+      buttonLabel: "Patvirtinti ir duoti XP",
+    });
     return;
   }
 
@@ -3016,26 +2601,6 @@ function handleActionClick(actionButton) {
     return;
   }
 
-  if (action === "open-invest-request") {
-    if (state.mode !== "child") {
-      createToast("Investavimo prašymą gali teikti tik vaiko režimas.", "warning");
-      return;
-    }
-
-    const investment = getSelectedInvestment();
-    openConfirm({
-      role: "child",
-      title: "Patvirtinti investavimo prašymą",
-      copy: `Įvesk vaiko PIN, kad išsiųstum prašymą į ${investment.name}. Tai nėra prisijungimo langas, o atskiras patvirtinimas.`,
-      action: {
-        type: "child-invest-request",
-        amount: state.selectedInvestmentAmount,
-      },
-      buttonLabel: "Siųsti prašymą",
-    });
-    return;
-  }
-
   if (action === "open-transfer-confirm") {
     openConfirm({
       role: "parent",
@@ -3050,63 +2615,6 @@ function handleActionClick(actionButton) {
     return;
   }
 
-  if (action === "open-topup-confirm") {
-    openConfirm({
-      role: "parent",
-      title: "Papildyti investavimo kišenę",
-      copy: "Įvesk tėvų PIN, kad vaikui būtų skirta daugiau investavimo lėšų.",
-      action: {
-        type: "parent-topup-invest-pocket",
-        amount: Number(actionButton.dataset.amount || "0"),
-      },
-      buttonLabel: "Papildyti kišenę",
-    });
-    return;
-  }
-
-  if (action === "toggle-crypto-setting") {
-    openConfirm({
-      role: "parent",
-      title: "Keisti kripto leidimą",
-      copy: "Įvesk tėvų PIN, kad įjungtum arba išjungtum kriptovaliutų prašymus.",
-      action: {
-        type: "parent-toggle-crypto",
-      },
-      buttonLabel: "Patvirtinti nustatymą",
-    });
-    return;
-  }
-
-  if (action === "approve-request") {
-    const request = appData.requests.find((item) => item.id === actionButton.dataset.requestId);
-    const asset = request ? INVESTMENTS.find((item) => item.id === request.assetId) : null;
-    openConfirm({
-      role: "parent",
-      title: "Patvirtinti investavimo prašymą",
-      copy: `Įvesk tėvų PIN, kad patvirtintum ${asset ? asset.name : "pasirinktą aktyvą"} už ${request ? formatCurrency(request.amount) : formatCurrency(0)}.`,
-      action: {
-        type: "parent-approve-request",
-        requestId: actionButton.dataset.requestId,
-      },
-      buttonLabel: "Patvirtinti prašymą",
-    });
-    return;
-  }
-
-  if (action === "reject-request") {
-    const request = appData.requests.find((item) => item.id === actionButton.dataset.requestId);
-    const asset = request ? INVESTMENTS.find((item) => item.id === request.assetId) : null;
-    openConfirm({
-      role: "parent",
-      title: "Atmesti investavimo prašymą",
-      copy: `Įvesk tėvų PIN, kad atmestum ${asset ? asset.name : "pasirinktą aktyvą"} prašymą.`,
-      action: {
-        type: "parent-reject-request",
-        requestId: actionButton.dataset.requestId,
-      },
-      buttonLabel: "Atmesti prašymą",
-    });
-  }
 }
 
 function handleQuizAnswer(index) {
@@ -3118,8 +2626,7 @@ function handleQuizAnswer(index) {
     state.quizFeedback = question.feedback;
     state.quizFeedbackTone = "success";
   } else {
-    state.quizFeedback =
-      "Dar ne visai. Pagalvok apie laikotarpį, riziką ir kodėl reikalinga tėvų priežiūra.";
+    state.quizFeedback = "Dar ne visai. Pagalvok apie taupymą, limitą ir XP misijas.";
     state.quizFeedbackTone = "error";
   }
 
@@ -3302,8 +2809,14 @@ document.addEventListener("click", (event) => {
 
 document.addEventListener("input", (event) => {
   const target = event.target;
-  if (target.id === "investmentAmountInput") {
-    state.selectedInvestmentAmount = sanitizeAmount(target.value);
+  if (target.id === "goalTitleInput") {
+    state.goalDraft.title = target.value;
+  }
+  if (target.id === "goalTargetInput") {
+    state.goalDraft.target = sanitizeNonNegativeAmount(target.value);
+  }
+  if (target.id === "goalXpInput") {
+    state.goalDraft.xpReward = sanitizeAmount(target.value);
   }
   if (target.id === "paymentRequestAmountInput") {
     state.paymentRequestAmount = sanitizeAmount(target.value);
@@ -3313,16 +2826,6 @@ document.addEventListener("input", (event) => {
       preview.textContent = `${APP_NAME} pavedimo užklausa: pervesk ${formatCurrency(state.paymentRequestAmount)} į ${account.title} (${account.accountNumber}).`;
     }
   }
-});
-
-document.addEventListener("click", (event) => {
-  const choiceButton = event.target.closest("[data-amount-choice]");
-  if (!choiceButton) {
-    return;
-  }
-
-  state.selectedInvestmentAmount = sanitizeAmount(choiceButton.dataset.amountChoice);
-  renderAll();
 });
 
 resetQuizQuestion(0);
