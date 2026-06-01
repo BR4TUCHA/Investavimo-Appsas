@@ -36,13 +36,23 @@ npm run android:build:debug
 
 APK kopija: `apk/Taupytukas-debug.apk`
 
-**Atsisiuntimas (naujausia šakos versija):**
+### Atsisiųsti (naudok šias nuorodas)
 
-https://raw.githubusercontent.com/BR4TUCHA/Investavimo-Appsas/cursor/simplify-goals-xp-ad52/apk/Taupytukas-debug.apk
+1. **APK aplankas** — atsidarysi `apk` ir matai `Taupytukas-debug.apk`:  
+   https://github.com/BR4TUCHA/Investavimo-Appsas/tree/cursor/simplify-goals-xp-ad52/apk
+
+2. **Tiesioginis atsisiuntimas** (patogiausia telefone):  
+   https://github.com/BR4TUCHA/Investavimo-Appsas/releases/download/taupytukas-apk/Taupytukas-debug.apk
+
+3. **Releases** — sąraše po *Assets* paspausk `Taupytukas-debug.apk`:  
+   https://github.com/BR4TUCHA/Investavimo-Appsas/releases
+
+4. **Atsisiuntimo puslapis** (mygtukas + nuoroda į failą):  
+   https://br4tucha.github.io/Investavimo-Appsas/
 
 SHA-256: `8d3e8261fc784c9afe41dab6e0bbdceecf761c793cfc266bad0196e49d808fee`
 
-> Jei telefone vis dar sena versija: ištrink seną Taupytukas įdiegimą ir įdiek iš naujo. GitHub `raw` kartais kešuoja — naudok nuorodą su teisinga šaka (`cursor/simplify-goals-xp-ad52`), ne `main` ar seną `taupytukas-ios` šaką.
+> Sena versija telefone? Ištrink programėlę ir įdiek iš naujo. Nenaudok senų `raw.githubusercontent.com` nuorodų su kita šaka.
 
 ## iOS
 

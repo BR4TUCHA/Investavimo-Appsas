@@ -1,0 +1,56 @@
+name: Publish Taupytukas APK
+
+on:
+  push:
+    branches:
+      - cursor/simplify-goals-xp-ad52
+      - main
+    paths:
+      - "apk/Taupytukas-debug.apk"
+      - "apk/index.html"
+      - ".github/workflows/publish-apk.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: publish-apk
+  cancel-in-progress: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish GitHub Release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: taupytukas-apk
+          name: Taupytukas Android APK
+          body: |
+            Naujausia **Taupytukas-debug.apk** versija.
+
+            - [Atsisiųsti APK](https://github.com/BR4TUCHA/Investavimo-Appsas/releases/download/taupytukas-apk/Taupytukas-debug.apk)
+            - [APK aplankas](https://github.com/BR4TUCHA/Investavimo-Appsas/tree/cursor/simplify-goals-xp-ad52/apk)
+          files: apk/Taupytukas-debug.apk
+          make_latest: true
+          overwrite_files: true
+
+  pages:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apk
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
